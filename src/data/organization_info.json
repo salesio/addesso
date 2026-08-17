@@ -1,0 +1,200 @@
+{
+  "name": "ADDESSO",
+  "fullName": "Associação para a Defesa e Desenvolvimento da Sociedade",
+  "slogan": "Unidos pela Transformação Social, Cidadania e Empoderamento Comunitário",
+  "foundationYear": 2009,
+  "yearsActive": 17,
+  "headquarters": {
+    "country": "Moçambique",
+    "city": "Maputo",
+    "districts": ["KaMavota", "KaMaxaquene"],
+    "address": "Bairro da Polana Caniço \"A\", Quarteirão 18, Casa Nº 56, Maputo - Moçambique",
+    "cbaAddress": "Centro de Boas Acções - Polana Caniço \"A\", Cidade de Maputo"
+  },
+  "contacts": {
+    "phones": ["+258 84 635 7890", "+258 87 652 5150", "+258 82 450 1200"],
+    "emails": ["info@addesso.org.mz", "addesso.org@gmail.com", "contacto@addesso.org.mz"],
+    "whatsapp": "+258846357890",
+    "facebook": "https://web.facebook.com/addesso2009",
+    "instagram": "https://instagram.com/addesso_moz",
+    "linkedin": "https://linkedin.com/company/addesso-mozambique"
+  },
+  "stats": {
+    "yearsOfImpact": "17+",
+    "documentedActions": "169+",
+    "catalogedPhotos": "712+",
+    "directBeneficiaries": "28.500+",
+    "trainedYouth": "1.200+",
+    "communityGardens": "450+",
+    "partnerInstitutions": "18+"
+  },
+  "mission": "Promover o desenvolvimento humano sustentável, a cidadania activa e a justiça social em Moçambique, empoderando crianças, jovens e famílias em situação de vulnerabilidade através da educação comunitária, liderança juvenil, segurança alimentar e solidariedade participativa.",
+  "vision": "Uma sociedade moçambicana justa, solidária e resiliente, onde cada criança tem acesso a uma educação digna, cada jovem tem oportunidades para liderar a sua comunidade e cada família tem segurança alimentar e bem-estar.",
+  "values": [
+    {
+      "name": "Solidariedade Comunitária",
+      "description": "Acreditamos na força da união e no apoio mútuo como motor de transformação das nossas comunidades."
+    },
+    {
+      "name": "Transparência & Integridade",
+      "description": "Compromisso absoluto com a prestação de contas, rigor ético e honestidade em todas as acções."
+    },
+    {
+      "name": "Empoderamento Juvenil",
+      "description": "Reconhecemos os jovens como protagonistas indispensáveis do desenvolvimento socioeconómico."
+    },
+    {
+      "name": "Inclusão & Igualdade",
+      "description": "Promovemos a igualdade de género, protecção integral da criança e inclusão de pessoas vulneráveis."
+    },
+    {
+      "name": "Sustentabilidade Ambiental",
+      "description": "Práticas ecológicas na agricultura urbana, conservação de recursos naturais e resiliência climática."
+    }
+  ],
+  "pillars": [
+    {
+      "id": "educacao-infancia",
+      "title": "Educação & Primeira Infância",
+      "badge": "Educação",
+      "icon": "book-open",
+      "color": "#0d9488",
+      "summary": "Projectos pioneiros de Creche Familiar, capacitação de educadores do pré-escolar, bibliotecas infantis e o programa 'Sopas com Letras' para estímulo precoce da leitura.",
+      "initiatives": [
+        "Projecto Creche Familiar nos bairros periféricos",
+        "Formação e capacitação contínua de educadores de infância",
+        "Salas de Leitura e Doação de Livros com a Fundação Carlos Morgado",
+        "Programa 'Sopas com Letras' e Reforço Escolar comunitário"
+      ]
+    },
+    {
+      "id": "juventude-cba",
+      "title": "Juventude, Liderança & Centro de Boas Acções",
+      "badge": "Juventude",
+      "icon": "users",
+      "color": "#0284c7",
+      "summary": "O Centro de Boas Acções (CBA) na Polana Caniço é o nosso pólo vibrante para mentoria de jovens, artes, capoeira, informática e a organização da Mini-Semana da Juventude.",
+      "initiatives": [
+        "Gestão e dinamização do Centro de Boas Acções (Polana Caniço)",
+        "Mini-Semana da Juventude e debates cívicos participativos",
+        "Oficinas de Artes, Dança, Música, Teatro e Capoeira",
+        "Cursos de Iniciação à Informática e Competências Digitais"
+      ]
+    },
+    {
+      "id": "agricultura-nutricao",
+      "title": "Segurança Alimentar & Agricultura Urbana",
+      "badge": "Agricultura",
+      "icon": "sprout",
+      "color": "#16a34a",
+      "summary": "Fomento de hortas caseiras nos quintais das famílias (Projecto Horta no Quintal e Agri-Urbe), formação agroecológica e promoção da soberania alimentar.",
+      "initiatives": [
+        "Projecto 'Horta no Quintal' para centenas de agregados familiares",
+        "Projecto Agri-Urbe em parceria com redes de cooperação internacional",
+        "Distribuição de sementes nativas, compostagem orgânica e rega eficiente",
+        "Educação nutricional e oficinas de culinária saudável com base local"
+      ]
+    },
+    {
+      "id": "emergencia-saude",
+      "title": "Ajuda Humanitária & Saúde Preventiva",
+      "badge": "Emergência",
+      "icon": "heart-handshake",
+      "color": "#dc2626",
+      "summary": "Distribuição de Kits de Emergência e Dignidade para vítimas de cheias e calamidades (Boane, Maputo, Gaza), acções de prevenção sanitária e saúde comunitária.",
+      "initiatives": [
+        "Canalização de donativos e socorro humanitário em cheias e inundações",
+        "Distribuição de Kits de Dignidade a mulheres e crianças em acolhimento",
+        "Campanhas de saneamento do meio, higienização e prevenção de doenças",
+        "Apoio a idosos e famílias em situação de extrema vulnerabilidade"
+      ]
+    },
+    {
+      "id": "parcerias-comunidade",
+      "title": "Desenvolvimento Comunitário & Parcerias",
+      "badge": "Cidadania",
+      "icon": "landmark",
+      "color": "#d97706",
+      "summary": "Articulação estreita com as estruturas governamentais de base, universidades (UEM), conselhos de juventude e cooperação internacional.",
+      "initiatives": [
+        "Parceria institucional com a Universidade Eduardo Mondlane (UEM)",
+        "Cooperação activa com o Conselho Distrital da Juventude (CDJ)",
+        "Articulação com secretários de bairros e líderes comunitários",
+        "Intervenções em distritos estratégicos (KaMavota, Matutuíne/Djabula, Boane, Manhiça)"
+      ]
+    }
+  ],
+  "cba": {
+    "name": "Centro de Boas Acções (CBA) - Polana Caniço",
+    "description": "Um polo de esperança e oportunidade no coração da Polana Caniço 'A'. O CBA é um centro comunitário multiusos criado pela ADDESSO para acolher diariamente dezenas de crianças para reforço escolar e leitura, além de jovens para cursos profissionalizantes, palestras de liderança, artes, desporto e diálogo cívico.",
+    "features": [
+      "Biblioteca Comunitária com centenas de livros infanto-juvenis",
+      "Sala de Reforço Escolar e Apoio Pedagógico",
+      "Espaço Multiuso para Oficinas de Artes, Dança e Capoeira",
+      "Horta Pedagógica Demonstrativa",
+      "Gabinete de Atendimento e Aconselhamento Juvenil"
+    ],
+    "schedule": "Segunda a Sábado, das 08h00 às 17h30",
+    "location": "Bairro da Polana Caniço \"A\", Cidade de Maputo"
+  },
+  "partners": [
+    {
+      "name": "Universidade Eduardo Mondlane (UEM)",
+      "type": "Académico & Investigação",
+      "description": "Parceria estratégica para estágios comunitários, capacitação técnica e apoio ao Centro de Boas Acções."
+    },
+    {
+      "name": "Fundação Carlos Morgado",
+      "type": "Cultura & Educação",
+      "description": "Doação de livros infantis, apoio a salas de leitura e incentivo à literacia nas comunidades."
+    },
+    {
+      "name": "Conselho Distrital da Juventude (CDJ KaMaxaquene & KaMavota)",
+      "type": "Juventude & Cidadania",
+      "description": "Coorganização da Mini-Semana da Juventude e mobilização juvenil cívica."
+    },
+    {
+      "name": "Conselho Nacional do Voluntariado (CNV)",
+      "type": "Voluntariado",
+      "description": "Certificação e enquadramento de voluntários nacionais e internacionais."
+    },
+    {
+      "name": "Conselho Municipal de Maputo",
+      "type": "Poder Local",
+      "description": "Articulação institucional para melhoria das condições socio-ambientais dos bairros."
+    },
+    {
+      "name": "AICS (Agência Italiana de Cooperação)",
+      "type": "Cooperação Internacional",
+      "description": "Apoio a iniciativas de agricultura urbana (Agri-Urbe) e sustentabilidade económica."
+    }
+  ],
+  "donationInfo": {
+    "mpesa": "+258 84 635 7890",
+    "mpesaName": "ADDESSO - Defesa e Desenv. da Sociedade",
+    "emola": "+258 87 652 5150",
+    "bank": "Banco Comercial e de Investimentos (BCI)",
+    "accountNumber": "18945632101",
+    "nib": "0008.0000.1894.5632.1018.4",
+    "iban": "MZ59 0008 0000 1894 5632 1018 4",
+    "swift": "BCIMMZMA",
+    "donationPillars": [
+      {
+        "amount": "500 MT / ~8 USD",
+        "impact": "Garante kit de material escolar e livros de leitura para 2 crianças no Centro de Boas Acções."
+      },
+      {
+        "amount": "1.500 MT / ~24 USD",
+        "impact": "Fornece sementes e ferramentas agroecológicas para a instalação de 1 Horta Familiar no quintal."
+      },
+      {
+        "amount": "3.500 MT / ~55 USD",
+        "impact": "Financia 1 Kit de Emergência e Dignidade completo para famílias desalojadas por cheias."
+      },
+      {
+        "amount": "10.000 MT / ~160 USD",
+        "impact": "Apoia o programa mensal de reforço pedagógico e merenda nutritiva para 30 crianças vulneráveis."
+      }
+    ]
+  }
+}
