@@ -48,19 +48,34 @@ import {
 const STORAGE_KEY = 'addesso_posts_v1';
 const LANG_STORAGE_KEY = 'addesso_lang_v1';
 
+export function assetUrl(path) {
+  if (!path) return './default_cover.png';
+  if (path.startsWith('data:') || path.startsWith('http://') || path.startsWith('https://')) return path;
+  const clean = path.replace(/^\.?\/+/, '');
+  return `./${clean}`;
+}
+
 function getStoredPosts() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map(p => ({
+          ...p,
+          cover_image: assetUrl(p.cover_image),
+          images: (p.images || []).map(img => assetUrl(img))
+        }));
       }
     }
   } catch (e) {
     console.error('Error loading stored posts:', e);
   }
-  return [...postsSeed];
+  return postsSeed.map(p => ({
+    ...p,
+    cover_image: assetUrl(p.cover_image),
+    images: (p.images || []).map(img => assetUrl(img))
+  }));
 }
 
 function saveStoredPosts(posts) {
@@ -236,7 +251,7 @@ function renderApp() {
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--slate-100);">
           <div class="brand-logo">
             <div class="brand-logo-img-wrapper">
-              <img src="/logo_cropped.png" alt="ADDESSO Logo" />
+              <img src="./logo_cropped.png" alt="ADDESSO Logo" />
             </div>
             <div class="brand-text">
               <span class="brand-name">ADDESSO</span>
@@ -320,7 +335,7 @@ function renderHeader(route, currentLangObj, tr) {
         <!-- Official Brand Logo -->
         <a href="#home" class="brand-logo">
           <div class="brand-logo-img-wrapper">
-            <img src="/logo_cropped.png" alt="ADDESSO Logotipo Oficial" />
+            <img src="./logo_cropped.png" alt="ADDESSO Logotipo Oficial" />
           </div>
           <div class="brand-text">
             <span class="brand-name">ADDESSO</span>
@@ -393,7 +408,7 @@ function renderFooter(tr) {
           <div>
             <div class="brand-logo" style="margin-bottom:1.25rem;">
               <div class="brand-logo-img-wrapper" style="width:48px;height:48px;">
-                <img src="/logo_cropped.png" alt="ADDESSO" />
+                <img src="./logo_cropped.png" alt="ADDESSO" />
               </div>
               <div class="brand-text">
                 <span class="brand-name" style="color:#ffffff;">ADDESSO</span>
@@ -576,7 +591,7 @@ function renderDedicatedPostPage(id, tr) {
               <div class="modal-gallery-grid">
                 ${post.images.map((img, idx) => `
                   <div class="gallery-thumb-item" onclick="openLightbox(${post.id}, ${idx})">
-                    <img src="${img}" alt="Fotografia de Campo ${idx + 1}" loading="lazy" onerror="this.src='/logo_cropped.png'" />
+                    <img src="${img}" alt="Fotografia de Campo ${idx + 1}" loading="lazy" onerror="this.src='./logo_cropped.png'" />
                   </div>
                 `).join('')}
               </div>
@@ -729,7 +744,7 @@ function renderHomePage(tr) {
           <!-- Hero Visual Frame with Real Archive Photo -->
           <div class="hero-visual-card">
             <div class="hero-main-photo-frame">
-              <img src="/archive_images/2025-06-17_01/image_01.jpg" alt="Centro de Boas Acções ADDESSO Inauguração" onerror="this.src='/logo_cropped.png'" />
+              <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Centro de Boas Acções ADDESSO Inauguração" onerror="this.src='./logo_cropped.png'" />
             </div>
             <div class="hero-float-card hero-float-1">
               <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;">
@@ -852,16 +867,16 @@ function renderHomePage(tr) {
             <!-- Gallery Grid with Real Photos -->
             <div class="cba-gallery-preview">
               <div class="cba-photo-card">
-                <img src="/archive_images/2025-06-17_01/image_02.jpg" alt="Inauguração do CBA" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2025-06-17_01/image_02.jpg" alt="Inauguração do CBA" onerror="this.src='./logo_cropped.png'" />
               </div>
               <div class="cba-photo-card">
-                <img src="/archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação de Jovens" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação de Jovens" onerror="this.src='./logo_cropped.png'" />
               </div>
               <div class="cba-photo-card">
-                <img src="/archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" onerror="this.src='./logo_cropped.png'" />
               </div>
               <div class="cba-photo-card">
-                <img src="/archive_images/2021-10-16_01/image_01.jpg" alt="Crianças e Cultura" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2021-10-16_01/image_01.jpg" alt="Crianças e Cultura" onerror="this.src='./logo_cropped.png'" />
               </div>
             </div>
           </div>
@@ -952,7 +967,7 @@ function renderSobrePage(tr) {
             </p>
           </div>
           <div style="position:relative;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);border:4px solid #ffffff;">
-            <img src="/archive_images/2021-09-05_01/image_01.jpg" alt="Acção Comunitária Histórica ADDESSO" onerror="this.src='/logo_cropped.png'" />
+            <img src="./archive_images/2021-09-05_01/image_01.jpg" alt="Acção Comunitária Histórica ADDESSO" onerror="this.src='./logo_cropped.png'" />
           </div>
         </div>
 
@@ -1058,7 +1073,7 @@ function renderProjectosPage(tr) {
                 </a>
               </div>
               <div style="order:${idx % 2 === 0 ? 2 : 1};border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);border:3px solid #ffffff;aspect-ratio:4/3;background:#000;">
-                <img src="/archive_images/${idx === 0 ? '2021-10-16_01/image_01.jpg' : idx === 1 ? '2026-08-14_01/image_01.jpg' : idx === 2 ? '2020-09-13_01/image_01.jpg' : idx === 3 ? '2026-01-21_01/image_01.jpg' : '2021-09-05_01/image_01.jpg'}" alt="${pillar.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/${idx === 0 ? '2021-10-16_01/image_01.jpg' : idx === 1 ? '2026-08-14_01/image_01.jpg' : idx === 2 ? '2020-09-13_01/image_01.jpg' : idx === 3 ? '2026-01-21_01/image_01.jpg' : '2021-09-05_01/image_01.jpg'}" alt="${pillar.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
               </div>
             </div>
           `).join('')}
@@ -1105,14 +1120,14 @@ function renderCbaPage(tr) {
 
           <div style="display:flex;flex-direction:column;gap:1rem;">
             <div style="border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:16/10;">
-              <img src="/archive_images/2025-06-17_01/image_01.jpg" alt="Inauguração do CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/logo_cropped.png'" />
+              <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Inauguração do CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
               <div style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);aspect-ratio:4/3;">
-                <img src="/archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação no CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação no CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
               </div>
               <div style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);aspect-ratio:4/3;">
-                <img src="/archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/logo_cropped.png'" />
+                <img src="./archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
               </div>
             </div>
           </div>
@@ -1308,11 +1323,11 @@ function renderBlogPage(tr) {
 
 function renderPostCard(post, tr) {
   const catBadge = getCategoryColor(post.primary_category);
-  const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : '/default_cover.png';
+  const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : './default_cover.png';
   return `
     <article class="post-card" onclick="navigateTo('#post/${post.id}')">
       <div class="post-card-thumb">
-        <img src="${cover}" alt="${post.title}" loading="lazy" onerror="this.src='/default_cover.png'" />
+        <img src="${cover}" alt="${post.title}" loading="lazy" onerror="this.src='./default_cover.png'" />
         ${post.image_count > 0 ? `
           <div class="post-img-count-badge">
             <i data-lucide="image" style="width:12px;height:12px;"></i>
@@ -1362,7 +1377,7 @@ function renderTimelinePostCard(post, tr) {
       ${post.images && post.images.length > 0 ? `
         <div style="display:flex;gap:0.5rem;overflow-x:auto;margin-bottom:1rem;">
           ${post.images.slice(0, 4).map(img => `
-            <img src="${img}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;" onerror="this.src='/logo_cropped.png'" />
+            <img src="${img}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
           `).join('')}
           ${post.images.length > 4 ? `
             <div style="width:80px;height:80px;border-radius:8px;background:var(--slate-800);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;">
@@ -1725,12 +1740,12 @@ function renderAdminPostsList() {
 
       <div id="sortable-posts-list" style="max-height:650px;overflow-y:auto;padding-right:0.5rem;">
         ${state.posts.map((post, index) => {
-          const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : '/default_cover.png';
+          const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : './default_cover.png';
           return `
             <div class="sortable-post-row" draggable="true" data-index="${index}">
               <div style="display:flex;align-items:center;gap:1rem;flex-grow:1;overflow:hidden;">
                 <span class="drag-handle"><i data-lucide="grip-vertical"></i></span>
-                <img src="${cover}" alt="thumb" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0;" onerror="this.src='/default_cover.png'" />
+                <img src="${cover}" alt="thumb" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0;" onerror="this.src='./default_cover.png'" />
                 <div style="overflow:hidden;">
                   <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
                     <span class="badge badge-blue" style="font-size:0.7rem;">#${post.id}</span>
@@ -1834,7 +1849,7 @@ function renderAdminPostForm() {
         <div id="preview-strip" class="image-preview-strip">
           ${(draft.images || []).map((img, idx) => `
             <div class="preview-thumb-card ${draft.cover_image === img ? 'is-cover' : ''}">
-              <img src="${img}" alt="Preview ${idx + 1}" onerror="this.src='/default_cover.png'" />
+              <img src="${img}" alt="Preview ${idx + 1}" onerror="this.src='./default_cover.png'" />
               <button type="button" class="thumb-delete-btn" onclick="removeDraftImage(${idx})">×</button>
               ${draft.cover_image === img ? `<span class="thumb-cover-badge">Capa</span>` : `
                 <button type="button" style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#fff;font-size:0.65rem;padding:0.15rem 0.35rem;border-radius:4px;" onclick="setDraftCoverImage(${idx})">Definir Capa</button>
@@ -2152,7 +2167,7 @@ window.handleSavePost = (e) => {
 
   const isEditing = !!state.adminEditingPost;
   const currentImages = (isEditing ? state.adminEditingPost.images : state.newPostDraft.images) || [];
-  const currentCover = (isEditing ? state.adminEditingPost.cover_image : state.newPostDraft.cover_image) || currentImages[0] || '/default_cover.png';
+  const currentCover = (isEditing ? state.adminEditingPost.cover_image : state.newPostDraft.cover_image) || currentImages[0] || './default_cover.png';
 
   if (isEditing) {
     const post = state.posts.find(p => p.id === state.adminEditingPost.id);
