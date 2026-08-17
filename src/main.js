@@ -179,9 +179,16 @@ function initRouter() {
   });
 }
 
-function navigateTo(hash) {
-  window.location.hash = hash;
+export function navigateTo(hash) {
+  if (window.location.hash === hash) {
+    state.currentRoute = hash;
+    renderApp();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    window.location.hash = hash;
+  }
 }
+window.navigateTo = navigateTo;
 
 /* ==========================================================================
    HELPERS & CATEGORIES
@@ -1325,7 +1332,7 @@ function renderPostCard(post, tr) {
   const catBadge = getCategoryColor(post.primary_category);
   const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : './default_cover.png';
   return `
-    <article class="post-card" onclick="navigateTo('#post/${post.id}')">
+    <article class="post-card" onclick="window.navigateTo('#post/${post.id}')" style="cursor:pointer;" tabindex="0" role="link">
       <div class="post-card-thumb">
         <img src="${cover}" alt="${post.title}" loading="lazy" onerror="this.src='./default_cover.png'" />
         ${post.image_count > 0 ? `
@@ -1343,17 +1350,19 @@ function renderPostCard(post, tr) {
             ${formatDatePT(post.date)}
           </span>
         </div>
-        <h3 class="post-card-title">${post.title}</h3>
+        <h3 class="post-card-title">
+          <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="color:inherit;text-decoration:none;">${post.title}</a>
+        </h3>
         <p class="post-card-excerpt">${post.excerpt || post.content.substring(0, 140) + '...'}</p>
         <div class="post-card-footer">
           <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.82rem;color:var(--slate-500);">
             <i data-lucide="clock" style="width:13px;height:13px;"></i>
             ${post.read_time_min || 1} ${tr.blog.readTime}
           </span>
-          <span style="display:flex;align-items:center;gap:0.35rem;">
+          <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="display:inline-flex;align-items:center;gap:0.35rem;color:var(--primary-600);font-weight:700;text-decoration:none;">
             ${tr.blog.readStory}
             <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-          </span>
+          </a>
         </div>
       </div>
     </article>
@@ -1363,7 +1372,7 @@ function renderPostCard(post, tr) {
 function renderTimelinePostCard(post, tr) {
   const catBadge = getCategoryColor(post.primary_category);
   return `
-    <div class="timeline-post-card" onclick="navigateTo('#post/${post.id}')">
+    <div class="timeline-post-card" onclick="window.navigateTo('#post/${post.id}')" style="cursor:pointer;" tabindex="0" role="link">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
         <span class="badge ${catBadge}">${post.primary_category}</span>
         <strong style="color:var(--primary-700);font-size:0.9rem;display:flex;align-items:center;gap:0.35rem;">
@@ -1371,7 +1380,9 @@ function renderTimelinePostCard(post, tr) {
           ${formatDatePT(post.date)} (#${post.id})
         </strong>
       </div>
-      <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem;color:var(--slate-900);">${post.title}</h3>
+      <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem;color:var(--slate-900);">
+        <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="color:inherit;text-decoration:none;">${post.title}</a>
+      </h3>
       <p style="color:var(--slate-600);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;">${post.excerpt || post.content.substring(0, 180) + '...'}</p>
       
       ${post.images && post.images.length > 0 ? `
@@ -1388,8 +1399,10 @@ function renderTimelinePostCard(post, tr) {
       ` : ''}
 
       <div style="display:flex;align-items:center;gap:0.4rem;color:var(--primary-700);font-weight:600;font-size:0.9rem;">
-        <span>${tr.blog.readStory}</span>
-        <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="display:inline-flex;align-items:center;gap:0.35rem;color:var(--primary-600);font-weight:700;text-decoration:none;">
+          <span>${tr.blog.readStory}</span>
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </a>
       </div>
     </div>
   `;
@@ -2063,24 +2076,24 @@ window.copyToClipboard = (text, successMsg) => {
 };
 
 window.sharePostWhatsApp = (title, id) => {
-  const url = `${window.location.origin}/#post/${id}`;
+  const url = window.location.href.split('#')[0] + '#post/' + id;
   const text = encodeURIComponent(`*ADDESSO Moçambique:* ${title}\n\nLeia mais e veja as fotos no link:\n${url}`);
   window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
 };
 
 window.sharePostFacebook = (id) => {
-  const url = encodeURIComponent(`${window.location.origin}/#post/${id}`);
+  const url = encodeURIComponent(window.location.href.split('#')[0] + '#post/' + id);
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
 };
 
 window.sharePostTwitter = (title, id) => {
-  const url = encodeURIComponent(`${window.location.origin}/#post/${id}`);
+  const url = encodeURIComponent(window.location.href.split('#')[0] + '#post/' + id);
   const text = encodeURIComponent(`ADDESSO Moçambique: ${title}`);
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
 };
 
 window.copyPostLink = (id) => {
-  const url = `${window.location.origin}/#post/${id}`;
+  const url = window.location.href.split('#')[0] + '#post/' + id;
   window.copyToClipboard(url, 'Link directo do artigo copiado com sucesso!');
 };
 
