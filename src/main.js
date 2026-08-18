@@ -1048,17 +1048,25 @@ function renderSobrePage(tr) {
         </div>
 
         <!-- Parceiros Oficiais -->
-        <div>
+        <div style="margin-top: 5rem;">
           <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
             <div class="section-tag">Rede de Cooperação</div>
             <h2 class="section-title">Parceiros Institucionais</h2>
+            <p style="color:var(--slate-600);font-size:1.05rem;margin-top:0.5rem;">
+              Entidades públicas, académicas, cívicas e internacionais que apoiam e cooperam activamente com as iniciativas da ADDESSO.
+            </p>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.75rem;">
+          <div class="partners-grid">
             ${orgInfo.partners.map(p => `
-              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;">
-                <span class="badge badge-purple" style="margin-bottom:0.75rem;">${p.type}</span>
-                <h4 style="font-size:1.15rem;margin-bottom:0.5rem;color:var(--slate-900);">${p.name}</h4>
-                <p style="font-size:0.88rem;color:var(--slate-600);line-height:1.6;">${p.description}</p>
+              <div class="partner-card">
+                <div class="partner-logo-box">
+                  <img src="${p.logo}" alt="Logotipo ${p.name}" loading="lazy" onerror="this.src='./logo_cropped.png'" />
+                </div>
+                <div class="partner-card-content">
+                  <span class="badge badge-purple" style="margin-bottom:0.6rem;font-size:0.75rem;">${p.type}</span>
+                  <h4 style="font-size:1.1rem;font-weight:800;margin-bottom:0.4rem;color:var(--slate-900);line-height:1.3;">${p.name}</h4>
+                  <p style="font-size:0.86rem;color:var(--slate-600);line-height:1.55;">${p.description}</p>
+                </div>
               </div>
             `).join('')}
           </div>

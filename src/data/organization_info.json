@@ -141,31 +141,37 @@
     {
       "name": "Universidade Eduardo Mondlane (UEM)",
       "type": "Académico & Investigação",
+      "logo": "./images/partners/partner_uem.png",
       "description": "Parceria estratégica para estágios comunitários, capacitação técnica e apoio ao Centro de Boas Acções."
     },
     {
       "name": "Fundação Carlos Morgado",
       "type": "Cultura & Educação",
+      "logo": "./images/partners/partner_fcm.png",
       "description": "Doação de livros infantis, apoio a salas de leitura e incentivo à literacia nas comunidades."
     },
     {
       "name": "Conselho Distrital da Juventude (CDJ KaMaxaquene & KaMavota)",
       "type": "Juventude & Cidadania",
+      "logo": "./images/partners/partner_cdj.png",
       "description": "Coorganização da Mini-Semana da Juventude e mobilização juvenil cívica."
     },
     {
       "name": "Conselho Nacional do Voluntariado (CNV)",
       "type": "Voluntariado",
+      "logo": "./images/partners/partner_cnv.png",
       "description": "Certificação e enquadramento de voluntários nacionais e internacionais."
     },
     {
       "name": "Conselho Municipal de Maputo",
       "type": "Poder Local",
+      "logo": "./images/partners/partner_cmm.png",
       "description": "Articulação institucional para melhoria das condições socio-ambientais dos bairros."
     },
     {
       "name": "AICS (Agência Italiana de Cooperação)",
       "type": "Cooperação Internacional",
+      "logo": "./images/partners/partner_aics.png",
       "description": "Apoio a iniciativas de agricultura urbana (Agri-Urbe) e sustentabilidade económica."
     }
   ],
