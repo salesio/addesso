@@ -89,22 +89,31 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
           </div>
         </a>
 
-        <!-- Desktop Navigation -->
-        <ul class="nav-links">
-          <li><a href="#home" class="nav-link ${e===`home`?`active`:``}">${r.nav.home}</a></li>
-          <li><a href="#sobre" class="nav-link ${e===`sobre`?`active`:``}">${r.nav.about}</a></li>
-          <li><a href="#programas" class="nav-link ${e===`programas`||e===`projectos`?`active`:``}">${r.nav.programs}</a></li>
-          <li><a href="#cba" class="nav-link ${e===`cba`?`active`:``}">${r.nav.cba}</a></li>
-          <li><a href="#delegacoes" class="nav-link ${e===`delegacoes`?`active`:``}">${r.nav.delegations}</a></li>
-          <li><a href="#transparencia" class="nav-link ${e===`transparencia`?`active`:``}">${r.nav.transparency}</a></li>
-          <li>
-            <a href="#blog" class="nav-link ${e===`blog`?`active`:``}">
-              <span>${r.nav.blog}</span>
-              <span class="nav-counter-pill">${K.posts.length}</span>
-            </a>
-          </li>
-          <li><a href="#contactos" class="nav-link ${e===`contactos`?`active`:``}">${r.nav.contact}</a></li>
-        </ul>
+        <!-- Desktop Centered Navigation Pill with Gradient Separators -->
+        <nav class="nav-center-container">
+          <ul class="nav-links">
+            <li class="nav-item"><a href="#home" class="nav-link ${e===`home`?`active`:``}">${r.nav.home}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#sobre" class="nav-link ${e===`sobre`?`active`:``}">${r.nav.about}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#programas" class="nav-link ${e===`programas`||e===`projectos`?`active`:``}">${r.nav.programs}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#cba" class="nav-link ${e===`cba`?`active`:``}">${r.nav.cba}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#delegacoes" class="nav-link ${e===`delegacoes`?`active`:``}">${r.nav.delegations}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#transparencia" class="nav-link ${e===`transparencia`?`active`:``}">${r.nav.transparency}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item">
+              <a href="#blog" class="nav-link ${e===`blog`?`active`:``}">
+                <span>${r.nav.blog}</span>
+                <span class="nav-counter-pill">${K.posts.length}</span>
+              </a>
+            </li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#contactos" class="nav-link ${e===`contactos`?`active`:``}">${r.nav.contact}</a></li>
+          </ul>
+        </nav>
 
         <!-- Action CTAs & Language Switcher -->
         <div class="nav-actions">
