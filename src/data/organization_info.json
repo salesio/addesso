@@ -1,15 +1,16 @@
 {
   "name": "ADDESSO",
   "fullName": "Associação para a Defesa e Desenvolvimento da Sociedade",
-  "slogan": "Unidos pela Transformação Social, Cidadania e Empoderamento Comunitário",
+  "slogan": "Empoderar comunidades para liderarem a sua própria mudança",
+  "cbaSlogan": "Pequenas Acções, Grandes Mudanças",
   "foundationYear": 2009,
   "yearsActive": 17,
   "headquarters": {
     "country": "Moçambique",
     "city": "Maputo",
     "districts": ["KaMavota", "KaMaxaquene"],
-    "address": "Bairro da Polana Caniço \"A\", Quarteirão 18, Casa Nº 56, Maputo - Moçambique",
-    "cbaAddress": "Centro de Boas Acções - Polana Caniço \"A\", Cidade de Maputo"
+    "address": "Bairro da Polana Caniço \"A\", Quarteirão 18, Casa Nº 56, Cidade de Maputo - Moçambique",
+    "cbaAddress": "Centro de Boas Acções - Bairro da Polana Caniço \"A\", Cidade de Maputo"
   },
   "contacts": {
     "phones": ["+258 84 635 7890", "+258 87 652 5150", "+258 82 450 1200"],
@@ -23,157 +24,339 @@
     "yearsOfImpact": "17+",
     "documentedActions": "169+",
     "catalogedPhotos": "712+",
-    "directBeneficiaries": "28.500+",
-    "trainedYouth": "1.200+",
-    "communityGardens": "450+",
-    "partnerInstitutions": "18+"
+    "directBeneficiaries": "32.000+",
+    "trainedYouth": "1.800+",
+    "childrenSupported": "2.400+",
+    "communityGardens": "520+",
+    "provincesActive": "9",
+    "partnerInstitutions": "24+"
   },
-  "mission": "Promover o desenvolvimento humano sustentável, a cidadania activa e a justiça social em Moçambique, empoderando crianças, jovens e famílias em situação de vulnerabilidade através da educação comunitária, liderança juvenil, segurança alimentar e solidariedade participativa.",
-  "vision": "Uma sociedade moçambicana justa, solidária e resiliente, onde cada criança tem acesso a uma educação digna, cada jovem tem oportunidades para liderar a sua comunidade e cada família tem segurança alimentar e bem-estar.",
+  "mission": "Empoderar comunidades para liderarem a sua própria mudança, promovendo o desenvolvimento humano sustentável, a cidadania activa e a justiça social em Moçambique através de programas transformadores na infância, juventude, terceira idade e famílias.",
+  "vision": "Comunidades pacíficas, prósperas, justas e resilientes em todo o território moçambicano.",
   "values": [
     {
-      "name": "Solidariedade Comunitária",
-      "description": "Acreditamos na força da união e no apoio mútuo como motor de transformação das nossas comunidades."
-    },
-    {
-      "name": "Transparência & Integridade",
-      "description": "Compromisso absoluto com a prestação de contas, rigor ético e honestidade em todas as acções."
-    },
-    {
-      "name": "Empoderamento Juvenil",
-      "description": "Reconhecemos os jovens como protagonistas indispensáveis do desenvolvimento socioeconómico."
-    },
-    {
       "name": "Inclusão & Igualdade",
-      "description": "Promovemos a igualdade de género, protecção integral da criança e inclusão de pessoas vulneráveis."
+      "description": "Acolhemos todas as gerações — crianças, jovens, adultos e idosos — promovendo a equidade e protecção integral."
     },
     {
-      "name": "Sustentabilidade Ambiental",
-      "description": "Práticas ecológicas na agricultura urbana, conservação de recursos naturais e resiliência climática."
+      "name": "Sustentabilidade",
+      "description": "Fomentamos a segurança alimentar, agricultura ecológica e modelos de empoderamento duradouros."
+    },
+    {
+      "name": "Integridade & Transparência",
+      "description": "Compromisso rigoroso com a ética, boa governação e prestação de contas aos beneficiários e parceiros."
+    },
+    {
+      "name": "Inovação Social",
+      "description": "Criamos soluções dinâmicas como o Hub Digital, Creche Familiar e a Biblioteca Viva para idosos."
+    },
+    {
+      "name": "Parceria & Cooperação",
+      "description": "Trabalhamos em rede com instituições governamentais, sociedade civil, universidades e cooperação internacional."
+    },
+    {
+      "name": "Voluntariado & Cidadania",
+      "description": "Mobilizamos o potencial transformador dos jovens e cidadãos para o serviço e solidariedade activa."
     }
   ],
-  "pillars": [
+  "governance": {
+    "socialOrgans": [
+      { "organ": "Assembleia-Geral", "role": "Órgão Soberano e Deliberativo de Membros Associados" },
+      { "organ": "Conselho de Direcção", "role": "Direcção Estratégica e Coordenação Institucional" },
+      { "organ": "Conselho Fiscal", "role": "Auditoria, Fiscalização Financeira e Conformidade Ética" }
+    ],
+    "executiveTeam": [
+      { "role": "Presidente da Direcção", "area": "Liderança Institucional e Representação Oficial" },
+      { "role": "Director Executivo", "area": "Gestão Operacional, Estratégia e Parcerias" },
+      { "role": "Coordenação de Programas", "area": "Primeira Infância, Juventude e Famílias Sustentáveis" },
+      { "role": "Oficial de Monitoria & Avaliação", "area": "Medição de Impacto e Prestação de Contas" },
+      { "role": "Administração & Finanças", "area": "Gestão Orçamental e Transparência Financeira" },
+      { "role": "Comunicação & Parcerias", "area": "Relações Institucionais e Visibilidade Comunitária" }
+    ]
+  },
+  "presence": {
+    "centralHubs": [
+      {
+        "city": "Cidade de Maputo",
+        "location": "Bairro da Polana Caniço \"A\"",
+        "role": "Sede Nacional e Centro de Boas Acções Central",
+        "highlight": "Polo principal com Hub Digital, Creche Familiar, Reforço Escolar e Biblioteca Viva"
+      },
+      {
+        "city": "Província de Maputo",
+        "location": "Bairro de Nkobe (Município da Matola)",
+        "role": "Centro de Boas Acções de Nkobe",
+        "highlight": "Iniciativas de capacitação juvenil, desporto e reforço educativo comunitário"
+      },
+      {
+        "city": "Província de Maputo",
+        "location": "Posto Administrativo de Maulana (Moamba)",
+        "role": "Centro de Boas Acções de Maulana",
+        "highlight": "Polo focado em agricultura sustentável, hortas comunitárias e apoio rural"
+      }
+    ],
+    "provincialDelegations": [
+      { "province": "Gaza", "capital": "Xai-Xai / Chókwè", "focus": "Ajuda humanitária, resiliência climática pós-cheias e capacitação comunitária" },
+      { "province": "Manica", "capital": "Chimoio", "focus": "Agroecologia, liderança juvenil e incentivo à literacia nas escolas" },
+      { "province": "Sofala", "capital": "Beira / Búzi", "focus": "Apoio a famílias vulneráveis, voluntariado jovem e hortas urbanas" },
+      { "province": "Zambézia", "capital": "Quelimane", "focus": "Primeira infância, creches familiares comunitárias e nutrição" },
+      { "province": "Tete", "capital": "Cidade de Tete", "focus": "Cidadania activa, bolsas de talentos juvenis e prevenção social" },
+      { "province": "Nampula", "capital": "Nampula / Nacala", "focus": "Empreendedorismo juvenil, literacia digital e desenvolvimento local" },
+      { "province": "Cabo Delgado", "capital": "Pemba", "focus": "Apoio psicossocial, kits de dignidade e integração comunitária de deslocados" },
+      { "province": "Niassa", "capital": "Lichinga", "focus": "Segurança alimentar familiar e redes comunitárias de solidariedade" }
+    ]
+  },
+  "structuredPrograms": [
     {
-      "id": "educacao-infancia",
-      "title": "Educação & Primeira Infância",
-      "badge": "Educação",
-      "icon": "book-open",
-      "color": "#0d9488",
-      "summary": "Projectos pioneiros de Creche Familiar, capacitação de educadores do pré-escolar, bibliotecas infantis e o programa 'Sopas com Letras' para estímulo precoce da leitura.",
-      "initiatives": [
-        "Projecto Creche Familiar nos bairros periféricos",
-        "Formação e capacitação contínua de educadores de infância",
-        "Salas de Leitura e Doação de Livros com a Fundação Carlos Morgado",
-        "Programa 'Sopas com Letras' e Reforço Escolar comunitário"
-      ]
-    },
-    {
-      "id": "juventude-cba",
-      "title": "Juventude, Liderança & Centro de Boas Acções",
-      "badge": "Juventude",
-      "icon": "users",
+      "id": "programa-1",
+      "number": "01",
+      "title": "Futuro em Crescimento",
+      "subtitle": "Primeira Infância, Educação e Desenvolvimento do Potencial Humano",
+      "badge": "Primeira Infância & Educação",
       "color": "#0284c7",
-      "summary": "O Centro de Boas Acções (CBA) na Polana Caniço é o nosso pólo vibrante para mentoria de jovens, artes, capoeira, informática e a organização da Mini-Semana da Juventude.",
-      "initiatives": [
-        "Gestão e dinamização do Centro de Boas Acções (Polana Caniço)",
-        "Mini-Semana da Juventude e debates cívicos participativos",
-        "Oficinas de Artes, Dança, Música, Teatro e Capoeira",
-        "Cursos de Iniciação à Informática e Competências Digitais"
+      "gradient": "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+      "target": "Crianças de 0 a 14 anos, mães cuidadoras e educadores comunitários",
+      "description": "Um programa estruturante e pioneiro dedicado a garantir que cada criança moçambicana cresça com nutrição adequada, estímulo cognitivo precoce, proteção legal e acesso a uma educação digna e contínua.",
+      "projects": [
+        {
+          "name": "Projecto Creche Familiar",
+          "tag": "0-5 Anos",
+          "icon": "heart",
+          "desc": "Formação, apoio técnico e apetrechamento a mães cuidadoras que acolhem crianças de 0 a 5 anos nos bairros, assegurando ambiente seguro e estimulação pedagógica precoce."
+        },
+        {
+          "name": "Projecto Crescer com Direitos",
+          "tag": "Cidadania Infantil",
+          "icon": "landmark",
+          "desc": "Facilitação do acesso gratuito ao Registo Civil de Nascimento e Bilhete de Identidade para crianças em situação de vulnerabilidade, garantindo a sua existência legal e direitos fundamentais."
+        },
+        {
+          "name": "Projecto Pontes para a Escola",
+          "tag": "Reforço Pedagógico",
+          "icon": "book-open",
+          "desc": "Combate activo ao abandono e insucesso escolar com salas diárias de reforço pedagógico, apoio a trabalhos de casa, doação de kits escolares e acompanhamento familiar."
+        },
+        {
+          "name": "Projecto Canto da Descoberta",
+          "tag": "Arte & Cultura",
+          "icon": "sparkles",
+          "desc": "Espaço lúdico com bibliotecas infantis, contadores de histórias, oficinas de artes plásticas, música e teatro comunitário para desenvolvimento da criatividade e inteligência emocional."
+        },
+        {
+          "name": "Mãe Informada, Filho Saudável",
+          "tag": "Saúde & Nutrição",
+          "icon": "sprout",
+          "desc": "Ciclos de palestras e oficinas práticas sobre aleitamento materno, alimentação saudável com produtos nativos, higiene preventiva e vigilância do desenvolvimento infantil."
+        }
       ]
     },
     {
-      "id": "agricultura-nutricao",
-      "title": "Segurança Alimentar & Agricultura Urbana",
-      "badge": "Agricultura",
-      "icon": "sprout",
-      "color": "#16a34a",
-      "summary": "Fomento de hortas caseiras nos quintais das famílias (Projecto Horta no Quintal e Agri-Urbe), formação agroecológica e promoção da soberania alimentar.",
-      "initiatives": [
-        "Projecto 'Horta no Quintal' para centenas de agregados familiares",
-        "Projecto Agri-Urbe em parceria com redes de cooperação internacional",
-        "Distribuição de sementes nativas, compostagem orgânica e rega eficiente",
-        "Educação nutricional e oficinas de culinária saudável com base local"
-      ]
-    },
-    {
-      "id": "emergencia-saude",
-      "title": "Ajuda Humanitária & Saúde Preventiva",
-      "badge": "Emergência",
-      "icon": "heart-handshake",
-      "color": "#dc2626",
-      "summary": "Distribuição de Kits de Emergência e Dignidade para vítimas de cheias e calamidades (Boane, Maputo, Gaza), acções de prevenção sanitária e saúde comunitária.",
-      "initiatives": [
-        "Canalização de donativos e socorro humanitário em cheias e inundações",
-        "Distribuição de Kits de Dignidade a mulheres e crianças em acolhimento",
-        "Campanhas de saneamento do meio, higienização e prevenção de doenças",
-        "Apoio a idosos e famílias em situação de extrema vulnerabilidade"
-      ]
-    },
-    {
-      "id": "parcerias-comunidade",
-      "title": "Desenvolvimento Comunitário & Parcerias",
-      "badge": "Cidadania",
-      "icon": "landmark",
+      "id": "programa-2",
+      "number": "02",
+      "title": "Juventude em Acção",
+      "subtitle": "Empoderamento, Tecnologia, Liderança & Talentos",
+      "badge": "Juventude & Tecnologia",
       "color": "#d97706",
-      "summary": "Articulação estreita com as estruturas governamentais de base, universidades (UEM), conselhos de juventude e cooperação internacional.",
-      "initiatives": [
-        "Parceria institucional com a Universidade Eduardo Mondlane (UEM)",
-        "Cooperação activa com o Conselho Distrital da Juventude (CDJ)",
-        "Articulação com secretários de bairros e líderes comunitários",
-        "Intervenções em distritos estratégicos (KaMavota, Matutuíne/Djabula, Boane, Manhiça)"
+      "gradient": "linear-gradient(135deg, #d97706 0%, #b45309 100%)",
+      "target": "Adolescentes e Jovens dos 15 aos 35 anos",
+      "description": "Capacitamos as novas gerações moçambicanas com competências digitais de vanguarda, literacia tecnológica, liderança ética, desporto e mentoria para transformarem os desafios locais em soluções sustentáveis.",
+      "projects": [
+        {
+          "name": "Hub Digital & Inovação",
+          "tag": "Competências do Futuro",
+          "icon": "layers",
+          "desc": "Laboratório de informática com acesso gratuito à internet, cursos de programação básica, design gráfico, marketing digital e iniciação ao empreendedorismo tecnológico."
+        },
+        {
+          "name": "Bolsa de Talentos",
+          "tag": "Oportunidades",
+          "icon": "sparkles",
+          "desc": "Identificação, mentoria e encaminhamento de jovens com habilidades artísticas, científicas, desportivas e académicas para bolsas de estudo e parcerias profissionais."
+        },
+        {
+          "name": "Liga Comunitária & Artes",
+          "tag": "Desporto & Expressão",
+          "icon": "users",
+          "desc": "Torneios desportivos de futebol comunitário, capoeira, grupos de dança e teatro social como ferramentas de inclusão, disciplina e prevenção da violência urbana."
+        },
+        {
+          "name": "Escolhas Conscientes",
+          "tag": "Saúde Reprodutiva",
+          "icon": "heart-handshake",
+          "desc": "Espaço seguro de orientação sobre saúde sexual e reprodutiva, prevenção de gravidezes precoces, combate ao HIV/SIDA e promoção da igualdade de género."
+        },
+        {
+          "name": "Academia de Líderes Juvenis",
+          "tag": "Cidadania Activa",
+          "icon": "landmark",
+          "desc": "Formação intensiva em liderança cívica, gestão comunitária de projectos, ética pública, voluntariado e mediação pacífica de conflitos."
+        },
+        {
+          "name": "Mini-Semana da Juventude",
+          "tag": "Grande Evento Cívico",
+          "icon": "calendar",
+          "desc": "Festival anual que reúne centenas de jovens em debates abertos com líderes comunitários, exposições de inovação, feiras de profissões e intercâmbio cultural."
+        }
       ]
+    },
+    {
+      "id": "programa-3",
+      "number": "03",
+      "title": "Famílias Sustentáveis",
+      "subtitle": "Adultos, Terceira Idade & Segurança Alimentar Comunitária",
+      "badge": "Família & Comunidade",
+      "color": "#16a34a",
+      "gradient": "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+      "target": "Famílias, mulheres chefes de família e idosos da comunidade",
+      "description": "Promovemos a dignidade intergeracional, autonomia económica das famílias e segurança alimentar familiar através da agricultura urbana, literacia financeira e cuidados especiais à terceira idade.",
+      "projects": [
+        {
+          "name": "Biblioteca Viva & Envelhecimento Activo",
+          "tag": "Cuidado aos Idosos",
+          "icon": "users",
+          "desc": "Sessões semanais de convívio intergeracional onde os idosos transmitem saberes tradicionais às crianças, associadas a sessões gratuitas de fisioterapia e defesa dos direitos do idoso."
+        },
+        {
+          "name": "Projecto Touch",
+          "tag": "Inclusão Digital Adultos",
+          "icon": "layers",
+          "desc": "Alfabetização e literacia digital prática para adultos e mães de família aprenderem a utilizar smartphones, serviços bancários móveis (M-Pesa/e-Mola) e comunicação digital."
+        },
+        {
+          "name": "Xlhuvuka (Progresso Financeiro)",
+          "tag": "Poupança Comunitária",
+          "icon": "landmark",
+          "desc": "Criação e dinamização de grupos comunitários de poupança e crédito rotativo (PCR), capacitação em gestão de pequenos negócios e micro-investimento familiar."
+        },
+        {
+          "name": "Tacho no Quintal & Agri-Urbe",
+          "tag": "Segurança Alimentar",
+          "icon": "sprout",
+          "desc": "Instalação de hortas agroecológicas nos quintais familiares, compostagem orgânica, distribuição de sementes nativas e criação sustentável de pequenos animais."
+        }
+      ]
+    }
+  ],
+  "transversalEvents": [
+    {
+      "title": "Feira de Oportunidades e Talentos",
+      "frequency": "Trimestral",
+      "badge": "Feira Comunitária",
+      "description": "Grande mostra comunitária que conecta micro-produtores locais, jovens formados no Hub Digital, artesãos e famílias dos programas da ADDESSO com empresas e a comunidade alargada para geração de renda e networking."
+    },
+    {
+      "title": "Mini-Semana da Juventude",
+      "frequency": "Anual",
+      "badge": "Festival de Liderança",
+      "description": "Celebração anual da cidadania e dinamismo juvenil em parceria com o Conselho Distrital da Juventude (CDJ), unindo desporto, debates cívicos, arte e premiação de talentos."
     }
   ],
   "cba": {
     "name": "Centro de Boas Acções (CBA) - Polana Caniço",
-    "description": "Um polo de esperança e oportunidade no coração da Polana Caniço 'A'. O CBA é um centro comunitário multiusos criado pela ADDESSO para acolher diariamente dezenas de crianças para reforço escolar e leitura, além de jovens para cursos profissionalizantes, palestras de liderança, artes, desporto e diálogo cívico.",
-    "features": [
-      "Biblioteca Comunitária com centenas de livros infanto-juvenis",
-      "Sala de Reforço Escolar e Apoio Pedagógico",
-      "Espaço Multiuso para Oficinas de Artes, Dança e Capoeira",
-      "Horta Pedagógica Demonstrativa",
-      "Gabinete de Atendimento e Aconselhamento Juvenil"
+    "slogan": "Pequenas Acções, Grandes Mudanças",
+    "history": "O Centro de Boas Acções nasceu da necessidade premente de criar um refúgio acolhedor e seguro para a infância e juventude nos bairros periféricos de Maputo. Desde a sua génese no Bairro FPLM até à sua consolidação estruturada no Bairro da Polana Caniço \"A\", o CBA transformou-se num complexo comunitário multiusos de referência, expandindo recentemente a sua metodologia para Nkobe (Matola) e Maulana (Moamba).",
+    "description": "Um polo de oportunidade, protecção e desenvolvimento humano integral. O CBA recebe diariamente centenas de crianças para reforço pedagógico e merenda, jovens para capacitação tecnológica e artes, e idosos para fisioterapia e convívio.",
+    "services": [
+      { "title": "Desenvolvimento da Primeira Infância", "desc": "Creche Familiar e estimulação cognitiva de 0 a 5 anos", "icon": "heart" },
+      { "title": "Hub de Literacia Digital & Informática", "desc": "Cursos de computação, programação básica e design", "icon": "layers" },
+      { "title": "Reforço Escolar & Apoio Pedagógico", "desc": "Acompanhamento diário para prevenir o abandono escolar", "icon": "book-open" },
+      { "title": "Cursos de Línguas (Inglês & Francês)", "desc": "Aulas práticas de comunicação para ampliar oportunidades", "icon": "globe" },
+      { "title": "Biblioteca Comunitária Infanto-Juvenil", "desc": "Centenas de livros infantis em parceria com a Fund. Carlos Morgado", "icon": "book-open" },
+      { "title": "Fisioterapia & Saúde do Idoso", "desc": "Sessões regulares de reabilitação motora e envelhecimento activo", "icon": "heart-handshake" },
+      { "title": "Gabinete de Registo Civil & Documentação", "desc": "Apoio legal para obtenção de certidão de nascimento e BI", "icon": "landmark" },
+      { "title": "Horta Pedagógica Demonstrativa", "desc": "Espaço prático de cultivo orgânico e educação ambiental", "icon": "sprout" }
     ],
-    "schedule": "Segunda a Sábado, das 08h00 às 17h30",
-    "location": "Bairro da Polana Caniço \"A\", Cidade de Maputo"
+    "schedule": "Segunda a Sábado, das 07h30 às 17h30",
+    "location": "Rua das Flores, Quarteirão 18, Bairro da Polana Caniço \"A\", Maputo"
   },
+  "transparency": {
+    "legalStatus": "Organização Não-Governamental (ONG) de Direito Moçambicano, dotada de personalidade jurídica e autonomia administrativa e financeira.",
+    "bulletinNumber": "Publicada no Boletim da República de Moçambique, III Série",
+    "nuit": "400 289 154",
+    "annualReports": [
+      { "year": "2025", "title": "Relatório Anual de Actividades & Prestação de Contas 2025", "beneficiaries": "32.000+", "status": "Disponível" },
+      { "year": "2024", "title": "Relatório de Impacto Comunitário & Auditoria 2024", "beneficiaries": "28.500+", "status": "Disponível" },
+      { "year": "2023", "title": "Relatório Anual de Consolidação Institucional 2023", "beneficiaries": "24.000+", "status": "Disponível" },
+      { "year": "2022", "title": "Relatório de Actividades & Balanço Social 2022", "beneficiaries": "19.500+", "status": "Disponível" }
+    ],
+    "policies": [
+      { "name": "Política de Protecção e Salvaguarda da Criança", "desc": "Tolerância zero ao abuso infantil, exploração ou negligência em todas as actividades." },
+      { "name": "Código de Ética e Conduta Profissional", "desc": "Directrizes rigorosas de integridade para colaboradores, directores e voluntários." },
+      { "name": "Política de Igualdade de Género e Inclusão", "desc": "Garantia de oportunidades equitativas para mulheres, jovens e pessoas com deficiência." },
+      { "name": "Manual de Procedimentos Financeiros e Aquisições", "desc": "Processos auditados de prestação de contas e transparência orçamental." }
+    ]
+  },
+  "donationCampaign": {
+    "title": "Campanha \"Semeando Sorrisos\"",
+    "goalAmount": "250.000 MT (~3.900 USD)",
+    "currentAmount": "195.000 MT (~3.050 USD)",
+    "percentage": 78,
+    "objective": "Garantir kits completos de material escolar, livros de leitura e merenda nutricional diária para 500 crianças acolhidas no Centro de Boas Acções durante o ano lectivo."
+  },
+  "materialNeeds": [
+    { "category": "Educação & Leitura", "items": "Livros de histórias infantis, cadernos pautados, lápis de cor, mochilas e estojos" },
+    { "category": "Alimentação Comunitária", "items": "Arroz, farinha de milho, feijão, amendoim, óleo e leite para a merenda das crianças" },
+    { "category": "Brinquedos & Psicomotricidade", "items": "Jogos didácticos, quebra-cabeças, bolas desportivas, cordas e material de desenho" },
+    { "category": "Hortas & Ambiente", "items": "Sementes de hortaliças nativas, regadores, pás, ancinhos e composto orgânico" }
+  ],
+  "networks": [
+    { "name": "Conselho Nacional do Voluntariado (CNV)", "role": "Presidência da Direcção", "icon": "users" },
+    { "name": "Rede de Defesa da Primeira Infância (RDPI)", "role": "Membro Fundador", "icon": "heart" },
+    { "name": "Good Deeds Day (Dia das Boas Acções)", "role": "Líder e Ponto Focal em Moçambique", "icon": "sparkles" },
+    { "name": "Conselho Nacional da Juventude (CNJ)", "role": "Membro Activo", "icon": "landmark" },
+    { "name": "Fórum dos Direitos da Criança (ROSC)", "role": "Rede de Cooperação", "icon": "book-open" }
+  ],
   "partners": [
     {
       "name": "Universidade Eduardo Mondlane (UEM)",
       "type": "Académico & Investigação",
       "logo": "./images/partners/partner_uem.png",
-      "description": "Parceria estratégica para estágios comunitários, capacitação técnica e apoio ao Centro de Boas Acções."
+      "description": "Parceria estratégica para estágios comunitários de estudantes, capacitação técnica e apoio pedagógico ao Centro de Boas Acções."
     },
     {
       "name": "Fundação Carlos Morgado",
       "type": "Cultura & Educação",
       "logo": "./images/partners/partner_fcm.png",
-      "description": "Doação de livros infantis, apoio a salas de leitura e incentivo à literacia nas comunidades."
+      "description": "Doação contínua de livros infantis, apoio e dinamização de salas de leitura e incentivo à literacia nas comunidades periféricas."
     },
     {
       "name": "Conselho Distrital da Juventude (CDJ KaMaxaquene & KaMavota)",
       "type": "Juventude & Cidadania",
       "logo": "./images/partners/partner_cdj.png",
-      "description": "Coorganização da Mini-Semana da Juventude e mobilização juvenil cívica."
+      "description": "Coorganização da Mini-Semana da Juventude, mobilização juvenil cívica e debates participativos."
     },
     {
       "name": "Conselho Nacional do Voluntariado (CNV)",
-      "type": "Voluntariado",
+      "type": "Voluntariado & Liderança",
       "logo": "./images/partners/partner_cnv.png",
-      "description": "Certificação e enquadramento de voluntários nacionais e internacionais."
+      "description": "Certificação, enquadramento e capacitação de voluntários nacionais e internacionais em missões de impacto social."
     },
     {
       "name": "Conselho Municipal de Maputo",
       "type": "Poder Local",
       "logo": "./images/partners/partner_cmm.png",
-      "description": "Articulação institucional para melhoria das condições socio-ambientais dos bairros."
+      "description": "Articulação institucional para requalificação urbana e melhoria das condições socio-ambientais dos bairros."
     },
     {
-      "name": "AICS (Agência Italiana de Cooperação)",
+      "name": "AICS (Agência Italiana de Cooperação para o Desenvolvimento)",
       "type": "Cooperação Internacional",
       "logo": "./images/partners/partner_aics.png",
-      "description": "Apoio a iniciativas de agricultura urbana (Agri-Urbe) e sustentabilidade económica."
+      "description": "Apoio a iniciativas estratégicas de agricultura urbana (Agri-Urbe), soberania alimentar e sustentabilidade económica das famílias."
     }
+  ],
+  "cooperationAllies": [
+    { "name": "Ministério da Juventude e Desporto (MJD)", "category": "Governo" },
+    { "name": "Conselho Nacional de Combate ao HIV/SIDA (CNCS)", "category": "Governo" },
+    { "name": "WeWorld GVC", "category": "Internacional" },
+    { "name": "Fundação AVSI", "category": "Internacional" },
+    { "name": "Global Environment Facility (GEF)", "category": "Internacional" },
+    { "name": "VSO (Voluntary Service Overseas)", "category": "Internacional" },
+    { "name": "LEMO", "category": "Internacional" },
+    { "name": "AIESEC Moçambique", "category": "Internacional" },
+    { "name": "Companhia Moçambicana de Hidrocarbonetos (CMH)", "category": "Corporativo" },
+    { "name": "CMG", "category": "Corporativo" },
+    { "name": "Tmcel Moçambique", "category": "Corporativo" },
+    { "name": "ZAP TV Moçambique", "category": "Média & Comunicação" }
   ],
   "donationInfo": {
     "mpesa": "+258 84 635 7890",
@@ -187,19 +370,19 @@
     "donationPillars": [
       {
         "amount": "500 MT / ~8 USD",
-        "impact": "Garante kit de material escolar e livros de leitura para 2 crianças no Centro de Boas Acções."
+        "impact": "Garante kit de material escolar completo e livros de leitura para 2 crianças no Centro de Boas Acções."
       },
       {
         "amount": "1.500 MT / ~24 USD",
-        "impact": "Fornece sementes e ferramentas agroecológicas para a instalação de 1 Horta Familiar no quintal."
+        "impact": "Fornece sementes, composto e ferramentas agroecológicas para a instalação de 1 Horta Familiar no quintal."
       },
       {
         "amount": "3.500 MT / ~55 USD",
-        "impact": "Financia 1 Kit de Emergência e Dignidade completo para famílias desalojadas por cheias."
+        "impact": "Financia 1 Kit de Emergência e Dignidade completo para famílias em situação de extrema vulnerabilidade ou cheias."
       },
       {
         "amount": "10.000 MT / ~160 USD",
-        "impact": "Apoia o programa mensal de reforço pedagógico e merenda nutritiva para 30 crianças vulneráveis."
+        "impact": "Apoia o programa mensal de reforço pedagógico, informática e merenda nutritiva para 30 crianças acolhidas no CBA."
       }
     ]
   }

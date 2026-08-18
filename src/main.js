@@ -33,83 +33,77 @@ import {
   Phone, 
   Mail, 
   ExternalLink, 
-  Copy,
-  Layers,
-  ListFilter,
+  Copy, 
+  Layers, 
+  ListFilter, 
   Eye,
   Globe,
   ChevronLeft,
-  Maximize2
+  Maximize2,
+  FileText,
+  ShieldCheck,
+  Award,
+  TrendingUp,
+  Map,
+  Compass,
+  Gift,
+  HelpCircle,
+  Briefcase
 } from 'lucide';
 
 /* ==========================================================================
-   APPLICATION STATE & PERSISTENCE
+   STATE MANAGEMENT & PERSISTENCE
    ========================================================================== */
 
-const STORAGE_KEY = 'addesso_posts_v1';
+const STORAGE_KEY = 'addesso_posts_v4';
 const LANG_STORAGE_KEY = 'addesso_lang_v1';
-
-export function assetUrl(path) {
-  if (!path) return './default_cover.png';
-  if (path.startsWith('data:') || path.startsWith('http://') || path.startsWith('https://')) return path;
-  const clean = path.replace(/^\.?\/+/, '');
-  return `./${clean}`;
-}
 
 function getStoredPosts() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map(p => ({
-          ...p,
-          cover_image: assetUrl(p.cover_image),
-          images: (p.images || []).map(img => assetUrl(img))
-        }));
-      }
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch (e) {
-    console.error('Error loading stored posts:', e);
+    console.error('Error loading posts from localStorage', e);
   }
-  return postsSeed.map(p => ({
-    ...p,
-    cover_image: assetUrl(p.cover_image),
-    images: (p.images || []).map(img => assetUrl(img))
-  }));
+  return [...postsSeed];
 }
 
 function saveStoredPosts(posts) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
   } catch (e) {
-    console.error('Error saving posts:', e);
+    console.error('Error saving posts to localStorage', e);
   }
 }
 
 function getStoredLang() {
-  const saved = localStorage.getItem(LANG_STORAGE_KEY);
-  if (saved && translations[saved]) {
-    return saved;
-  }
-  return 'pt'; // Portuguese is default
+  try {
+    const saved = localStorage.getItem(LANG_STORAGE_KEY);
+    if (saved && translations[saved]) return saved;
+  } catch (e) {}
+  return 'pt';
 }
 
-// App State
 const state = {
   posts: getStoredPosts(),
   lang: getStoredLang(),
+  isLangMenuOpen: false,
   currentRoute: window.location.hash || '#home',
-  sortOrder: 'asc', // 'asc' = 2017 -> 2026, 'desc' = 2026 -> 2017
+  searchQuery: '',
   selectedCategory: 'all',
   selectedYear: 'all',
-  searchQuery: '',
-  viewMode: 'grid', // 'grid' | 'timeline'
-  isLangMenuOpen: false,
-  activeLightbox: { isOpen: false, images: [], currentIndex: 0 },
-  adminTab: 'posts', // 'posts' | 'create'
+  sortOrder: 'desc', // 'desc' (recent) or 'asc' (oldest)
+  viewMode: 'grid', // 'grid' or 'timeline'
+  activeLightbox: {
+    isOpen: false,
+    images: [],
+    currentIndex: 0
+  },
+  adminTab: 'posts', // 'posts' or 'create'
   adminEditingPost: null,
-  draggedPostIndex: null,
   newPostDraft: {
     title: '',
     date: new Date().toISOString().split('T')[0],
@@ -118,84 +112,49 @@ const state = {
     images: [],
     cover_image: '',
     featured: false
-  }
+  },
+  draggedPostIndex: null
 };
 
+// Helper for i18n
 function t() {
   return translations[state.lang] || translations.pt;
 }
 
 /* ==========================================================================
-   TOAST NOTIFICATIONS
+   ROUTING & NAVIGATION
    ========================================================================== */
 
-function showToast(message, type = 'success') {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    <span style="display:flex;align-items:center;gap:0.5rem;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      ${message}
-    </span>
-  `;
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+function navigateTo(hash) {
+  window.location.hash = hash;
 }
-
-/* ==========================================================================
-   ROUTING & SCROLL MANAGEMENT
-   ========================================================================== */
 
 function initRouter() {
   window.addEventListener('hashchange', () => {
     state.currentRoute = window.location.hash || '#home';
     state.isLangMenuOpen = false;
-    renderApp();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  // Reading progress bar for full post page
-  window.addEventListener('scroll', () => {
-    const bar = document.getElementById('reading-progress');
-    if (bar) {
-      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      bar.style.width = scrolled + '%';
-    }
+    renderApp();
   });
 }
 
-export function navigateTo(hash) {
-  if (window.location.hash === hash) {
-    state.currentRoute = hash;
-    renderApp();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    window.location.hash = hash;
-  }
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <i data-lucide="${type === 'success' ? 'check' : 'sparkles'}" style="width:16px;height:16px;"></i>
+    <span>${escapeHtml(message)}</span>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.3s forwards ease-in';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
 }
-window.navigateTo = navigateTo;
 
-/* ==========================================================================
-   HELPERS & CATEGORIES
-   ========================================================================== */
-
-const ALL_CATEGORIES = [
+const CATEGORIES = [
   "Educação & Primeira Infância",
   "Juventude & Liderança",
   "Centro de Boas Acções",
@@ -286,8 +245,10 @@ function renderApp() {
         <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;">
           <li><a href="#home" class="mobile-link ${route === 'home' ? 'active' : ''}"><span>${tr.nav.home}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
           <li><a href="#sobre" class="mobile-link ${route === 'sobre' ? 'active' : ''}"><span>${tr.nav.about}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
-          <li><a href="#projectos" class="mobile-link ${route === 'projectos' ? 'active' : ''}"><span>${tr.nav.projects}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
+          <li><a href="#programas" class="mobile-link ${route === 'programas' || route === 'projectos' ? 'active' : ''}"><span>${tr.nav.programs}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
           <li><a href="#cba" class="mobile-link ${route === 'cba' ? 'active' : ''}"><span>${tr.nav.cba}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
+          <li><a href="#delegacoes" class="mobile-link ${route === 'delegacoes' ? 'active' : ''}"><span>${tr.nav.delegations}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
+          <li><a href="#transparencia" class="mobile-link ${route === 'transparencia' ? 'active' : ''}"><span>${tr.nav.transparency}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
           <li><a href="#blog" class="mobile-link ${route === 'blog' ? 'active' : ''}"><span>${tr.nav.blog} (${state.posts.length})</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
           <li><a href="#contactos" class="mobile-link ${route === 'contactos' ? 'active' : ''}"><span>${tr.nav.contact}</span> <i data-lucide="chevron-right" style="width:16px;height:16px;"></i></a></li>
         </ul>
@@ -327,7 +288,8 @@ function renderApp() {
       X, Menu, Check, ChevronRight, Sparkles, Upload, Trash2, GripVertical, 
       Plus, Download, RefreshCw, BookOpen, Users, Sprout, HeartHandshake, 
       Landmark, MapPin, Phone, Mail, ExternalLink, Copy, Layers, ListFilter, Eye,
-      Globe, ChevronLeft, Maximize2
+      Globe, ChevronLeft, Maximize2, FileText, ShieldCheck, Award, TrendingUp,
+      Map, Compass, Gift, HelpCircle, Briefcase
     }
   });
 }
@@ -351,12 +313,14 @@ function renderHeader(route, currentLangObj, tr) {
           </div>
         </a>
 
-        <!-- Streamlined Clean Desktop Navigation -->
+        <!-- Desktop Navigation -->
         <ul class="nav-links">
           <li><a href="#home" class="nav-link ${route === 'home' ? 'active' : ''}">${tr.nav.home}</a></li>
           <li><a href="#sobre" class="nav-link ${route === 'sobre' ? 'active' : ''}">${tr.nav.about}</a></li>
-          <li><a href="#projectos" class="nav-link ${route === 'projectos' ? 'active' : ''}">${tr.nav.projects}</a></li>
+          <li><a href="#programas" class="nav-link ${route === 'programas' || route === 'projectos' ? 'active' : ''}">${tr.nav.programs}</a></li>
           <li><a href="#cba" class="nav-link ${route === 'cba' ? 'active' : ''}">${tr.nav.cba}</a></li>
+          <li><a href="#delegacoes" class="nav-link ${route === 'delegacoes' ? 'active' : ''}">${tr.nav.delegations}</a></li>
+          <li><a href="#transparencia" class="nav-link ${route === 'transparencia' ? 'active' : ''}">${tr.nav.transparency}</a></li>
           <li>
             <a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">
               <span>${tr.nav.blog}</span>
@@ -412,82 +376,85 @@ function renderFooter(tr) {
     <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
-          <!-- Col 1: About -->
-          <div>
-            <div class="brand-logo" style="margin-bottom:1.25rem;">
-              <div class="brand-logo-img-wrapper" style="width:48px;height:48px;">
-                <img src="./logo_cropped.png" alt="ADDESSO" />
+          <div class="footer-brand">
+            <div class="footer-brand-logo-row">
+              <div class="footer-logo-box">
+                <img src="./logo_cropped.png" alt="ADDESSO Logótipo Oficial" />
               </div>
-              <div class="brand-text">
-                <span class="brand-name" style="color:#ffffff;">ADDESSO</span>
-                <span class="brand-slogan" style="color:var(--primary-300);">${tr.footer.slogan}</span>
+              <div>
+                <span class="footer-title">ADDESSO</span>
+                <span class="footer-subtitle">Moçambique • Fundada em 2009</span>
               </div>
             </div>
-            <p style="font-size:0.92rem;color:var(--slate-400);line-height:1.6;margin-bottom:1.5rem;">
-              Associação para a Defesa e Desenvolvimento da Sociedade. Organização Moçambicana sem fins lucrativos focada na infância, juventude, segurança alimentar e transformação comunitária.
+            <p class="footer-desc">
+              ${orgInfo.mission}
             </p>
-            <div style="display:flex;gap:0.75rem;">
-              <a href="https://web.facebook.com/addesso2009" target="_blank" class="btn btn-outline-white btn-sm" style="padding:0.4rem 0.8rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                Página Oficial no Facebook
-              </a>
+            <div class="footer-badges">
+              <span class="badge badge-outline"><i data-lucide="shield-check" style="width:14px;height:14px;"></i> ONG Registada • NUIT: ${orgInfo.transparency.nuit}</span>
+              <span class="badge badge-outline"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Sede: Polana Caniço "A", Maputo</span>
             </div>
           </div>
 
-          <!-- Col 2: Navigation -->
-          <div>
-            <h4 class="footer-heading">Navegação</h4>
+          <div class="footer-col">
+            <h4 class="footer-heading">Organização</h4>
             <ul class="footer-links">
               <li><a href="#home">${tr.nav.home}</a></li>
               <li><a href="#sobre">${tr.nav.about}</a></li>
-              <li><a href="#projectos">${tr.nav.projects}</a></li>
+              <li><a href="#programas">${tr.nav.programs}</a></li>
               <li><a href="#cba">${tr.nav.cba}</a></li>
-              <li><a href="#blog">${tr.nav.blog} (${state.posts.length})</a></li>
-              <li><a href="#participar">${tr.nav.help}</a></li>
+              <li><a href="#delegacoes">${tr.nav.delegations}</a></li>
+              <li><a href="#transparencia">${tr.nav.transparency}</a></li>
             </ul>
           </div>
 
-          <!-- Col 3: Pillars -->
-          <div>
-            <h4 class="footer-heading">Áreas de Actuação</h4>
+          <div class="footer-col">
+            <h4 class="footer-heading">Acção Comunitária</h4>
             <ul class="footer-links">
-              <li><a href="#projectos">Educação Pré-Escolar</a></li>
-              <li><a href="#cba">Centro CBA Polana Caniço</a></li>
-              <li><a href="#projectos">Horta no Quintal & AgriUrb</a></li>
-              <li><a href="#projectos">Kits de Dignidade & Cheias</a></li>
-              <li><a href="#projectos">Mini-Semana da Juventude</a></li>
-              <li><a href="#sobre">Parceria Estratégica UEM</a></li>
+              <li><a href="#blog">${tr.nav.blog} (${state.posts.length})</a></li>
+              <li><a href="#participar">Doações M-Pesa / e-Mola / BCI</a></li>
+              <li><a href="#participar">Voluntariado Comunitário</a></li>
+              <li><a href="#participar">Campanha Semeando Sorrisos</a></li>
+              <li><a href="#contactos">${tr.nav.contact}</a></li>
+              <li><a href="#admin">${tr.nav.admin}</a></li>
             </ul>
           </div>
 
-          <!-- Col 4: Contact -->
-          <div>
-            <h4 class="footer-heading">${tr.nav.contact}</h4>
-            <p style="font-size:0.88rem;color:var(--slate-400);margin-bottom:0.75rem;display:flex;align-items:flex-start;gap:0.5rem;">
-              <i data-lucide="map-pin" style="width:18px;height:18px;flex-shrink:0;color:var(--primary-300);margin-top:2px;"></i>
-              Bairro Polana Caniço "A", Q.18, Casa 56, Maputo, Moçambique
-            </p>
-            <p style="font-size:0.88rem;color:var(--slate-400);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;">
-              <i data-lucide="phone" style="width:18px;height:18px;color:var(--primary-300);"></i>
-              +258 84 635 7890 / 87 652 5150
-            </p>
-            <p style="font-size:0.88rem;color:var(--slate-400);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;">
-              <i data-lucide="mail" style="width:18px;height:18px;color:var(--primary-300);"></i>
-              info@addesso.org.mz / addesso.org@gmail.com
-            </p>
-            <a href="#admin" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--slate-400);text-decoration:underline;">
-              <i data-lucide="layers" style="width:14px;height:14px;"></i> ${tr.nav.admin}
-            </a>
+          <div class="footer-col">
+            <h4 class="footer-heading">Contactos Directos</h4>
+            <div class="footer-contact-info">
+              <div class="footer-contact-row">
+                <i data-lucide="map-pin"></i>
+                <span>${orgInfo.headquarters.address}</span>
+              </div>
+              <div class="footer-contact-row">
+                <i data-lucide="phone"></i>
+                <span>${orgInfo.contacts.phones[0]}</span>
+              </div>
+              <div class="footer-contact-row">
+                <i data-lucide="mail"></i>
+                <span>${orgInfo.contacts.emails[0]}</span>
+              </div>
+            </div>
+
+            <div class="footer-social-row">
+              <a href="${orgInfo.contacts.facebook}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook ADDESSO"><i data-lucide="globe"></i></a>
+              <a href="${orgInfo.contacts.instagram}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Instagram ADDESSO"><i data-lucide="sparkles"></i></a>
+              <a href="https://wa.me/${orgInfo.contacts.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="WhatsApp Directo"><i data-lucide="phone"></i></a>
+              <a href="${orgInfo.contacts.linkedin}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn ADDESSO"><i data-lucide="landmark"></i></a>
+            </div>
           </div>
         </div>
 
-        <div class="footer-bottom-bar">
+        <div class="footer-bottom">
           <div>
-            &copy; 2009–2026 <strong>ADDESSO</strong> (Associação para a Defesa e Desenvolvimento da Sociedade). ${tr.footer.rights}
+            &copy; ${new Date().getFullYear()} ADDESSO — Associação para a Defesa e Desenvolvimento da Sociedade. ${tr.footer.rights}
           </div>
-          <div style="display:flex;gap:1.5rem;">
-            <span>Moçambique • Maputo</span>
-            <span>Registo Oficial ONG Sem Fins Lucrativos</span>
+          <div class="footer-legal-links">
+            <a href="#transparencia">Transparência & Estatutos</a>
+            <span>•</span>
+            <a href="#sobre">Governação</a>
+            <span>•</span>
+            <a href="#contactos">Polana Caniço "A"</a>
           </div>
         </div>
       </div>
@@ -496,235 +463,80 @@ function renderFooter(tr) {
 }
 
 /* ==========================================================================
-   DEDICATED FULL POST PAGE COMPONENT
+   LIGHTBOX FULLSCREEN MODAL
    ========================================================================== */
 
-function renderDedicatedPostPage(id, tr) {
-  const post = state.posts.find(p => p.id === id);
-  if (!post) {
-    return `
-      <div class="container section-padding" style="text-align:center;">
-        <h2 style="font-size:2rem;margin-bottom:1rem;">Publicação não encontrada</h2>
-        <p style="color:var(--slate-600);margin-bottom:2rem;">O registo solicitado não existe ou foi removido.</p>
-        <a href="#blog" class="btn btn-primary">${tr.blog.backToBlog}</a>
-      </div>
-    `;
-  }
-
-  const catBadge = getCategoryColor(post.primary_category);
-
-  // Prev and Next posts
-  const currentIndex = state.posts.findIndex(p => p.id === id);
-  const prevPost = currentIndex > 0 ? state.posts[currentIndex - 1] : null;
-  const nextPost = currentIndex < state.posts.length - 1 ? state.posts[currentIndex + 1] : null;
-
-  // Related posts (from same category, excluding current)
-  const related = state.posts
-    .filter(p => p.id !== post.id && p.primary_category === post.primary_category)
-    .slice(0, 3);
-
-  // Update dynamic page title for browser tab
-  document.title = `${post.title} | ADDESSO Moçambique`;
-
-  const featuredImg = (post.cover_image && post.cover_image !== './default_cover.png') 
-    ? post.cover_image 
-    : (post.images && post.images.length > 0 ? post.images[0] : null);
+function renderLightboxContent() {
+  const { images, currentIndex } = state.activeLightbox;
+  if (!images || images.length === 0) return '';
+  const currentImg = images[currentIndex] || '';
+  const total = images.length;
 
   return `
-    <!-- Reading Progress Bar -->
-    <div id="reading-progress" class="reading-progress-bar"></div>
-
-    <article class="post-page-wrapper">
-      <!-- Hero Header of the Article -->
-      <div class="post-page-hero">
-        <div class="container">
-          <!-- Breadcrumbs -->
-          <nav class="post-breadcrumbs">
-            <a href="#home" style="color:var(--slate-300);">${tr.nav.home}</a>
-            <span style="color:var(--slate-500);"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
-            <a href="#blog" style="color:var(--slate-300);">${tr.nav.blog}</a>
-            <span style="color:var(--slate-500);"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
-            <span style="color:var(--primary-300);">${post.primary_category}</span>
-          </nav>
-
-          <div style="margin-bottom:1rem;">
-            <span class="badge ${catBadge}" style="font-size:0.82rem;padding:0.35rem 0.85rem;">
-              ${post.primary_category}
-            </span>
-          </div>
-
-          <h1 class="post-hero-title">${post.title}</h1>
-
-          <div class="post-meta-strip">
-            <span style="display:flex;align-items:center;gap:0.4rem;">
-              <i data-lucide="calendar" style="width:16px;height:16px;color:var(--accent-400);"></i>
-              <strong>${formatDatePT(post.date)}</strong>
-            </span>
-            <span style="display:flex;align-items:center;gap:0.4rem;">
-              <i data-lucide="clock" style="width:16px;height:16px;color:var(--accent-400);"></i>
-              <span>${post.read_time_min || 1} ${tr.blog.readTime}</span>
-            </span>
-            <span style="display:flex;align-items:center;gap:0.4rem;">
-              <i data-lucide="image" style="width:16px;height:16px;color:var(--accent-400);"></i>
-              <span>${post.image_count || (post.images ? post.images.length : 0)} fotos</span>
-            </span>
-            <span style="display:flex;align-items:center;gap:0.4rem;">
-              <span class="badge badge-blue" style="font-size:0.75rem;">Registo #${post.id}</span>
-            </span>
-          </div>
-        </div>
+    <div class="lightbox-header">
+      <div class="lightbox-counter-badge">
+        <i data-lucide="image" style="width:16px;height:16px;"></i>
+        <span>Fotografia ${currentIndex + 1} de ${total}</span>
       </div>
-
-      <!-- Main Article Body -->
-      <div class="container">
-        <div class="post-content-container">
-          <!-- Back Link -->
-          <div style="margin-bottom:1.75rem;">
-            <a href="#blog" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:0.4rem;">
-              <i data-lucide="arrow-left" style="width:15px;height:15px;"></i>
-              <span>${tr.blog.backToBlog}</span>
-            </a>
-          </div>
-
-          <!-- Featured Image (Imagem de Destaque) -->
-          ${featuredImg ? `
-            <div class="post-featured-image-wrapper" onclick="window.openLightbox(${post.id}, 0)" title="Clique para ver em ecrã completo">
-              <img src="${featuredImg}" alt="${post.title}" loading="eager" onerror="this.parentElement.style.display='none'" />
-              <div class="featured-image-badge">
-                <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--accent-400);"></i>
-                <span>Imagem de Destaque</span>
-              </div>
-              <div class="featured-image-expand-hint">
-                <i data-lucide="maximize-2" style="width:15px;height:15px;"></i>
-                <span>Ver em ecrã completo</span>
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Post Main Text (Conteúdo do Artigo) -->
-          <div class="post-main-text">${post.content}</div>
-
-          <!-- Masonry Photo Gallery -->
-          ${post.images && post.images.length > 0 ? `
-            <div class="masonry-gallery-wrapper">
-              <div class="masonry-gallery-header">
-                <div>
-                  <h3 class="masonry-gallery-title">
-                    <i data-lucide="image" style="width:24px;height:24px;color:var(--primary-600);"></i>
-                    Galeria Fotográfica de Campo (${post.images.length} fotos)
-                  </h3>
-                  <p style="color:var(--slate-500);font-size:0.9rem;margin-top:0.35rem;">
-                    Registos documentados das actividades e impacto da ADDESSO na comunidade
-                  </p>
-                </div>
-                <span class="gallery-hint-pill">
-                  <i data-lucide="maximize-2" style="width:14px;height:14px;"></i> Clique em qualquer foto para ampliar
-                </span>
-              </div>
-
-              <div class="masonry-gallery-grid">
-                ${post.images.map((img, idx) => `
-                  <div class="masonry-gallery-item" onclick="window.openLightbox(${post.id}, ${idx})" title="Foto ${idx + 1} de ${post.images.length}">
-                    <img src="${img}" alt="Registo de Campo ${idx + 1}" loading="lazy" onerror="this.src='./default_cover.png'" />
-                    <div class="masonry-item-overlay">
-                      <span class="masonry-photo-number">#${idx + 1}</span>
-                      <span class="masonry-zoom-btn">
-                        <i data-lucide="maximize-2" style="width:15px;height:15px;"></i>
-                        Ampliar
-                      </span>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Social Sharing & WhatsApp Preview Bar -->
-          <div style="margin-top:3.5rem;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;">
-            <strong style="display:block;font-size:1.05rem;color:var(--slate-900);margin-bottom:0.5rem;">
-              ${tr.blog.shareText}
-            </strong>
-            <p style="font-size:0.88rem;color:var(--slate-500);margin-bottom:1.25rem;">
-              Ajude a amplificar a voz das comunidades apoiadas pela ADDESSO em Moçambique.
-            </p>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-              <button class="btn btn-accent btn-sm" onclick="window.sharePostWhatsApp('${escapeHtml(post.title)}', ${post.id})">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                Partilhar no WhatsApp
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="window.sharePostFacebook(${post.id})">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                Facebook
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="window.sharePostTwitter('${escapeHtml(post.title)}', ${post.id})">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                X / Twitter
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="window.copyPostLink(${post.id})">
-                <i data-lucide="copy" style="width:15px;height:15px;"></i> Copiar Link
-              </button>
-            </div>
-          </div>
-
-          <!-- Adjacent Next / Previous Post Navigation -->
-          <div class="post-adjacent-nav">
-            ${prevPost ? `
-              <div class="adjacent-post-card" onclick="window.navigateTo('#post/${prevPost.id}')">
-                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--slate-400);margin-bottom:0.25rem;display:flex;align-items:center;gap:0.35rem;">
-                  <i data-lucide="arrow-left" style="width:13px;height:13px;"></i> ${tr.blog.prevPost}
-                </span>
-                <strong style="font-size:0.95rem;color:var(--slate-900);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                  ${prevPost.title}
-                </strong>
-              </div>
-            ` : '<div></div>'}
-
-            ${nextPost ? `
-              <div class="adjacent-post-card" style="text-align:right;" onclick="window.navigateTo('#post/${nextPost.id}')">
-                <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--slate-400);margin-bottom:0.25rem;display:inline-flex;align-items:center;gap:0.35rem;justify-content:flex-end;">
-                  ${tr.blog.nextPost} <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-                </span>
-                <strong style="font-size:0.95rem;color:var(--slate-900);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                  ${nextPost.title}
-                </strong>
-              </div>
-            ` : '<div></div>'}
-          </div>
-        </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <button id="close-lightbox" class="lightbox-btn-circle close-btn" title="Fechar Visualizador (ESC)">
+          <i data-lucide="x" style="width:22px;height:22px;"></i>
+        </button>
       </div>
+    </div>
 
-      <!-- Related Posts from same category -->
-      ${related.length > 0 ? `
-        <div class="related-posts-section">
-          <div class="container">
-            <h3 style="font-size:1.5rem;color:var(--slate-900);margin-bottom:2rem;text-align:center;">
-              ${tr.blog.relatedPosts}
-            </h3>
-            <div class="posts-grid">
-              ${related.map(p => renderPostCard(p, tr)).join('')}
-            </div>
-          </div>
-        </div>
+    <div class="lightbox-main-stage" onclick="event.stopPropagation()">
+      ${total > 1 ? `
+        <button class="lightbox-nav-btn prev" onclick="window.prevLightboxImage(); event.stopPropagation();" title="Fotografia Anterior (Seta Esquerda)">
+          <i data-lucide="arrow-left" style="width:24px;height:24px;"></i>
+        </button>
       ` : ''}
-    </article>
+
+      <div class="lightbox-img-wrapper">
+        <img src="${currentImg}" alt="Visualização em ecrã inteiro" class="lightbox-img" onerror="this.src='./default_cover.png'" />
+      </div>
+
+      ${total > 1 ? `
+        <button class="lightbox-nav-btn next" onclick="window.nextLightboxImage(); event.stopPropagation();" title="Próxima Fotografia (Seta Direita)">
+          <i data-lucide="arrow-right" style="width:24px;height:24px;"></i>
+        </button>
+      ` : ''}
+    </div>
+
+    ${total > 1 ? `
+      <div class="lightbox-thumbnails-carousel" onclick="event.stopPropagation()">
+        ${images.map((img, idx) => `
+          <div class="lightbox-thumb-item ${idx === currentIndex ? 'active' : ''}" onclick="window.setLightboxIndex(${idx})">
+            <img src="${img}" alt="Miniatura ${idx + 1}" onerror="this.src='./default_cover.png'" />
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
   `;
 }
 
 /* ==========================================================================
-   ROUTE PAGES
+   ROUTE SWITCHER
    ========================================================================== */
 
 function renderRouteContent(route, tr) {
   switch (route) {
     case 'sobre':
       return renderSobrePage(tr);
+    case 'programas':
     case 'projectos':
       return renderProjectosPage(tr);
     case 'cba':
       return renderCbaPage(tr);
+    case 'delegacoes':
+    case 'presenca':
+      return renderDelegacoesPage(tr);
+    case 'transparencia':
+      return renderTransparenciaPage(tr);
     case 'blog':
       return renderBlogPage(tr);
     case 'participar':
+    case 'doar':
       return renderParticiparPage(tr);
     case 'contactos':
       return renderContactosPage(tr);
@@ -735,6 +547,10 @@ function renderRouteContent(route, tr) {
       return renderHomePage(tr);
   }
 }
+
+/* ==========================================================================
+   PAGES: HOME PAGE
+   ========================================================================== */
 
 function renderHomePage(tr) {
   const recentPosts = [...state.posts].reverse().slice(0, 3);
@@ -751,15 +567,15 @@ function renderHomePage(tr) {
               ${tr.hero.badge}
             </div>
             <h1 class="hero-headline">
-              Unidos pela <span class="text-brand">Transformação Social</span> e <span class="text-amber">Cidadania Activa</span>
+              Empoderar comunidades para <span class="text-brand">liderarem a sua própria mudança</span>
             </h1>
             <p class="hero-description">
               ${tr.hero.subtitle}
             </p>
             <div class="hero-ctas">
-              <a href="#blog" class="btn btn-primary btn-lg">
+              <a href="#programas" class="btn btn-primary btn-lg">
                 <i data-lucide="book-open" style="width:18px;height:18px;"></i>
-                ${tr.hero.exploreBtn} (${totalPosts})
+                ${tr.hero.exploreBtn}
               </a>
               <a href="#cba" class="btn btn-outline btn-lg">
                 <i data-lucide="landmark" style="width:18px;height:18px;"></i>
@@ -801,7 +617,7 @@ function renderHomePage(tr) {
                 <i data-lucide="sprout" style="width:20px;height:20px;"></i>
               </div>
               <div>
-                <strong style="display:block;font-size:0.95rem;">Horta no Quintal</strong>
+                <strong style="display:block;font-size:0.95rem;">Tacho no Quintal</strong>
                 <span style="font-size:0.78rem;color:var(--slate-300);">Segurança Alimentar</span>
               </div>
             </div>
@@ -823,101 +639,133 @@ function renderHomePage(tr) {
             <div class="impact-label">${tr.stats.actions}</div>
           </div>
           <div class="impact-item">
-            <div class="impact-number">${orgInfo.stats.catalogedPhotos}</div>
-            <div class="impact-label">${tr.stats.photos}</div>
-          </div>
-          <div class="impact-item">
             <div class="impact-number">${orgInfo.stats.directBeneficiaries}</div>
             <div class="impact-label">${tr.stats.beneficiaries}</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-number">${orgInfo.stats.provincesActive}</div>
+            <div class="impact-label">Províncias com Presença Activa</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 5 Pilares de Acção -->
+    <!-- OS 3 PROGRAMAS ESTRUTURANTES (ESQUEMAS ATRACTIVOS) -->
     <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="text-align:center;max-width:720px;margin:0 auto 3.5rem;">
+        <div style="text-align:center;max-width:760px;margin:0 auto 3.5rem;">
           <div class="section-tag">${tr.pillars.tag}</div>
-          <h2 class="section-title">${tr.pillars.title}</h2>
+          <h2 class="section-title">Os 3 Programas Estruturantes do Centro de Boas Acções</h2>
           <p class="section-subtitle" style="margin:0 auto;">
-            ${tr.pillars.subtitle}
+            Uma intervenção integrada e intergeracional que acolhe desde a primeira infância até à terceira idade.
           </p>
         </div>
 
-        <div class="pillars-grid">
-          ${orgInfo.pillars.map(pillar => `
-            <div class="pillar-card" style="--pillar-color: ${pillar.color};">
-              <div class="pillar-icon-box">
-                <i data-lucide="${pillar.icon}" style="width:26px;height:26px;"></i>
+        <div class="structured-programs-grid">
+          ${orgInfo.structuredPrograms.map(prog => `
+            <div class="program-scheme-card" style="--prog-color: ${prog.color};">
+              <div class="program-scheme-header">
+                <div class="program-number-badge">${prog.number}</div>
+                <div>
+                  <span class="badge ${prog.id === 'programa-1' ? 'badge-blue' : prog.id === 'programa-2' ? 'badge-gold' : 'badge-emerald'}" style="margin-bottom:0.4rem;">
+                    ${prog.badge}
+                  </span>
+                  <h3 class="program-scheme-title">${prog.title}</h3>
+                  <span class="program-scheme-subtitle">${prog.subtitle}</span>
+                </div>
               </div>
-              <span class="badge ${pillar.badge === 'Educação' ? 'badge-blue' : pillar.badge === 'Juventude' ? 'badge-gold' : pillar.badge === 'Agricultura' ? 'badge-emerald' : 'badge-terracotta'}" style="align-self:flex-start;margin-bottom:0.75rem;">
-                ${pillar.badge}
-              </span>
-              <h3 class="pillar-title">${pillar.title}</h3>
-              <p class="pillar-summary">${pillar.summary}</p>
-              <ul class="pillar-list">
-                ${pillar.initiatives.map(item => `
-                  <li>
-                    <i data-lucide="check" style="width:16px;height:16px;"></i>
-                    <span>${item}</span>
-                  </li>
-                `).join('')}
-              </ul>
+
+              <p class="program-scheme-desc">${prog.description}</p>
+
+              <!-- Scheme Flow / Sub-projects -->
+              <div class="program-subprojects-flow">
+                <span class="flow-label">Projectos Integrados:</span>
+                <div class="flow-items-grid">
+                  ${prog.projects.map(proj => `
+                    <div class="flow-item">
+                      <div class="flow-item-icon">
+                        <i data-lucide="${proj.icon}" style="width:16px;height:16px;"></i>
+                      </div>
+                      <div>
+                        <strong class="flow-item-name">${proj.name}</strong>
+                        <span class="flow-item-tag">${proj.tag}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="program-scheme-footer">
+                <a href="#programas" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;">
+                  <span>Conhecer o Programa em Detalhe</span>
+                  <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+                </a>
+              </div>
             </div>
           `).join('')}
         </div>
       </div>
     </section>
 
-    <!-- Centro de Boas Acções Spotlight Section -->
-    <section class="section-padding" style="background-color:var(--bg-subtle);">
+    <!-- Centro de Boas Acções Showcase -->
+    <section class="section-padding" style="background:linear-gradient(180deg, var(--bg-subtle) 0%, #ffffff 100%);">
       <div class="container">
-        <div class="cba-spotlight">
-          <div class="cba-grid">
-            <div>
-              <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
-                ${tr.cba.tag}
-              </div>
-              <h2 style="font-size:clamp(2rem,3.5vw,2.8rem);color:#ffffff;margin-bottom:1.25rem;">
-                ${tr.cba.title}
-              </h2>
-              <p style="font-size:1.05rem;color:rgba(255,255,255,0.9);line-height:1.7;margin-bottom:2rem;">
-                ${tr.cba.subtitle}
-              </p>
-              <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
-                <div class="cba-feature-pill">
-                  <i data-lucide="book-open" style="width:20px;height:20px;color:var(--primary-200);"></i>
-                  <span>${tr.cba.f1}</span>
+        <div class="cba-showcase-grid">
+          <div>
+            <div class="section-tag">${tr.cba.tag}</div>
+            <h2 class="section-title">
+              Centro de Boas Acções (CBA)
+            </h2>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--primary-700);margin-bottom:1rem;font-style:italic;">
+              "${orgInfo.cba.slogan}"
+            </div>
+            <p style="font-size:1.05rem;color:var(--slate-600);line-height:1.7;margin-bottom:1.75rem;">
+              ${orgInfo.cba.description}
+            </p>
+
+            <div class="cba-services-list">
+              ${orgInfo.cba.services.slice(0, 4).map(s => `
+                <div class="cba-service-item">
+                  <div class="cba-service-icon">
+                    <i data-lucide="${s.icon}" style="width:18px;height:18px;"></i>
+                  </div>
+                  <div>
+                    <strong style="display:block;font-size:0.95rem;color:var(--slate-900);">${s.title}</strong>
+                    <span style="font-size:0.84rem;color:var(--slate-500);">${s.desc}</span>
+                  </div>
                 </div>
-                <div class="cba-feature-pill">
-                  <i data-lucide="users" style="width:20px;height:20px;color:var(--accent-300);"></i>
-                  <span>${tr.cba.f2}</span>
-                </div>
-                <div class="cba-feature-pill">
-                  <i data-lucide="sprout" style="width:20px;height:20px;color:var(--green-100);"></i>
-                  <span>${tr.cba.f3}</span>
-                </div>
-              </div>
-              <a href="#cba" class="btn btn-accent btn-lg">
-                <span>${tr.cba.detailsBtn}</span>
-                <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
-              </a>
+              `).join('')}
             </div>
 
-            <!-- Gallery Grid with Real Photos -->
-            <div class="cba-gallery-preview">
-              <div class="cba-photo-card">
-                <img src="./archive_images/2025-06-17_01/image_02.jpg" alt="Inauguração do CBA" onerror="this.src='./logo_cropped.png'" />
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;">
+              <a href="#cba" class="btn btn-primary">
+                <span>${tr.cba.detailsBtn}</span>
+                <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+              </a>
+              <a href="#contactos" class="btn btn-outline">
+                <i data-lucide="map-pin" style="width:16px;height:16px;"></i>
+                <span>Como Chegar</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="cba-photo-mosaic">
+            <div class="cba-photo-card cba-photo-large">
+              <img src="./archive_images/2024-04-20_01/image_01.jpg" alt="Actividades no Centro de Boas Acções" onerror="this.src='./logo_cropped.png'" />
+              <div class="cba-photo-overlay">
+                <span>Reforço Escolar & Leitura</span>
               </div>
-              <div class="cba-photo-card">
-                <img src="./archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação de Jovens" onerror="this.src='./logo_cropped.png'" />
+            </div>
+            <div class="cba-photo-card">
+              <img src="./archive_images/2024-04-06_01/image_01.jpg" alt="Educação e Juventude CBA" onerror="this.src='./logo_cropped.png'" />
+              <div class="cba-photo-overlay">
+                <span>Oficinas Juvenis</span>
               </div>
-              <div class="cba-photo-card">
-                <img src="./archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" onerror="this.src='./logo_cropped.png'" />
-              </div>
-              <div class="cba-photo-card">
-                <img src="./archive_images/2021-10-16_01/image_01.jpg" alt="Crianças e Cultura" onerror="this.src='./logo_cropped.png'" />
+            </div>
+            <div class="cba-photo-card">
+              <img src="./archive_images/2024-03-30_01/image_01.jpg" alt="Horta Comunitária CBA" onerror="this.src='./logo_cropped.png'" />
+              <div class="cba-photo-overlay">
+                <span>Horta Pedagógica</span>
               </div>
             </div>
           </div>
@@ -925,109 +773,199 @@ function renderHomePage(tr) {
       </div>
     </section>
 
-    <!-- Latest From Field (Blog Highlights) -->
+    <!-- Campanha em Destaque: Semeando Sorrisos -->
     <section class="section-padding" style="background-color:#ffffff;">
+      <div class="container">
+        <div class="campaign-featured-card">
+          <div class="campaign-grid">
+            <div>
+              <span class="badge badge-gold" style="margin-bottom:1rem;">Campanha em Curso 2026</span>
+              <h2 style="font-size:clamp(1.75rem,2.8vw,2.4rem);color:#ffffff;margin-bottom:1rem;line-height:1.25;">
+                ${orgInfo.donationCampaign.title}
+              </h2>
+              <p style="color:var(--slate-200);font-size:1.05rem;line-height:1.7;margin-bottom:1.5rem;">
+                ${orgInfo.donationCampaign.objective}
+              </p>
+
+              <!-- Progress Bar -->
+              <div class="campaign-progress-box">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;font-size:0.9rem;font-weight:700;color:#ffffff;">
+                  <span>Meta Angariada: ${orgInfo.donationCampaign.currentAmount}</span>
+                  <span style="color:var(--accent-300);">${orgInfo.donationCampaign.percentage}%</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: ${orgInfo.donationCampaign.percentage}%;"></div>
+                </div>
+                <div style="font-size:0.8rem;color:var(--slate-300);margin-top:0.4rem;">
+                  Meta Total: ${orgInfo.donationCampaign.goalAmount}
+                </div>
+              </div>
+
+              <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;">
+                <a href="#participar" class="btn btn-accent btn-lg">
+                  <i data-lucide="heart" style="width:18px;height:18px;"></i>
+                  <span>Apoiar Esta Campanha</span>
+                </a>
+                <button class="btn btn-outline-white" onclick="window.copyToClipboard('${orgInfo.donationInfo.mpesa}', 'Número M-Pesa copiado com sucesso!')">
+                  <i data-lucide="copy" style="width:16px;height:16px;"></i>
+                  <span>Copiar M-Pesa (${orgInfo.donationInfo.mpesa})</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Channels box -->
+            <div class="campaign-channels-sidebar">
+              <h4 style="color:#ffffff;font-size:1.15rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
+                <i data-lucide="gift" style="width:20px;height:20px;color:var(--accent-400);"></i>
+                Doação Rápida
+              </h4>
+
+              <div class="quick-channel-item">
+                <img src="./images/payments/mpesa_logo.png" alt="M-Pesa" class="quick-chan-logo" />
+                <div>
+                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">M-Pesa (Moçambique)</strong>
+                  <span style="color:var(--accent-300);font-size:0.95rem;font-weight:700;">${orgInfo.donationInfo.mpesa}</span>
+                </div>
+              </div>
+
+              <div class="quick-channel-item">
+                <img src="./images/payments/emola_logo.png" alt="e-Mola" class="quick-chan-logo" />
+                <div>
+                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">Movitel e-Mola</strong>
+                  <span style="color:#fdba74;font-size:0.95rem;font-weight:700;">${orgInfo.donationInfo.emola}</span>
+                </div>
+              </div>
+
+              <div class="quick-channel-item">
+                <img src="./images/payments/bci_logo.png" alt="BCI" class="quick-chan-logo" />
+                <div>
+                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">Banco BCI (Conta)</strong>
+                  <span style="color:var(--slate-200);font-size:0.85rem;">Conta: ${orgInfo.donationInfo.accountNumber}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Últimas Notícias do Blog -->
+    <section class="section-padding" style="background-color:var(--bg-subtle);">
       <div class="container">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3rem;flex-wrap:wrap;gap:1.5rem;">
           <div>
             <div class="section-tag">${tr.blog.tag}</div>
-            <h2 class="section-title">Últimos Registos Comunitários</h2>
-            <p class="section-subtitle" style="margin-bottom:0;">
-              Todas as acções da ADDESSO desde os primeiros passos em 2017 até aos dias actuais.
-            </p>
+            <h2 class="section-title">Últimas Publicações do Diário de Campo</h2>
           </div>
-          <a href="#blog" class="btn btn-primary">
-            <span>Ver Todos os ${totalPosts} Registos</span>
+          <a href="#blog" class="btn btn-outline">
+            <span>Ver Todas as ${totalPosts} Notícias</span>
             <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
           </a>
         </div>
 
-        <div class="posts-grid">
-          ${recentPosts.map(post => renderPostCard(post, tr)).join('')}
+        <div class="blog-grid">
+          ${recentPosts.map(post => `
+            <article class="post-card" onclick="window.location.hash = '#post/${post.id}'" style="cursor:pointer;">
+              <div class="post-card-img-wrapper">
+                <img src="${post.cover_image || './default_cover.png'}" alt="${escapeHtml(post.title)}" loading="lazy" onerror="this.src='./default_cover.png'" />
+                <span class="post-cat-badge ${getCategoryColor(post.primary_category)}">${post.primary_category}</span>
+                <span class="post-count-badge">
+                  <i data-lucide="image" style="width:13px;height:13px;"></i>
+                  ${post.image_count || 1}
+                </span>
+              </div>
+              <div class="post-card-body">
+                <div class="post-card-meta">
+                  <span><i data-lucide="calendar" style="width:13px;height:13px;"></i> ${formatDatePT(post.date)}</span>
+                  <span><i data-lucide="clock" style="width:13px;height:13px;"></i> ${post.read_time_min} ${tr.blog.readTime}</span>
+                </div>
+                <h3 class="post-card-title">${post.title}</h3>
+                <p class="post-card-excerpt">${post.excerpt}</p>
+                <div class="post-card-footer">
+                  <span class="post-read-more">
+                    ${tr.blog.readStory}
+                    <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+                  </span>
+                </div>
+              </div>
+            </article>
+          `).join('')}
         </div>
       </div>
     </section>
 
-    <!-- Interactive Donation & CTA Banner -->
-    <section class="section-padding" style="background:linear-gradient(135deg, #0c4a6e, #082f49);color:#ffffff;">
+    <!-- Parceiros Institucionais (Rede de Cooperação) -->
+    <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="text-align:center;max-width:760px;margin:0 auto 3rem;">
-          <div class="section-tag" style="background:rgba(245,158,11,0.2);color:var(--accent-300);border-color:rgba(245,158,11,0.4);">
-            ${tr.donation.tag}
-          </div>
-          <h2 style="font-size:clamp(2.2rem,4vw,3.2rem);color:#ffffff;margin-bottom:1.25rem;">
-            ${tr.donation.title}
-          </h2>
-          <p style="font-size:1.1rem;color:var(--slate-300);line-height:1.7;">
-            ${tr.donation.subtitle}
+        <div style="text-align:center;max-width:720px;margin:0 auto 3.5rem;">
+          <div class="section-tag">Rede de Cooperação</div>
+          <h2 class="section-title">Parceiros Oficiais & Alianças Institucionais</h2>
+          <p class="section-subtitle" style="margin:0 auto;">
+            Trabalhamos em conjunto com universidades, entidades governamentais, sociedade civil e cooperação internacional.
           </p>
         </div>
 
-        <div style="display:flex;justify-content:center;gap:1.25rem;flex-wrap:wrap;">
-          <a href="#participar" class="btn btn-accent btn-lg">
-            <i data-lucide="heart" style="width:20px;height:20px;"></i>
-            <span>${tr.donation.mpesaBtn}</span>
-          </a>
-          <a href="#participar" class="btn btn-outline-white btn-lg">
-            <i data-lucide="users" style="width:20px;height:20px;"></i>
-            <span>${tr.donation.volunteerBtn}</span>
-          </a>
+        <div class="partners-grid">
+          ${orgInfo.partners.map(p => `
+            <div class="partner-card">
+              <div class="partner-logo-box">
+                <img src="${p.logo}" alt="Logotipo ${p.name}" loading="lazy" onerror="this.src='./logo_cropped.png'" />
+              </div>
+              <div class="partner-card-content">
+                <span class="badge badge-purple" style="margin-bottom:0.6rem;font-size:0.75rem;">${p.type}</span>
+                <h4 style="font-size:1.1rem;font-weight:800;margin-bottom:0.4rem;color:var(--slate-900);line-height:1.3;">${p.name}</h4>
+                <p style="font-size:0.86rem;color:var(--slate-600);line-height:1.55;">${p.description}</p>
+              </div>
+            </div>
+          `).join('')}
         </div>
       </div>
     </section>
   `;
 }
 
+/* ==========================================================================
+   PAGES: SOBRE NÓS
+   ========================================================================== */
+
 function renderSobrePage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:4.5rem 0 3.5rem;">
+    <div class="page-hero-banner">
       <div class="container">
-        <div class="section-tag" style="background:rgba(14,165,233,0.2);color:var(--primary-300);border-color:rgba(14,165,233,0.4);">
-          Sobre a Nossa Organização
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Conheça a Nossa História
         </div>
-        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;">
-          Quem Somos & O Que Nos Move
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Quem Somos & A Nossa Missão
         </h1>
-        <p style="font-size:1.15rem;color:var(--slate-300);max-width:720px;line-height:1.7;">
-          A ADDESSO – Associação para a Defesa e Desenvolvimento da Sociedade – nasceu em 2009 com a convicção de que o desenvolvimento comunitário se constrói com as pessoas e para as pessoas.
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Fundada em 2009, a ADDESSO é uma organização moçambicana sem fins lucrativos dedicada à transformação social comunitária e empoderamento das famílias.
         </p>
       </div>
     </div>
 
     <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;margin-bottom:5rem;">
-          <div>
-            <div class="section-tag">A Nossa Origem</div>
-            <h2 class="section-title">Mais de 17 Anos no Terreno</h2>
-            <p style="color:var(--slate-600);font-size:1.05rem;line-height:1.75;margin-bottom:1.5rem;">
-              Desde a sua formalização em 2009, a ADDESSO tem trabalhado incansavelmente nos bairros periféricos de Maputo e províncias vizinhas. Desde intervenções pioneiras no povoado de Djabula (Matutuíne), até à criação do Projecto Creche Familiar e à consolidação do Centro de Boas Acções na Polana Caniço "A".
-            </p>
-            <p style="color:var(--slate-600);font-size:1.05rem;line-height:1.75;">
-              A organização actua como uma ponte sólida entre a comunidade local, o meio académico (Universidade Eduardo Mondlane), a sociedade civil e os parceiros de cooperação internacional, sempre com foco em resultados tangíveis e sustentáveis.
-            </p>
-          </div>
-          <div style="position:relative;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);border:4px solid #ffffff;">
-            <img src="./archive_images/2021-09-05_01/image_01.jpg" alt="Acção Comunitária Histórica ADDESSO" onerror="this.src='./logo_cropped.png'" />
-          </div>
-        </div>
-
-        <!-- Missão e Visão -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:2rem;margin-bottom:5rem;">
-          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:2.25rem;">
-            <div style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
-              <i data-lucide="sparkles"></i>
+        <!-- Missão, Visão e Historial -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:2.5rem;margin-bottom:5rem;">
+          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;">
+            <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+              <i data-lucide="compass" style="width:26px;height:26px;"></i>
             </div>
-            <h3 style="font-size:1.4rem;margin-bottom:0.75rem;">A Nossa Missão</h3>
-            <p style="color:var(--slate-600);line-height:1.7;font-size:0.95rem;">${orgInfo.mission}</p>
+            <h3 style="font-size:1.5rem;margin-bottom:1rem;color:var(--slate-900);">A Nossa Missão</h3>
+            <p style="color:var(--slate-600);line-height:1.75;font-size:1.05rem;">
+              "${orgInfo.mission}"
+            </p>
           </div>
 
-          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:2.25rem;">
-            <div style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--accent-100);color:var(--accent-700);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
-              <i data-lucide="eye"></i>
+          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;">
+            <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:rgba(245,158,11,0.15);color:var(--accent-600);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+              <i data-lucide="eye" style="width:26px;height:26px;"></i>
             </div>
-            <h3 style="font-size:1.4rem;margin-bottom:0.75rem;">A Nossa Visão</h3>
-            <p style="color:var(--slate-600);line-height:1.7;font-size:0.95rem;">${orgInfo.vision}</p>
+            <h3 style="font-size:1.5rem;margin-bottom:1rem;color:var(--slate-900);">A Nossa Visão</h3>
+            <p style="color:var(--slate-600);line-height:1.75;font-size:1.05rem;">
+              "${orgInfo.vision}"
+            </p>
           </div>
         </div>
 
@@ -1035,19 +973,74 @@ function renderSobrePage(tr) {
         <div style="margin-bottom:5rem;">
           <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
             <div class="section-tag">Princípios Éticos</div>
-            <h2 class="section-title">Os Nossos Valores</h2>
+            <h2 class="section-title">Valores Fundamentais</h2>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1.5rem;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.75rem;">
             ${orgInfo.values.map(val => `
-              <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-xs);">
-                <h4 style="font-size:1.1rem;color:var(--primary-800);margin-bottom:0.5rem;">${val.name}</h4>
-                <p style="font-size:0.9rem;color:var(--slate-600);line-height:1.6;">${val.description}</p>
+              <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;box-shadow:var(--shadow-sm);">
+                <h4 style="font-size:1.15rem;margin-bottom:0.5rem;color:var(--slate-900);">${val.name}</h4>
+                <p style="font-size:0.92rem;color:var(--slate-600);line-height:1.6;">${val.description}</p>
               </div>
             `).join('')}
           </div>
         </div>
 
-        <!-- Parceiros Oficiais -->
+        <!-- Estrutura e Governação -->
+        <div style="margin-bottom:5rem;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
+            <div class="section-tag">Governação & Transparência</div>
+            <h2 class="section-title">Estrutura e Órgãos Sociais</h2>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;margin-bottom:3rem;">
+            ${orgInfo.governance.socialOrgans.map(org => `
+              <div style="background:var(--slate-900);color:#ffffff;border-radius:var(--radius-xl);padding:2rem;">
+                <div style="color:var(--accent-400);font-size:0.8rem;font-weight:700;text-transform:uppercase;margin-bottom:0.5rem;">Órgão Estatutário</div>
+                <h3 style="font-size:1.35rem;color:#ffffff;margin-bottom:0.5rem;">${org.organ}</h3>
+                <p style="color:var(--slate-300);font-size:0.92rem;line-height:1.6;">${org.role}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Direcção Executiva -->
+          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;">
+            <h3 style="font-size:1.4rem;color:var(--slate-900);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.6rem;">
+              <i data-lucide="briefcase" style="width:22px;height:22px;color:var(--primary-600);"></i>
+              Direcção Executiva & Equipa de Gestão
+            </h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1.25rem;">
+              ${orgInfo.governance.executiveTeam.map(exec => `
+                <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.25rem;">
+                  <strong style="font-size:1.05rem;color:var(--slate-900);display:block;margin-bottom:0.25rem;">${exec.role}</strong>
+                  <span style="font-size:0.85rem;color:var(--slate-600);">${exec.area}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Redes e Alianças -->
+        <div style="margin-bottom:5rem;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
+            <div class="section-tag">Filiações & Redes</div>
+            <h2 class="section-title">Redes Nacionais e Internacionais</h2>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;">
+            ${orgInfo.networks.map(net => `
+              <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;display:flex;align-items:center;gap:1.25rem;">
+                <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="${net.icon}" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                  <h4 style="font-size:1.05rem;color:var(--slate-900);margin-bottom:0.25rem;">${net.name}</h4>
+                  <span style="font-size:0.85rem;color:var(--primary-700);font-weight:700;">${net.role}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Parceiros Oficiais com Logótipos -->
         <div style="margin-top: 5rem;">
           <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
             <div class="section-tag">Rede de Cooperação</div>
@@ -1071,145 +1064,247 @@ function renderSobrePage(tr) {
             `).join('')}
           </div>
         </div>
+
+        <!-- Aliados de Cooperação -->
+        <div style="margin-top: 4rem;background:var(--slate-900);border-radius:var(--radius-2xl);padding:clamp(2rem,4vw,3.5rem);color:#ffffff;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 2.5rem;">
+            <span class="badge badge-gold" style="margin-bottom:0.75rem;">Cooperação Alargada</span>
+            <h3 style="font-size:1.75rem;color:#ffffff;margin-bottom:0.5rem;">Governo, ONGs Globais & Parceiros Corporativos</h3>
+            <p style="color:var(--slate-300);font-size:0.95rem;">Organizações e empresas com as quais a ADDESSO desenvolve programas conjuntos:</p>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;">
+            ${orgInfo.cooperationAllies.map(ally => `
+              <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-full);padding:0.5rem 1.25rem;font-size:0.88rem;color:#ffffff;display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-400);"></div>
+                <span>${ally.name}</span>
+                <span style="font-size:0.75rem;color:var(--slate-400);font-style:italic;">(${ally.category})</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </div>
     </section>
   `;
 }
 
+/* ==========================================================================
+   PAGES: PROGRAMAS & PROJECTOS
+   ========================================================================== */
+
 function renderProjectosPage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:4.5rem 0 3.5rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #0369a1, #0f172a);">
       <div class="container">
         <div class="section-tag" style="background:rgba(245,158,11,0.2);color:var(--accent-300);border-color:rgba(245,158,11,0.4);">
-          Áreas de Intervenção
+          Áreas de Intervenção Estruturantes
         </div>
-        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;">
-          Projectos & Programas de Impacto
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Os 3 Grandes Programas de Impacto
         </h1>
-        <p style="font-size:1.15rem;color:var(--slate-300);max-width:720px;line-height:1.7;">
-          Conheça em detalhe os programas que transformam diariamente a vida de milhares de famílias e jovens moçambicanos.
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:750px;line-height:1.7;">
+          Conheça em detalhe a arquitectura programática da ADDESSO e do Centro de Boas Acções, concebida para criar autonomia sustentável nas comunidades.
         </p>
       </div>
     </div>
 
     <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="display:flex;flex-direction:column;gap:4rem;">
-          ${orgInfo.pillars.map((pillar, idx) => `
-            <div style="display:grid;grid-template-columns:${idx % 2 === 0 ? '1.1fr 0.9fr' : '0.9fr 1.1fr'};gap:3rem;align-items:center;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:clamp(1.5rem,3vw,3rem);">
-              <div style="order:${idx % 2 === 0 ? 1 : 2};">
-                <span class="badge ${pillar.badge === 'Educação' ? 'badge-blue' : pillar.badge === 'Juventude' ? 'badge-gold' : pillar.badge === 'Agricultura' ? 'badge-emerald' : 'badge-terracotta'}" style="margin-bottom:1rem;">
-                  ${pillar.badge}
-                </span>
-                <h2 style="font-size:clamp(1.75rem,2.8vw,2.4rem);margin-bottom:1rem;color:var(--slate-900);">
-                  ${pillar.title}
+        <!-- The 3 Detailed Programs -->
+        <div style="display:flex;flex-direction:column;gap:4.5rem;">
+          ${orgInfo.structuredPrograms.map((prog, idx) => `
+            <div id="${prog.id}" class="detailed-program-card" style="border-top: 4px solid ${prog.color};">
+              <div class="detailed-prog-header">
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+                  <span class="program-number-badge" style="background:${prog.color};color:#fff;width:38px;height:38px;font-size:1rem;">${prog.number}</span>
+                  <span class="badge ${prog.id === 'programa-1' ? 'badge-blue' : prog.id === 'programa-2' ? 'badge-gold' : 'badge-emerald'}">
+                    ${prog.badge}
+                  </span>
+                </div>
+                <h2 style="font-size:clamp(1.75rem,2.8vw,2.4rem);color:var(--slate-900);margin-bottom:0.5rem;font-weight:800;">
+                  Programa ${prog.title}
                 </h2>
-                <p style="font-size:1.05rem;color:var(--slate-600);line-height:1.7;margin-bottom:1.5rem;">
-                  ${pillar.summary}
+                <h4 style="font-size:1.15rem;color:var(--slate-500);font-weight:500;margin-bottom:1rem;">
+                  ${prog.subtitle}
+                </h4>
+                <p style="font-size:1.05rem;color:var(--slate-700);line-height:1.75;max-width:850px;margin-bottom:1.5rem;">
+                  ${prog.description}
                 </p>
-                <h4 style="font-size:1rem;font-weight:700;color:var(--slate-800);margin-bottom:0.75rem;">Principais Iniciativas:</h4>
-                <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.75rem;">
-                  ${pillar.initiatives.map(item => `
-                    <li style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.95rem;color:var(--slate-700);">
-                      <i data-lucide="check" style="width:16px;height:16px;color:var(--primary-600);flex-shrink:0;margin-top:2px;"></i>
-                      <span>${item}</span>
-                    </li>
-                  `).join('')}
-                </ul>
-                <a href="#blog" class="btn btn-outline btn-sm" onclick="filterBlogByCategory('${pillar.title}')">
-                  <span>${tr.pillars.viewPosts}</span>
-                  <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-                </a>
+                <div style="background:var(--slate-50);border-left:3px solid ${prog.color};padding:0.75rem 1.25rem;border-radius:0 var(--radius-md) var(--radius-md) 0;font-size:0.9rem;color:var(--slate-600);margin-bottom:2rem;">
+                  <strong>Público-Alvo:</strong> ${prog.target}
+                </div>
               </div>
-              <div style="order:${idx % 2 === 0 ? 2 : 1};border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);border:3px solid #ffffff;aspect-ratio:4/3;background:#000;">
-                <img src="./archive_images/${idx === 0 ? '2021-10-16_01/image_01.jpg' : idx === 1 ? '2026-08-14_01/image_01.jpg' : idx === 2 ? '2020-09-13_01/image_01.jpg' : idx === 3 ? '2026-01-21_01/image_01.jpg' : '2021-09-05_01/image_01.jpg'}" alt="${pillar.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
+
+              <!-- Detailed Sub-projects Grid -->
+              <h3 style="font-size:1.35rem;color:var(--slate-900);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.6rem;">
+                <i data-lucide="layers" style="width:20px;height:20px;color:${prog.color};"></i>
+                Projectos Operacionais Integrados
+              </h3>
+
+              <div class="subprojects-detailed-grid">
+                ${prog.projects.map(proj => `
+                  <div class="subproject-detail-item">
+                    <div class="subproject-icon-box" style="background:${prog.color}15;color:${prog.color};">
+                      <i data-lucide="${proj.icon}" style="width:22px;height:22px;"></i>
+                    </div>
+                    <div>
+                      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;">
+                        <h4 style="font-size:1.1rem;color:var(--slate-900);font-weight:700;">${proj.name}</h4>
+                        <span class="badge badge-outline" style="font-size:0.7rem;padding:0.15rem 0.45rem;">${proj.tag}</span>
+                      </div>
+                      <p style="font-size:0.9rem;color:var(--slate-600);line-height:1.6;">${proj.desc}</p>
+                    </div>
+                  </div>
+                `).join('')}
               </div>
             </div>
           `).join('')}
         </div>
+
+        <!-- Eventos Comunitários de Impacto -->
+        <div style="margin-top:5.5rem;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
+            <div class="section-tag">Eventos Transversais</div>
+            <h2 class="section-title">Grandes Iniciativas Comunitárias</h2>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:2rem;">
+            ${orgInfo.transversalEvents.map(evt => `
+              <div style="background:var(--slate-900);color:#ffffff;border-radius:var(--radius-2xl);padding:2.5rem;border:1px solid rgba(255,255,255,0.1);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                  <span class="badge badge-gold">${evt.badge}</span>
+                  <span style="font-size:0.8rem;color:var(--slate-400);font-weight:700;text-transform:uppercase;">Periodicidade: ${evt.frequency}</span>
+                </div>
+                <h3 style="font-size:1.6rem;color:#ffffff;margin-bottom:1rem;">${evt.title}</h3>
+                <p style="color:var(--slate-300);line-height:1.7;font-size:0.98rem;margin-bottom:1.5rem;">
+                  ${evt.description}
+                </p>
+                <a href="#blog" class="btn btn-outline-white btn-sm">
+                  <span>Ver Notícias Deste Evento</span>
+                  <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+                </a>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </div>
     </section>
   `;
 }
 
+/* ==========================================================================
+   PAGES: CENTRO DE BOAS ACÇÕES (CBA)
+   ========================================================================== */
+
 function renderCbaPage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0369a1);color:#ffffff;padding:5rem 0 4rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #0f766e, #0f172a);">
       <div class="container">
         <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
-          ${tr.cba.tag}
+          Polo Central da ADDESSO
         </div>
-        <h1 style="font-size:clamp(2.4rem,4.5vw,3.6rem);color:#ffffff;margin-bottom:1rem;">
-          ${tr.cba.title}
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Centro de Boas Acções (CBA)
         </h1>
-        <p style="font-size:1.2rem;color:rgba(255,255,255,0.9);max-width:760px;line-height:1.7;">
-          O coração das actividades da ADDESSO no Bairro da Polana Caniço "A", em Maputo. Um centro vibrante de oportunidade, aprendizagem, liderança e cidadania.
+        <div style="font-size:1.35rem;color:var(--accent-300);font-style:italic;margin-bottom:1rem;">
+          "${orgInfo.cba.slogan}"
+        </div>
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Um espaço diário de esperança, educação, tecnologia, saúde preventiva e solidariedade para crianças, jovens e famílias.
         </p>
       </div>
     </div>
 
     <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:3.5rem;align-items:center;margin-bottom:4rem;">
+        <!-- História e Evolução -->
+        <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:3.5rem;align-items:center;margin-bottom:5rem;">
           <div>
-            <div class="section-tag">Espaço Comunitário Aberto</div>
-            <h2 class="section-title">A Nossa Casa Comunitária</h2>
-            <p style="color:var(--slate-600);font-size:1.05rem;line-height:1.75;margin-bottom:1.5rem;">
-              ${orgInfo.cba.description}
+            <div class="section-tag">Génese & Expansão</div>
+            <h2 class="section-title">A História e Evolução do Centro</h2>
+            <p style="font-size:1.05rem;color:var(--slate-700);line-height:1.8;margin-bottom:1.25rem;">
+              ${orgInfo.cba.history}
             </p>
-            <div style="background:var(--primary-50);border:1px solid var(--primary-200);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;">
-              <strong style="color:var(--primary-900);display:block;margin-bottom:0.35rem;">Horário de Funcionamento:</strong>
-              <p style="color:var(--primary-800);font-size:0.95rem;margin:0;">${orgInfo.cba.schedule}</p>
-            </div>
-            <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.25rem;">
-              <strong style="color:var(--slate-900);display:block;margin-bottom:0.35rem;">Localização:</strong>
-              <p style="color:var(--slate-700);font-size:0.95rem;margin:0;">${orgInfo.cba.location} (Distrito Municipal KaMavota / KaMaxaquene)</p>
+            <p style="font-size:1.05rem;color:var(--slate-700);line-height:1.8;margin-bottom:2rem;">
+              Hoje, o CBA não é apenas um edifício, mas um modelo comunitário de referência que integra a primeira infância com a terceira idade, o desporto com a tecnologia e a agricultura familiar com a sustentabilidade económica.
+            </p>
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+              <div style="background:var(--bg-subtle);border-radius:var(--radius-lg);padding:1rem 1.5rem;">
+                <div style="font-size:1.8rem;font-weight:800;color:var(--primary-700);">3 Polos</div>
+                <span style="font-size:0.85rem;color:var(--slate-600);">Polana Caniço, Nkobe & Maulana</span>
+              </div>
+              <div style="background:var(--bg-subtle);border-radius:var(--radius-lg);padding:1rem 1.5rem;">
+                <div style="font-size:1.8rem;font-weight:800;color:var(--accent-600);">8 Serviços</div>
+                <span style="font-size:0.85rem;color:var(--slate-600);">Diários e Gratuitos</span>
+              </div>
             </div>
           </div>
 
-          <div style="display:flex;flex-direction:column;gap:1rem;">
-            <div style="border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:16/10;">
-              <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Inauguração do CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-              <div style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);aspect-ratio:4/3;">
-                <img src="./archive_images/2026-07-26_01/image_01.jpg" alt="Capacitação no CBA" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
-              </div>
-              <div style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);aspect-ratio:4/3;">
-                <img src="./archive_images/2026-08-14_01/image_01.jpg" alt="Mini Semana da Juventude" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
-              </div>
-            </div>
+          <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);border:1px solid var(--slate-200);">
+            <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Inauguração Centro de Boas Acções" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
           </div>
         </div>
 
-        <div style="margin-bottom:4rem;">
+        <!-- Os 8 Serviços do CBA -->
+        <div style="margin-bottom:5rem;">
           <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
-            <div class="section-tag">Instalações & Serviços</div>
-            <h2 class="section-title">O Que Acontece no Centro</h2>
+            <div class="section-tag">Serviços Comunitários</div>
+            <h2 class="section-title">O Que Oferecemos Diariamente no CBA</h2>
           </div>
+
           <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.75rem;">
-            ${orgInfo.cba.features.map(feat => `
-              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;display:flex;align-items:flex-start;gap:1rem;">
-                <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="check" style="width:20px;height:20px;"></i>
+            ${orgInfo.cba.services.map(s => `
+              <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;">
+                <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+                  <i data-lucide="${s.icon}" style="width:24px;height:24px;"></i>
                 </div>
-                <div>
-                  <h4 style="font-size:1.1rem;color:var(--slate-900);margin-bottom:0.25rem;">${feat}</h4>
-                  <p style="font-size:0.88rem;color:var(--slate-600);">Espaço comunitário aberto à juventude, infância e idosos do bairro.</p>
-                </div>
+                <h4 style="font-size:1.15rem;margin-bottom:0.5rem;color:var(--slate-900);">${s.title}</h4>
+                <p style="font-size:0.9rem;color:var(--slate-600);line-height:1.6;">${s.desc}</p>
               </div>
             `).join('')}
           </div>
         </div>
 
-        <div style="background:linear-gradient(135deg, #0c4a6e, #082f49);color:#ffffff;border-radius:var(--radius-2xl);padding:3rem;text-align:center;">
-          <h3 style="font-size:1.8rem;margin-bottom:1rem;color:#ffffff;">Quer Visitar ou Ser Voluntário no Centro de Boas Acções?</h3>
-          <p style="color:var(--slate-300);max-width:600px;margin:0 auto 2rem;font-size:1.05rem;">
-            Venha conhecer de perto as nossas actividades pedagógicas e oficinas de liderança com os jovens da Polana Caniço.
-          </p>
-          <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
-            <a href="#participar" class="btn btn-primary btn-lg">Inscrever-se como Voluntário</a>
-            <a href="#contactos" class="btn btn-outline-white btn-lg">Agendar Visita</a>
+        <!-- Os 3 Polos Comunitários -->
+        <div style="background:var(--slate-900);border-radius:var(--radius-2xl);padding:clamp(2rem,4vw,3.5rem);color:#ffffff;margin-bottom:5rem;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
+            <span class="badge badge-gold" style="margin-bottom:0.75rem;">Polos de Impacto</span>
+            <h2 style="font-size:2rem;color:#ffffff;margin-bottom:0.5rem;">Os 3 Centros de Boas Acções</h2>
+            <p style="color:var(--slate-300);">Locais de acolhimento e desenvolvimento da ADDESSO:</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:2rem;">
+            ${orgInfo.presence.centralHubs.map(hub => `
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-xl);padding:2rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;color:var(--accent-400);font-size:0.85rem;font-weight:700;margin-bottom:0.5rem;">
+                  <i data-lucide="map-pin" style="width:16px;height:16px;"></i>
+                  ${hub.city}
+                </div>
+                <h3 style="font-size:1.35rem;color:#ffffff;margin-bottom:0.5rem;">${hub.role}</h3>
+                <span style="display:block;font-size:0.9rem;color:var(--slate-400);margin-bottom:1rem;">${hub.location}</span>
+                <p style="font-size:0.92rem;color:var(--slate-300);line-height:1.6;">${hub.highlight}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Horários e Localização -->
+        <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+          <div>
+            <h3 style="font-size:1.4rem;color:var(--slate-900);margin-bottom:0.5rem;">Visite o Centro de Boas Acções</h3>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.95rem;color:var(--slate-600);">
+              <div><strong style="color:var(--slate-800);">Localização:</strong> ${orgInfo.cba.location}</div>
+              <div><strong style="color:var(--slate-800);">Horário:</strong> ${orgInfo.cba.schedule}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a href="#contactos" class="btn btn-primary">
+              <i data-lucide="map-pin" style="width:16px;height:16px;"></i>
+              <span>Como Chegar</span>
+            </a>
+            <a href="#participar" class="btn btn-accent">
+              <i data-lucide="heart" style="width:16px;height:16px;"></i>
+              <span>Apoiar o CBA</span>
+            </a>
           </div>
         </div>
       </div>
@@ -1217,302 +1312,193 @@ function renderCbaPage(tr) {
   `;
 }
 
-function renderBlogPage(tr) {
-  let filtered = [...state.posts];
+/* ==========================================================================
+   PAGES: PRESENÇA NACIONAL & DELEGAÇÕES
+   ========================================================================== */
 
-  if (state.selectedCategory !== 'all') {
-    filtered = filtered.filter(p => p.categories && p.categories.includes(state.selectedCategory));
-  }
-
-  if (state.selectedYear !== 'all') {
-    filtered = filtered.filter(p => p.date && p.date.startsWith(state.selectedYear));
-  }
-
-  if (state.searchQuery.trim()) {
-    const q = state.searchQuery.toLowerCase();
-    filtered = filtered.filter(p => 
-      (p.title && p.title.toLowerCase().includes(q)) || 
-      (p.content && p.content.toLowerCase().includes(q)) ||
-      (p.date && p.date.includes(q))
-    );
-  }
-
-  if (state.sortOrder === 'asc') {
-    filtered.sort((a, b) => a.id - b.id);
-  } else {
-    filtered.sort((a, b) => b.id - a.id);
-  }
-
-  const years = ['all', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
-
+function renderDelegacoesPage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:4.5rem 0 3rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #0c4a6e, #0f172a);">
       <div class="container">
-        <div class="section-tag" style="background:rgba(14,165,233,0.2);color:var(--primary-300);border-color:rgba(14,165,233,0.4);">
-          ${tr.blog.tag}
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Cobertura em Todo Moçambique
         </div>
-        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;">
-          ${tr.blog.title}
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Presença Nacional & Delegações Provinciais
         </h1>
-        <p style="font-size:1.15rem;color:var(--slate-300);max-width:720px;line-height:1.7;">
-          ${tr.blog.subtitle} Repositório vivo de <strong>${state.posts.length} publicações</strong> e mais de <strong>700 fotografias</strong> documentando a transformação social.
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Com sede em Maputo e representações activas em 8 províncias, a ADDESSO mobiliza comunidades de norte a sul do país.
         </p>
       </div>
     </div>
 
-    <section class="blog-section section-padding">
+    <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <!-- Filter Controls Box -->
-        <div class="blog-controls-card">
-          <!-- Row 1: Search & Sorting Order -->
-          <div class="blog-search-row">
-            <div class="search-input-box">
-              <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
-              <input type="text" id="blog-search" placeholder="${tr.blog.searchPlaceholder}" value="${state.searchQuery}" />
-            </div>
-
-            <!-- Sort Direction Toggle -->
-            <div class="sort-order-toggle">
-              <button id="sort-asc-btn" class="sort-order-btn ${state.sortOrder === 'asc' ? 'active' : ''}">
-                <i data-lucide="arrow-right" style="width:14px;height:14px;display:inline;margin-right:3px;"></i>
-                ${tr.blog.orderAsc}
-              </button>
-              <button id="sort-desc-btn" class="sort-order-btn ${state.sortOrder === 'desc' ? 'active' : ''}">
-                <i data-lucide="arrow-left" style="width:14px;height:14px;display:inline;margin-right:3px;"></i>
-                ${tr.blog.orderDesc}
-              </button>
-            </div>
-
-            <!-- View Switcher -->
-            <div class="sort-order-toggle">
-              <button id="view-grid-btn" class="sort-order-btn ${state.viewMode === 'grid' ? 'active' : ''}">
-                <i data-lucide="layers" style="width:14px;height:14px;display:inline;margin-right:3px;"></i>
-                ${tr.blog.viewGrid}
-              </button>
-              <button id="view-timeline-btn" class="sort-order-btn ${state.viewMode === 'timeline' ? 'active' : ''}">
-                <i data-lucide="list-filter" style="width:14px;height:14px;display:inline;margin-right:3px;"></i>
-                ${tr.blog.viewTimeline}
-              </button>
-            </div>
-          </div>
-
-          <!-- Row 2: Category Filter Pills -->
-          <div style="margin-bottom:1rem;">
-            <strong style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--slate-500);display:block;margin-bottom:0.5rem;">
-              ${tr.blog.filterCat}
-            </strong>
-            <div class="filter-pills-row">
-              <button class="filter-pill ${state.selectedCategory === 'all' ? 'active' : ''}" onclick="setBlogCategory('all')">
-                ${tr.blog.allCats} <span class="count">${state.posts.length}</span>
-              </button>
-              ${ALL_CATEGORIES.map(cat => {
-                const count = state.posts.filter(p => p.categories && p.categories.includes(cat)).length;
-                return `
-                  <button class="filter-pill ${state.selectedCategory === cat ? 'active' : ''}" onclick="setBlogCategory('${cat}')">
-                    ${cat} <span class="count">${count}</span>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          </div>
-
-          <!-- Row 3: Year Filter Pills -->
-          <div>
-            <strong style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--slate-500);display:block;margin-bottom:0.5rem;">
-              ${tr.blog.filterYear}
-            </strong>
-            <div class="filter-pills-row">
-              ${years.map(yr => {
-                const count = yr === 'all' ? state.posts.length : state.posts.filter(p => p.date && p.date.startsWith(yr)).length;
-                return `
-                  <button class="filter-pill ${state.selectedYear === yr ? 'active' : ''}" onclick="setBlogYear('${yr}')">
-                    ${yr === 'all' ? tr.blog.allYears : yr} <span class="count">${count}</span>
-                  </button>
-                `;
-              }).join('')}
-            </div>
+        <!-- Polos Centrais de Maputo -->
+        <div style="margin-bottom:4rem;">
+          <div class="section-tag">Sede & Polos Centrais</div>
+          <h2 class="section-title">Maputo (Cidade e Província)</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:2rem;margin-top:2rem;">
+            ${orgInfo.presence.centralHubs.map(hub => `
+              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:2rem;">
+                <span class="badge badge-blue" style="margin-bottom:0.75rem;">${hub.city}</span>
+                <h3 style="font-size:1.35rem;color:var(--slate-900);margin-bottom:0.5rem;">${hub.role}</h3>
+                <div style="font-size:0.88rem;color:var(--slate-500);margin-bottom:1rem;">
+                  <i data-lucide="map-pin" style="width:14px;height:14px;display:inline;"></i> ${hub.location}
+                </div>
+                <p style="font-size:0.92rem;color:var(--slate-700);line-height:1.6;">${hub.highlight}</p>
+              </div>
+            `).join('')}
           </div>
         </div>
 
-        <!-- Showing Result Counter -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;color:var(--slate-600);font-size:0.95rem;flex-wrap:wrap;gap:0.75rem;">
-          <div>
-            ${tr.blog.showing} <strong>${filtered.length}</strong> ${tr.blog.of} <strong>${state.posts.length}</strong> ${tr.blog.posts}
-          </div>
-          ${(state.selectedCategory !== 'all' || state.selectedYear !== 'all' || state.searchQuery) ? `
-            <button class="btn btn-outline btn-sm" onclick="resetBlogFilters()">
-              <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
-              Limpar Filtros
-            </button>
-          ` : ''}
-        </div>
+        <!-- Delegações Provinciais de Moçambique -->
+        <div>
+          <div class="section-tag">Delegações Provinciais</div>
+          <h2 class="section-title">Cobertura Nacional em 8 Províncias</h2>
+          <p style="color:var(--slate-600);font-size:1.05rem;margin-bottom:2.5rem;">
+            Cada delegação actua em coordenação com os líderes comunitários, municípios e parceiros locais:
+          </p>
 
-        <!-- Render Posts by Layout View -->
-        ${filtered.length === 0 ? `
-          <div style="text-align:center;padding:4rem 2rem;background:#ffffff;border-radius:var(--radius-xl);border:1px solid var(--slate-200);">
-            <div style="width:64px;height:64px;border-radius:50%;background:var(--slate-100);color:var(--slate-400);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
-              <i data-lucide="search" style="width:28px;height:28px;"></i>
-            </div>
-            <h3 style="font-size:1.4rem;color:var(--slate-800);margin-bottom:0.5rem;">Nenhuma publicação encontrada</h3>
-            <button class="btn btn-primary" onclick="resetBlogFilters()">Ver Todas as Publicações</button>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.75rem;">
+            ${orgInfo.presence.provincialDelegations.map(del => `
+              <div class="provincial-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                  <h3 style="font-size:1.35rem;color:var(--slate-900);font-weight:800;">Província de ${del.province}</h3>
+                  <span class="badge badge-outline">${del.capital}</span>
+                </div>
+                <div style="margin-bottom:0.75rem;font-size:0.82rem;font-weight:700;color:var(--primary-700);text-transform:uppercase;">
+                  Foco de Intervenção Local:
+                </div>
+                <p style="font-size:0.9rem;color:var(--slate-600);line-height:1.6;">
+                  ${del.focus}
+                </p>
+                <div style="margin-top:auto;padding-top:1.25rem;border-top:1px solid var(--slate-100);display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:0.8rem;color:var(--slate-500);">Delegação Activa</span>
+                  <a href="#contactos" class="btn btn-sm btn-outline">Contactar</a>
+                </div>
+              </div>
+            `).join('')}
           </div>
-        ` : state.viewMode === 'grid' ? `
-          <div class="posts-grid">
-            ${filtered.map(post => renderPostCard(post, tr)).join('')}
-          </div>
-        ` : `
-          <div class="posts-timeline">
-            ${filtered.map(post => renderTimelinePostCard(post, tr)).join('')}
-          </div>
-        `}
+        </div>
       </div>
     </section>
   `;
 }
 
-function renderPostCard(post, tr) {
-  const catBadge = getCategoryColor(post.primary_category);
-  const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : './default_cover.png';
+/* ==========================================================================
+   PAGES: TRANSPARÊNCIA & PRESTAÇÃO DE CONTAS
+   ========================================================================== */
+
+function renderTransparenciaPage(tr) {
   return `
-    <article class="post-card" onclick="window.navigateTo('#post/${post.id}')" style="cursor:pointer;" tabindex="0" role="link">
-      <div class="post-card-thumb">
-        <img src="${cover}" alt="${post.title}" loading="lazy" onerror="this.src='./default_cover.png'" />
-        ${post.image_count > 0 ? `
-          <div class="post-img-count-badge">
-            <i data-lucide="image" style="width:12px;height:12px;"></i>
-            <span>${post.image_count} fotos</span>
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #1e293b, #0f172a);">
+      <div class="container">
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Rigor Ético & Boa Governação
+        </div>
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Transparência & Prestação de Contas
+        </h1>
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          O compromisso inegociável da ADDESSO com a prestação de contas, auditoria, transparência orçamental e proteção dos beneficiários.
+        </p>
+      </div>
+    </div>
+
+    <section class="section-padding" style="background-color:#ffffff;">
+      <div class="container">
+        <!-- Estatuto Legal -->
+        <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;margin-bottom:4rem;">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+            <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;">
+              <i data-lucide="shield-check" style="width:26px;height:26px;"></i>
+            </div>
+            <div>
+              <h2 style="font-size:1.4rem;color:var(--slate-900);margin:0;">Enquadramento Legal & Estatutos Oficiais</h2>
+              <span style="font-size:0.88rem;color:var(--slate-500);">Entidade Jurídica de Direito Moçambicano</span>
+            </div>
           </div>
-        ` : ''}
-      </div>
-      <div class="post-card-body">
-        <div class="post-meta-row">
-          <span class="badge ${catBadge}">${post.primary_category}</span>
-          <span style="display:flex;align-items:center;gap:0.3rem;">
-            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
-            ${formatDatePT(post.date)}
-          </span>
-        </div>
-        <h3 class="post-card-title">
-          <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="color:inherit;text-decoration:none;">${post.title}</a>
-        </h3>
-        <p class="post-card-excerpt">${post.excerpt || post.content.substring(0, 140) + '...'}</p>
-        <div class="post-card-footer">
-          <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.82rem;color:var(--slate-500);">
-            <i data-lucide="clock" style="width:13px;height:13px;"></i>
-            ${post.read_time_min || 1} ${tr.blog.readTime}
-          </span>
-          <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="display:inline-flex;align-items:center;gap:0.35rem;color:var(--primary-600);font-weight:700;text-decoration:none;">
-            ${tr.blog.readStory}
-            <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-          </a>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-function renderTimelinePostCard(post, tr) {
-  const catBadge = getCategoryColor(post.primary_category);
-  return `
-    <div class="timeline-post-card" onclick="window.navigateTo('#post/${post.id}')" style="cursor:pointer;" tabindex="0" role="link">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
-        <span class="badge ${catBadge}">${post.primary_category}</span>
-        <strong style="color:var(--primary-700);font-size:0.9rem;display:flex;align-items:center;gap:0.35rem;">
-          <i data-lucide="calendar" style="width:14px;height:14px;"></i>
-          ${formatDatePT(post.date)} (#${post.id})
-        </strong>
-      </div>
-      <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem;color:var(--slate-900);">
-        <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="color:inherit;text-decoration:none;">${post.title}</a>
-      </h3>
-      <p style="color:var(--slate-600);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;">${post.excerpt || post.content.substring(0, 180) + '...'}</p>
-      
-      ${post.images && post.images.length > 0 ? `
-        <div style="display:flex;gap:0.5rem;overflow-x:auto;margin-bottom:1rem;">
-          ${post.images.slice(0, 4).map(img => `
-            <img src="${img}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
-          `).join('')}
-          ${post.images.length > 4 ? `
-            <div style="width:80px;height:80px;border-radius:8px;background:var(--slate-800);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;">
-              +${post.images.length - 4}
+          <p style="font-size:1.02rem;color:var(--slate-700);line-height:1.75;margin-bottom:1.5rem;">
+            ${orgInfo.transparency.legalStatus}
+          </p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
+            <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1rem;">
+              <span style="font-size:0.75rem;color:var(--slate-500);text-transform:uppercase;font-weight:700;display:block;">Publicação Oficial</span>
+              <strong style="color:var(--slate-900);font-size:0.95rem;">${orgInfo.transparency.bulletinNumber}</strong>
             </div>
-          ` : ''}
-        </div>
-      ` : ''}
-
-      <div style="display:flex;align-items:center;gap:0.4rem;color:var(--primary-700);font-weight:600;font-size:0.9rem;">
-        <a href="#post/${post.id}" onclick="event.stopPropagation(); window.navigateTo('#post/${post.id}');" style="display:inline-flex;align-items:center;gap:0.35rem;color:var(--primary-600);font-weight:700;text-decoration:none;">
-          <span>${tr.blog.readStory}</span>
-          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-        </a>
-      </div>
-    </div>
-  `;
-}
-
-function renderLightboxContent() {
-  const { images, currentIndex } = state.activeLightbox;
-  if (!images || images.length === 0) return '';
-  const currentImg = images[currentIndex] || images[0];
-
-  return `
-    <div class="lightbox-modal-content" onclick="event.stopPropagation()">
-      <!-- Top Header Bar -->
-      <div class="lightbox-header">
-        <div class="lightbox-counter-badge">
-          <i data-lucide="image" style="width:16px;height:16px;color:var(--accent-400);"></i>
-          <span>Fotografia <strong>${currentIndex + 1}</strong> de <strong>${images.length}</strong></span>
-        </div>
-        <button class="lightbox-close-btn" onclick="window.closeLightbox()" title="Fechar visualização (Esc)">
-          <i data-lucide="x" style="width:24px;height:24px;"></i>
-        </button>
-      </div>
-
-      <!-- Center Main Stage -->
-      <div class="lightbox-main-view">
-        ${images.length > 1 ? `
-          <button class="lightbox-nav-btn prev" onclick="window.prevLightboxImage(); event.stopPropagation();" title="Fotografia Anterior (←)">
-            <i data-lucide="chevron-left" style="width:28px;height:28px;"></i>
-          </button>
-        ` : ''}
-
-        <div class="lightbox-image-container" onclick="event.stopPropagation()">
-          <img src="${currentImg}" alt="Fotografia em alta resolução ${currentIndex + 1}" />
-        </div>
-
-        ${images.length > 1 ? `
-          <button class="lightbox-nav-btn next" onclick="window.nextLightboxImage(); event.stopPropagation();" title="Próxima Fotografia (→)">
-            <i data-lucide="chevron-right" style="width:28px;height:28px;"></i>
-          </button>
-        ` : ''}
-      </div>
-
-      <!-- Bottom Thumbnail Carousel -->
-      ${images.length > 1 ? `
-        <div class="lightbox-thumbs-bar" onclick="event.stopPropagation()">
-          ${images.map((img, idx) => `
-            <div class="lightbox-thumb-item ${currentIndex === idx ? 'active' : ''}" onclick="window.setLightboxIndex(${idx}); event.stopPropagation();" title="Ver foto ${idx + 1}">
-              <img src="${img}" alt="Miniatura ${idx + 1}" onerror="this.src='./default_cover.png'" />
+            <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1rem;">
+              <span style="font-size:0.75rem;color:var(--slate-500);text-transform:uppercase;font-weight:700;display:block;">Número de Identificação Tributária</span>
+              <strong style="color:var(--slate-900);font-size:0.95rem;">NUIT: ${orgInfo.transparency.nuit}</strong>
             </div>
-          `).join('')}
+          </div>
         </div>
-      ` : '<div></div>'}
-    </div>
+
+        <!-- Relatórios Anuais de Actividades -->
+        <div style="margin-bottom:4.5rem;">
+          <div class="section-tag">Relatórios de Actividades</div>
+          <h2 class="section-title">Relatórios Anuais e Auditorias (2022 - 2025)</h2>
+          <p style="color:var(--slate-600);font-size:1.05rem;margin-bottom:2.5rem;">
+            Consulte os relatórios consolidados de actividades e prestação de contas dos últimos anos:
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;">
+            ${orgInfo.transparency.annualReports.map(rep => `
+              <div class="report-download-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                  <span class="badge badge-gold">Ano ${rep.year}</span>
+                  <span style="font-size:0.8rem;color:var(--green-700);font-weight:700;">● ${rep.status}</span>
+                </div>
+                <h3 style="font-size:1.15rem;color:var(--slate-900);margin-bottom:0.75rem;font-weight:700;">${rep.title}</h3>
+                <div style="font-size:0.85rem;color:var(--slate-600);margin-bottom:1.5rem;">
+                  Beneficiários Documentados: <strong>${rep.beneficiaries}</strong>
+                </div>
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="window.showToast('Download do Relatório ${rep.year} iniciado!', 'success')">
+                  <i data-lucide="download" style="width:15px;height:15px;"></i>
+                  <span>Descarregar Relatório (PDF)</span>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Políticas Institucionais e Salvaguardas -->
+        <div>
+          <div class="section-tag">Políticas & Regulamentos</div>
+          <h2 class="section-title">Códigos de Conduta e Salvaguarda</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.75rem;margin-top:2rem;">
+            ${orgInfo.transparency.policies.map(pol => `
+              <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;box-shadow:var(--shadow-sm);">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-50);color:var(--primary-600);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                  <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+                </div>
+                <h4 style="font-size:1.1rem;color:var(--slate-900);margin-bottom:0.5rem;font-weight:700;">${pol.name}</h4>
+                <p style="font-size:0.9rem;color:var(--slate-600);line-height:1.6;">${pol.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </section>
   `;
 }
+
+/* ==========================================================================
+   PAGES: COMO APOIAR / PARTICIPAR
+   ========================================================================== */
 
 function renderParticiparPage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:4.5rem 0 3.5rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #b45309, #0f172a);">
       <div class="container">
-        <div class="section-tag" style="background:rgba(245,158,11,0.2);color:var(--accent-300);border-color:rgba(245,158,11,0.4);">
-          ${tr.donation.tag}
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Solidariedade & Transformação
         </div>
-        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;">
-          ${tr.donation.title}
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Como Apoiar & Fazer Parte
         </h1>
-        <p style="font-size:1.15rem;color:var(--slate-300);max-width:720px;line-height:1.7;">
-          ${tr.donation.subtitle}
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Seja através de contribuições financeiras, doações de materiais, voluntariado comunitário ou parcerias empresariais.
         </p>
       </div>
     </div>
@@ -1621,50 +1607,74 @@ function renderParticiparPage(tr) {
           </div>
         </div>
 
-        <!-- Volunteer Form -->
-        <div style="max-width:800px;margin:0 auto;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:clamp(2rem,4vw,3.5rem);">
+        <!-- Doações em Espécie (Lista de Necessidades) -->
+        <div style="margin-bottom:5rem;">
+          <div style="text-align:center;max-width:650px;margin:0 auto 3rem;">
+            <div class="section-tag">Doações em Espécie</div>
+            <h2 class="section-title">Lista de Necessidades Comunitárias</h2>
+            <p style="color:var(--slate-600);font-size:1.05rem;">Aceitamos doações de materiais para entrega directa às crianças e famílias:</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1.75rem;">
+            ${orgInfo.materialNeeds.map(need => `
+              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.75rem;">
+                <span class="badge badge-emerald" style="margin-bottom:0.75rem;">${need.category}</span>
+                <p style="font-size:0.95rem;color:var(--slate-700);line-height:1.6;font-weight:500;">
+                  ${need.items}
+                </p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Volunteer Form & Corporate Partnerships -->
+        <div style="max-width:850px;margin:0 auto;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:clamp(2rem,4vw,3.5rem);">
           <div style="text-align:center;margin-bottom:2.5rem;">
-            <div class="section-tag">Junte-se à Equipa</div>
-            <h2 class="section-title">Inscrição para Voluntariado</h2>
-            <p style="color:var(--slate-600);">Preencha o formulário para se tornar voluntário comunitário ou universitário na ADDESSO.</p>
+            <div class="section-tag">Junte-se à Nossa Missão</div>
+            <h2 class="section-title">Inscrição para Voluntariado & Parcerias</h2>
+            <p style="color:var(--slate-600);">Preencha o formulário para se tornar voluntário comunitário, universitário ou parceiro corporativo da ADDESSO.</p>
           </div>
 
           <form id="volunteer-form" onsubmit="handleVolunteerSubmit(event)" style="display:flex;flex-direction:column;gap:1.25rem;">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
               <div>
                 <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Nome Completo *</label>
-                <input type="text" required placeholder="Seu nome" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);" />
+                <input type="text" required placeholder="Seu nome" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
               </div>
               <div>
-                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Contacto Telefónico / WhatsApp *</label>
-                <input type="tel" required placeholder="+258 84 000 0000" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);" />
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Telefone / WhatsApp *</label>
+                <input type="tel" required placeholder="+258 84 000 0000" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
               </div>
             </div>
 
-            <div>
-              <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Endereço de E-mail</label>
-              <input type="email" placeholder="seuemail@exemplo.com" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);" />
-            </div>
-
-            <div>
-              <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Área de Interesse de Voluntariado *</label>
-              <select required style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;">
-                <option value="Apoio Pedagógico & Reforço Escolar (CBA Polana Caniço)">Apoio Pedagógico & Reforço Escolar (CBA Polana Caniço)</option>
-                <option value="Oficinas de Liderança Juvenil, Artes e Informática">Oficinas de Liderança Juvenil, Artes e Informática</option>
-                <option value="Projecto Horta no Quintal & Agricultura Urbana">Projecto Horta no Quintal & Agricultura Urbana</option>
-                <option value="Resposta Humanitária, Saúde & Calamidades">Resposta Humanitária, Saúde & Calamidades</option>
-                <option value="Comunicação, Redes Sociais e Fotografia">Comunicação, Redes Sociais e Fotografia</option>
-              </select>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div>
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">E-mail</label>
+                <input type="email" placeholder="seuemail@exemplo.com" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
+              </div>
+              <div>
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Modalidade de Participação *</label>
+                <select required class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);">
+                  <option value="">Seleccione a modalidade...</option>
+                  <option value="voluntario_individual">Voluntariado Comunitário / Universitário</option>
+                  <option value="primeira_infancia">Apoio à Primeira Infância e Creches</option>
+                  <option value="hub_digital">Formador de Informática / Hub Digital</option>
+                  <option value="idosos">Apoio a Idosos & Fisioterapia</option>
+                  <option value="hortas">Hortas Familiares & Agricultura</option>
+                  <option value="parceiro_empresa">Parceria Empresarial / Voluntariado Corporativo</option>
+                  <option value="doador_recorrente">Doador Regular / Patrocinador</option>
+                </select>
+              </div>
             </div>
 
             <div>
               <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Mensagem / Disponibilidade</label>
-              <textarea rows="4" placeholder="Conte-nos um pouco sobre a sua motivação e horários disponíveis..." style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);"></textarea>
+              <textarea rows="3" placeholder="Conte-nos como gostaria de colaborar ou a disponibilidade de horários..." class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg" style="margin-top:0.5rem;">
+            <button type="submit" class="btn btn-accent btn-lg" style="width:100%;justify-content:center;margin-top:0.5rem;">
               <i data-lucide="heart" style="width:18px;height:18px;"></i>
-              Submeter Candidatura de Voluntariado
+              <span>Enviar Candidatura / Contacto</span>
             </button>
           </form>
         </div>
@@ -1673,17 +1683,382 @@ function renderParticiparPage(tr) {
   `;
 }
 
+/* ==========================================================================
+   PAGES: BLOG & NOTÍCIAS (169 POSTS)
+   ========================================================================== */
+
+function renderBlogPage(tr) {
+  let filtered = [...state.posts];
+
+  // Category filter
+  if (state.selectedCategory !== 'all') {
+    filtered = filtered.filter(p => 
+      p.primary_category === state.selectedCategory || 
+      (p.categories && p.categories.includes(state.selectedCategory))
+    );
+  }
+
+  // Year filter
+  if (state.selectedYear !== 'all') {
+    filtered = filtered.filter(p => p.date && p.date.startsWith(state.selectedYear));
+  }
+
+  // Search filter
+  if (state.searchQuery.trim()) {
+    const q = state.searchQuery.toLowerCase();
+    filtered = filtered.filter(p => 
+      p.title.toLowerCase().includes(q) || 
+      (p.content && p.content.toLowerCase().includes(q)) ||
+      (p.primary_category && p.primary_category.toLowerCase().includes(q))
+    );
+  }
+
+  // Sort order
+  if (state.sortOrder === 'asc') {
+    filtered.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  } else {
+    filtered.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  }
+
+  // Extract unique years
+  const years = Array.from(new Set(state.posts.map(p => p.date ? p.date.slice(0, 4) : null).filter(Boolean))).sort().reverse();
+
+  return `
+    <div class="page-hero-banner">
+      <div class="container">
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Diário de Campo • 2017 a 2026
+        </div>
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Arquivo Completo de Acções & Notícias
+        </h1>
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Mais de 169 acções comunitárias documentadas em fotografias e relatos de campo pelo povo moçambicano.
+        </p>
+      </div>
+    </div>
+
+    <section class="section-padding blog-section">
+      <div class="container">
+        <!-- Controls Card -->
+        <div class="blog-controls-card">
+          <div class="blog-search-row">
+            <div class="search-input-box">
+              <i data-lucide="search" class="search-icon"></i>
+              <input 
+                type="text" 
+                id="blog-search" 
+                class="blog-search-input" 
+                placeholder="${tr.blog.searchPlaceholder}" 
+                value="${escapeHtml(state.searchQuery)}" 
+              />
+              ${state.searchQuery ? `
+                <button class="clear-search-btn" onclick="window.resetBlogFilters()" title="Limpar pesquisa">×</button>
+              ` : ''}
+            </div>
+
+            <div class="blog-view-buttons">
+              <button id="sort-desc-btn" class="btn btn-sm ${state.sortOrder === 'desc' ? 'btn-primary' : 'btn-outline'}" title="${tr.blog.orderDesc}">
+                <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                <span class="hide-on-mobile">${tr.blog.orderDesc}</span>
+              </button>
+              <button id="sort-asc-btn" class="btn btn-sm ${state.sortOrder === 'asc' ? 'btn-primary' : 'btn-outline'}" title="${tr.blog.orderAsc}">
+                <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                <span class="hide-on-mobile">${tr.blog.orderAsc}</span>
+              </button>
+              <button id="view-grid-btn" class="btn btn-sm ${state.viewMode === 'grid' ? 'btn-primary' : 'btn-outline'}" title="Ver em Grade">
+                <i data-lucide="layers" style="width:14px;height:14px;"></i>
+              </button>
+              <button id="view-timeline-btn" class="btn btn-sm ${state.viewMode === 'timeline' ? 'btn-primary' : 'btn-outline'}" title="Ver em Linha do Tempo">
+                <i data-lucide="clock" style="width:14px;height:14px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Category Pills -->
+          <div class="category-pills-row">
+            <span class="filter-label">${tr.blog.filterCat}</span>
+            <div class="pills-scroll-wrapper">
+              <button class="pill-btn ${state.selectedCategory === 'all' ? 'active' : ''}" onclick="window.setBlogCategory('all')">
+                ${tr.blog.allCats} (${state.posts.length})
+              </button>
+              ${CATEGORIES.map(cat => {
+                const count = state.posts.filter(p => p.primary_category === cat || (p.categories && p.categories.includes(cat))).length;
+                return `
+                  <button class="pill-btn ${state.selectedCategory === cat ? 'active' : ''}" onclick="window.setBlogCategory('${escapeHtml(cat)}')">
+                    ${cat} (${count})
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Year Filter Pills -->
+          <div class="year-pills-row">
+            <span class="filter-label">${tr.blog.filterYear}</span>
+            <div class="pills-scroll-wrapper">
+              <button class="pill-btn-sm ${state.selectedYear === 'all' ? 'active' : ''}" onclick="window.setBlogYear('all')">
+                ${tr.blog.allYears}
+              </button>
+              ${years.map(yr => {
+                const count = state.posts.filter(p => p.date && p.date.startsWith(yr)).length;
+                return `
+                  <button class="pill-btn-sm ${state.selectedYear === yr ? 'active' : ''}" onclick="window.setBlogYear('${yr}')">
+                    ${yr} (${count})
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Results Status -->
+        <div class="results-status-bar">
+          <div>
+            ${tr.blog.showing} <strong>${filtered.length}</strong> ${tr.blog.of} <strong>${state.posts.length}</strong> ${tr.blog.posts}
+            ${state.selectedCategory !== 'all' ? ` em <em>"${state.selectedCategory}"</em>` : ''}
+            ${state.selectedYear !== 'all' ? ` no ano <em>${state.selectedYear}</em>` : ''}
+          </div>
+          ${(state.selectedCategory !== 'all' || state.selectedYear !== 'all' || state.searchQuery) ? `
+            <button class="btn btn-outline btn-sm" onclick="window.resetBlogFilters()">Limpar Filtros</button>
+          ` : ''}
+        </div>
+
+        <!-- Posts Listing (Grid or Timeline) -->
+        ${filtered.length === 0 ? `
+          <div class="empty-state-card">
+            <i data-lucide="search" style="width:48px;height:48px;color:var(--slate-400);margin-bottom:1rem;"></i>
+            <h3>Nenhuma publicação encontrada</h3>
+            <p>Tente ajustar os termos de pesquisa ou remover os filtros activos.</p>
+            <button class="btn btn-primary" onclick="window.resetBlogFilters()" style="margin-top:1rem;">Ver Todos os Posts</button>
+          </div>
+        ` : state.viewMode === 'grid' ? `
+          <div class="blog-grid">
+            ${filtered.map(post => `
+              <article class="post-card" onclick="window.location.hash = '#post/${post.id}'" style="cursor:pointer;">
+                <div class="post-card-img-wrapper">
+                  <img src="${post.cover_image || './default_cover.png'}" alt="${escapeHtml(post.title)}" loading="lazy" onerror="this.src='./default_cover.png'" />
+                  <span class="post-cat-badge ${getCategoryColor(post.primary_category)}">${post.primary_category}</span>
+                  <span class="post-count-badge">
+                    <i data-lucide="image" style="width:13px;height:13px;"></i>
+                    ${post.image_count || (post.images ? post.images.length : 1)}
+                  </span>
+                </div>
+                <div class="post-card-body">
+                  <div class="post-card-meta">
+                    <span><i data-lucide="calendar" style="width:13px;height:13px;"></i> ${formatDatePT(post.date)}</span>
+                    <span><i data-lucide="clock" style="width:13px;height:13px;"></i> ${post.read_time_min} ${tr.blog.readTime}</span>
+                  </div>
+                  <h3 class="post-card-title">${post.title}</h3>
+                  <p class="post-card-excerpt">${post.excerpt}</p>
+                  <div class="post-card-footer">
+                    <span class="post-read-more">
+                      ${tr.blog.readStory}
+                      <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="timeline-container">
+            ${filtered.map(post => `
+              <div class="timeline-item" onclick="window.location.hash = '#post/${post.id}'" style="cursor:pointer;">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-img-box">
+                    <img src="${post.cover_image || './default_cover.png'}" alt="${escapeHtml(post.title)}" loading="lazy" onerror="this.src='./default_cover.png'" />
+                  </div>
+                  <div class="timeline-content">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.4rem;">
+                      <span class="badge ${getCategoryColor(post.primary_category)}">${post.primary_category}</span>
+                      <span style="font-size:0.8rem;color:var(--slate-500);"><i data-lucide="calendar" style="width:13px;height:13px;display:inline;"></i> ${formatDatePT(post.date)}</span>
+                    </div>
+                    <h3 style="font-size:1.15rem;font-weight:700;color:var(--slate-900);margin-bottom:0.5rem;">${post.title}</h3>
+                    <p style="font-size:0.88rem;color:var(--slate-600);line-height:1.6;margin-bottom:0.75rem;">${post.excerpt}</p>
+                    <span class="post-read-more" style="font-size:0.82rem;">${tr.blog.readStory} →</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </section>
+  `;
+}
+
+/* ==========================================================================
+   PAGES: DEDICATED POST PAGE (WITH FEATURED IMAGE & MASONRY GALLERY)
+   ========================================================================== */
+
+function renderDedicatedPostPage(postId, tr) {
+  const post = state.posts.find(p => p.id === postId);
+  if (!post) {
+    return `
+      <div class="container section-padding" style="text-align:center;">
+        <h2>Publicação não encontrada</h2>
+        <a href="#blog" class="btn btn-primary" style="margin-top:1.5rem;">Voltar ao Blog</a>
+      </div>
+    `;
+  }
+
+  const currentIndex = state.posts.findIndex(p => p.id === postId);
+  const prevPost = currentIndex > 0 ? state.posts[currentIndex - 1] : null;
+  const nextPost = currentIndex < state.posts.length - 1 ? state.posts[currentIndex + 1] : null;
+
+  // Prepare images list
+  const featuredImage = post.cover_image && post.cover_image !== './default_cover.png' ? post.cover_image : null;
+  const galleryImages = (post.images && post.images.length > 0) ? post.images : (featuredImage ? [featuredImage] : []);
+
+  return `
+    <article class="single-post-article">
+      <!-- Breadcrumb & Back button -->
+      <div style="background:var(--slate-900);color:#ffffff;padding:1.5rem 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+            <a href="#blog" class="btn btn-outline-white btn-sm">
+              <i data-lucide="arrow-left" style="width:16px;height:16px;"></i>
+              <span>${tr.blog.backToBlog}</span>
+            </a>
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--slate-300);">
+              <span>Blog</span>
+              <span>/</span>
+              <span class="badge ${getCategoryColor(post.primary_category)}">${post.primary_category}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="max-width:960px;padding-top:3.5rem;padding-bottom:5rem;">
+        <!-- Post Header -->
+        <header class="single-post-header" style="margin-bottom:2.5rem;">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+            <span class="badge ${getCategoryColor(post.primary_category)}" style="font-size:0.85rem;padding:0.4rem 0.9rem;">
+              ${post.primary_category}
+            </span>
+            <span style="color:var(--slate-500);font-size:0.9rem;display:flex;align-items:center;gap:0.4rem;">
+              <i data-lucide="calendar" style="width:15px;height:15px;"></i>
+              ${formatDatePT(post.date)}
+            </span>
+            <span style="color:var(--slate-500);font-size:0.9rem;display:flex;align-items:center;gap:0.4rem;">
+              <i data-lucide="clock" style="width:15px;height:15px;"></i>
+              ${post.read_time_min} ${tr.blog.readTime}
+            </span>
+          </div>
+
+          <h1 style="font-size:clamp(2rem,3.5vw,2.8rem);line-height:1.25;color:var(--slate-900);font-weight:800;margin-bottom:1.5rem;">
+            ${post.title}
+          </h1>
+
+          <!-- Social Share Bar -->
+          <div class="single-post-share-bar">
+            <span style="font-size:0.85rem;font-weight:700;color:var(--slate-600);">${tr.blog.shareText}</span>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="share-icon-btn whatsapp" onclick="window.sharePostWhatsApp('${escapeHtml(post.title)}', ${post.id})" title="Partilhar no WhatsApp">
+                <i data-lucide="phone" style="width:15px;height:15px;"></i>
+                <span>WhatsApp</span>
+              </button>
+              <button class="share-icon-btn facebook" onclick="window.sharePostFacebook(${post.id})" title="Partilhar no Facebook">
+                <i data-lucide="globe" style="width:15px;height:15px;"></i>
+                <span>Facebook</span>
+              </button>
+              <button class="share-icon-btn link" onclick="window.copyPostLink(${post.id})" title="Copiar Link">
+                <i data-lucide="copy" style="width:15px;height:15px;"></i>
+                <span>Copiar Link</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- 1. FEATURED IMAGE (IMAGEM DE DESTAQUE) -->
+        ${featuredImage ? `
+          <div class="post-featured-image-frame" onclick="window.openLightbox(${post.id}, 0)">
+            <img src="${featuredImage}" alt="${escapeHtml(post.title)}" onerror="this.src='./default_cover.png'" />
+            <div class="featured-image-zoom-badge">
+              <i data-lucide="maximize-2" style="width:16px;height:16px;"></i>
+              <span>Ampliar Imagem</span>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- 2. POST BODY TEXT -->
+        <div class="single-post-content" style="font-size:1.12rem;line-height:1.85;color:var(--slate-700);margin-bottom:3.5rem;">
+          ${(post.content || '').split('\n\n').map(par => `<p style="margin-bottom:1.25rem;">${escapeHtml(par)}</p>`).join('')}
+        </div>
+
+        <!-- 3. MASONRY GALLERY (GALERIA DE FOTOGRAFIAS DO ARTIGO) -->
+        ${galleryImages.length > 0 ? `
+          <div class="post-masonry-section" style="margin-top:3.5rem;padding-top:2.5rem;border-top:1px solid var(--slate-200);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+              <div>
+                <span class="badge badge-gold" style="margin-bottom:0.35rem;">Galeria de Campo</span>
+                <h3 style="font-size:1.6rem;color:var(--slate-900);font-weight:800;">
+                  Fotografias Desta Acção (${galleryImages.length})
+                </h3>
+              </div>
+              <span style="font-size:0.85rem;color:var(--slate-500);">Clique para ver em ecrã inteiro</span>
+            </div>
+
+            <div class="masonry-gallery-container">
+              ${galleryImages.map((img, idx) => `
+                <div class="masonry-gallery-item" onclick="window.openLightbox(${post.id}, ${idx})">
+                  <img src="${img}" alt="Registo fotográfico ${idx + 1}" loading="lazy" onerror="this.src='./default_cover.png'" />
+                  <div class="masonry-item-overlay">
+                    <div class="masonry-overlay-badge">
+                      <i data-lucide="maximize-2" style="width:16px;height:16px;"></i>
+                      <span>Ver Foto ${idx + 1}</span>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Post Pagination (Prev / Next) -->
+        <div class="post-nav-pagination" style="margin-top:4rem;padding-top:2rem;border-top:1px solid var(--slate-200);display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;">
+          ${prevPost ? `
+            <a href="#post/${prevPost.id}" class="post-nav-btn prev">
+              <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
+              <div>
+                <span style="font-size:0.75rem;text-transform:uppercase;color:var(--slate-400);display:block;">${tr.blog.prevPost}</span>
+                <strong style="color:var(--slate-800);font-size:0.95rem;">${prevPost.title.slice(0, 45)}...</strong>
+              </div>
+            </a>
+          ` : '<div></div>'}
+
+          ${nextPost ? `
+            <a href="#post/${nextPost.id}" class="post-nav-btn next">
+              <div style="text-align:right;">
+                <span style="font-size:0.75rem;text-transform:uppercase;color:var(--slate-400);display:block;">${tr.blog.nextPost}</span>
+                <strong style="color:var(--slate-800);font-size:0.95rem;">${nextPost.title.slice(0, 45)}...</strong>
+              </div>
+              <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+            </a>
+          ` : '<div></div>'}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/* ==========================================================================
+   PAGES: CONTACTOS
+   ========================================================================== */
+
 function renderContactosPage(tr) {
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:4.5rem 0 3.5rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #0f172a, #1e293b);">
       <div class="container">
-        <div class="section-tag" style="background:rgba(14,165,233,0.2);color:var(--primary-300);border-color:rgba(14,165,233,0.4);">
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
           ${tr.contact.tag}
         </div>
-        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;">
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
           ${tr.contact.title}
         </h1>
-        <p style="font-size:1.15rem;color:var(--slate-300);max-width:720px;line-height:1.7;">
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
           ${tr.contact.subtitle}
         </p>
       </div>
@@ -1691,65 +2066,85 @@ function renderContactosPage(tr) {
 
     <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;">
+        <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:3.5rem;">
+          <!-- Contact Info Cards -->
           <div>
-            <h2 class="section-title" style="margin-bottom:2rem;">Canais Oficiais</h2>
-            
-            <div style="display:flex;flex-direction:column;gap:1.5rem;">
-              <div style="display:flex;align-items:flex-start;gap:1rem;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;">
-                <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="map-pin"></i>
-                </div>
-                <div>
-                  <strong style="display:block;font-size:1.1rem;color:var(--slate-900);margin-bottom:0.25rem;">Sede & Centro de Boas Acções</strong>
-                  <p style="color:var(--slate-600);font-size:0.95rem;margin:0;">${orgInfo.headquarters.address}</p>
+            <h2 style="font-size:1.75rem;color:var(--slate-900);margin-bottom:1.5rem;font-weight:800;">
+              Sede Central & Polos Comunitários
+            </h2>
+
+            <div style="display:flex;flex-direction:column;gap:1.5rem;margin-bottom:2.5rem;">
+              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.5rem;">
+                <span class="badge badge-blue" style="margin-bottom:0.5rem;">Sede Nacional & Polo Central CBA</span>
+                <strong style="display:block;font-size:1.05rem;color:var(--slate-900);margin-bottom:0.25rem;">Polana Caniço "A", Cidade de Maputo</strong>
+                <p style="font-size:0.88rem;color:var(--slate-600);line-height:1.5;">${orgInfo.headquarters.address}</p>
+              </div>
+
+              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.5rem;">
+                <span class="badge badge-gold" style="margin-bottom:0.5rem;">Telefones & WhatsApp Directo</span>
+                <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.95rem;color:var(--slate-800);margin-top:0.25rem;">
+                  ${orgInfo.contacts.phones.map(phone => `
+                    <div><strong>${phone}</strong></div>
+                  `).join('')}
                 </div>
               </div>
 
-              <div style="display:flex;align-items:flex-start;gap:1rem;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;">
-                <div style="width:48px;height:48px;border-radius:50%;background:var(--accent-100);color:var(--accent-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="phone"></i>
-                </div>
-                <div>
-                  <strong style="display:block;font-size:1.1rem;color:var(--slate-900);margin-bottom:0.25rem;">Telefones / WhatsApp Directo</strong>
-                  <p style="color:var(--slate-600);font-size:0.95rem;margin:0;">+258 84 635 7890 / +258 87 652 5150</p>
-                </div>
-              </div>
-
-              <div style="display:flex;align-items:flex-start;gap:1rem;background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;">
-                <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="mail"></i>
-                </div>
-                <div>
-                  <strong style="display:block;font-size:1.1rem;color:var(--slate-900);margin-bottom:0.25rem;">Correio Electrónico</strong>
-                  <p style="color:var(--slate-600);font-size:0.95rem;margin:0;">info@addesso.org.mz / addesso.org@gmail.com</p>
+              <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.5rem;">
+                <span class="badge badge-emerald" style="margin-bottom:0.5rem;">Endereços Electrónicos</span>
+                <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.95rem;color:var(--slate-800);margin-top:0.25rem;">
+                  ${orgInfo.contacts.emails.map(email => `
+                    <div><strong>${email}</strong></div>
+                  `).join('')}
                 </div>
               </div>
             </div>
+
+            <!-- WhatsApp Quick Connect Button -->
+            <a href="https://wa.me/${orgInfo.contacts.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-lg" style="width:100%;justify-content:center;">
+              <i data-lucide="phone" style="width:18px;height:18px;"></i>
+              <span>Falar Directamente via WhatsApp</span>
+            </a>
           </div>
 
-          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:2.5rem;">
-            <h3 style="font-size:1.5rem;color:var(--slate-900);margin-bottom:1.5rem;">Envie-nos uma Mensagem Directa</h3>
-            <form onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:1.25rem;">
+          <!-- Contact Form -->
+          <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-2xl);padding:clamp(2rem,4vw,3rem);">
+            <h3 style="font-size:1.5rem;color:var(--slate-900);margin-bottom:0.5rem;font-weight:800;">
+              Envie-nos uma Mensagem Directa
+            </h3>
+            <p style="color:var(--slate-600);font-size:0.95rem;margin-bottom:2rem;">
+              Responderemos ao seu pedido de informação ou proposta no prazo de 24 a 48 horas úteis.
+            </p>
+
+            <form id="contact-form" onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:1.25rem;">
               <div>
-                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Seu Nome *</label>
-                <input type="text" required placeholder="Nome e Apelido" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Nome Completo *</label>
+                <input type="text" required placeholder="Seu nome" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
               </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div>
+                  <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">E-mail *</label>
+                  <input type="email" required placeholder="seuemail@exemplo.com" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Telefone</label>
+                  <input type="tel" placeholder="+258 84 000 0000" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
+                </div>
+              </div>
+
               <div>
-                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">E-mail ou WhatsApp *</label>
-                <input type="text" required placeholder="Contacto directo" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Assunto *</label>
+                <input type="text" required placeholder="Ex: Parceria institucional, Doação de livros, Visita ao CBA..." class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
               </div>
+
               <div>
-                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Assunto</label>
-                <input type="text" placeholder="Ex: Proposta de Parceria, Visita, Informação" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Mensagem Detalhada *</label>
+                <textarea rows="4" required placeholder="Escreva aqui a sua mensagem..." class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);"></textarea>
               </div>
-              <div>
-                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Mensagem *</label>
-                <textarea required rows="4" placeholder="Escreva a sua mensagem aqui..." style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary btn-lg">
+
+              <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:0.5rem;">
                 <i data-lucide="mail" style="width:18px;height:18px;"></i>
-                ${tr.contact.sendBtn}
+                <span>${tr.contact.sendBtn}</span>
               </button>
             </form>
           </div>
@@ -1759,83 +2154,50 @@ function renderContactosPage(tr) {
   `;
 }
 
+/* ==========================================================================
+   PAGES: ADMIN STUDIO
+   ========================================================================== */
+
 function renderAdminPage(tr) {
-  const totalPosts = state.posts.length;
-  const totalImages = state.posts.reduce((sum, p) => sum + (p.image_count || 0), 0);
-
   return `
-    <div style="background:linear-gradient(135deg, #0c4a6e, #0f172a);color:#ffffff;padding:3.5rem 0 2.5rem;">
+    <div class="page-hero-banner" style="background:linear-gradient(135deg, #0f172a, #334155);">
       <div class="container">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-          <div>
-            <div class="section-tag" style="background:rgba(245,158,11,0.25);color:var(--accent-400);border-color:rgba(245,158,11,0.4);">
-              Área Administrativa & Construtor de Conteúdos
-            </div>
-            <h1 style="font-size:clamp(2rem,3.5vw,2.8rem);color:#ffffff;margin-bottom:0.5rem;">
-              Painel de Gestão do Blog ADDESSO
-            </h1>
-            <p style="color:var(--slate-300);font-size:1rem;">
-              Criar novos posts com Drag & Drop de imagens, reordenar a sequência cronológica e exportar backups.
-            </p>
-          </div>
-
-          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-            <button class="btn btn-outline-white btn-sm" onclick="exportPostsJSON()">
-              <i data-lucide="download" style="width:16px;height:16px;"></i>
-              Exportar Base JSON
-            </button>
-            <button class="btn btn-outline-white btn-sm" onclick="resetToFactoryPosts()">
-              <i data-lucide="refresh-cw" style="width:16px;height:16px;"></i>
-              Restaurar 169 Originais
-            </button>
-            <a href="#blog" class="btn btn-primary btn-sm">
-              <i data-lucide="eye" style="width:16px;height:16px;"></i>
-              Ver Blog ao Vivo
-            </a>
-          </div>
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#ffffff;border-color:rgba(255,255,255,0.3);">
+          Painel de Gestão & Edição de Publicações
         </div>
+        <h1 style="font-size:clamp(2.4rem,4vw,3.5rem);color:#ffffff;margin-bottom:1rem;font-weight:800;">
+          Admin Studio ADDESSO
+        </h1>
+        <p style="font-size:1.15rem;color:var(--slate-200);max-width:720px;line-height:1.7;">
+          Gerencie todas as publicações do arquivo histórico, crie novas acções de campo com upload de fotos e ordene por arrastamento.
+        </p>
       </div>
     </div>
 
-    <section class="section-padding" style="background-color:var(--bg-subtle);">
+    <section class="section-padding" style="background-color:#ffffff;">
       <div class="container">
-        <div class="admin-studio-wrapper">
-          <div class="admin-header-bar">
-            <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;">
-              <div>
-                <span style="font-size:0.75rem;color:var(--slate-400);text-transform:uppercase;">Total de Publicações:</span>
-                <strong style="display:block;font-size:1.4rem;color:var(--primary-300);">${totalPosts}</strong>
-              </div>
-              <div>
-                <span style="font-size:0.75rem;color:var(--slate-400);text-transform:uppercase;">Fotografias Catalogadas:</span>
-                <strong style="display:block;font-size:1.4rem;color:var(--accent-300);">${totalImages}</strong>
-              </div>
-              <div>
-                <span style="font-size:0.75rem;color:var(--slate-400);text-transform:uppercase;">Estado da Memória:</span>
-                <strong style="display:block;font-size:0.95rem;color:var(--green-500);">Sincronizado Localmente</strong>
-              </div>
-            </div>
-            <button class="btn btn-accent btn-sm" onclick="setAdminTab('create')">
-              <i data-lucide="plus" style="width:16px;height:16px;"></i>
-              Novo Artigo / Publicação
+        <!-- Admin Navigation Tabs -->
+        <div class="admin-tabs-bar">
+          <button class="admin-tab-btn ${state.adminTab === 'posts' ? 'active' : ''}" onclick="setAdminTab('posts')">
+            <i data-lucide="layers" style="width:16px;height:16px;"></i>
+            <span>Publicações Catalogadas (${state.posts.length})</span>
+          </button>
+          <button class="admin-tab-btn ${state.adminTab === 'create' ? 'active' : ''}" onclick="setAdminTab('create')">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>
+            <span>${state.adminEditingPost ? 'Editar Publicação #' + state.adminEditingPost.id : 'Criar Nova Publicação'}</span>
+          </button>
+          <div style="margin-left:auto;display:flex;gap:0.5rem;">
+            <button class="btn btn-outline btn-sm" onclick="exportPostsJSON()" title="Descarregar JSON">
+              <i data-lucide="download" style="width:14px;height:14px;"></i> Exportar JSON
             </button>
-          </div>
-
-          <div class="admin-tabs">
-            <button class="admin-tab-btn ${state.adminTab === 'posts' ? 'active' : ''}" onclick="setAdminTab('posts')">
-              <i data-lucide="layers" style="width:16px;height:16px;"></i>
-              Gerir & Reordenar Posts (${totalPosts})
+            <button class="btn btn-outline btn-sm" onclick="resetToFactoryPosts()" title="Restaurar Originais">
+              <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Restaurar Fábrica
             </button>
-            <button class="admin-tab-btn ${state.adminTab === 'create' ? 'active' : ''}" onclick="setAdminTab('create')">
-              <i data-lucide="plus" style="width:16px;height:16px;"></i>
-              ${state.adminEditingPost ? 'Editar Publicação' : 'Criar Nova Publicação (Drag & Drop)'}
-            </button>
-          </div>
-
-          <div style="padding:2rem;">
-            ${state.adminTab === 'posts' ? renderAdminPostsList() : renderAdminPostForm()}
           </div>
         </div>
+
+        <!-- Admin Content -->
+        ${state.adminTab === 'posts' ? renderAdminPostsList() : renderAdminPostForm()}
       </div>
     </section>
   `;
@@ -1843,57 +2205,47 @@ function renderAdminPage(tr) {
 
 function renderAdminPostsList() {
   return `
-    <div>
+    <div style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
         <div>
-          <h3 style="font-size:1.3rem;color:var(--slate-900);margin-bottom:0.25rem;">Reorganização Visual com Drag & Drop</h3>
-          <p style="font-size:0.9rem;color:var(--slate-500);">
-            Arraste os itens para cima ou para baixo para redefinir a sequência dos artigos no blog.
-          </p>
+          <h3 style="font-size:1.3rem;font-weight:700;color:var(--slate-900);">Lista Completa de Publicações</h3>
+          <p style="font-size:0.85rem;color:var(--slate-500);">Arraste pelo ícone para reordenar ou utilize os botões de acção.</p>
         </div>
-        <button class="btn btn-accent btn-sm" onclick="setAdminTab('create')">
-          <i data-lucide="plus" style="width:16px;height:16px;"></i>
-          Criar Nova Publicação
+        <button class="btn btn-primary btn-sm" onclick="setAdminTab('create')">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i> Nova Publicação
         </button>
       </div>
 
-      <div id="sortable-posts-list" style="max-height:650px;overflow-y:auto;padding-right:0.5rem;">
-        ${state.posts.map((post, index) => {
-          const cover = post.cover_image && post.cover_image !== '/logo.svg' ? post.cover_image : './default_cover.png';
-          return `
-            <div class="sortable-post-row" draggable="true" data-index="${index}">
-              <div style="display:flex;align-items:center;gap:1rem;flex-grow:1;overflow:hidden;">
-                <span class="drag-handle"><i data-lucide="grip-vertical"></i></span>
-                <img src="${cover}" alt="thumb" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0;" onerror="this.src='./default_cover.png'" />
-                <div style="overflow:hidden;">
-                  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
-                    <span class="badge badge-blue" style="font-size:0.7rem;">#${post.id}</span>
-                    <span style="font-size:0.8rem;color:var(--slate-500);">${post.date}</span>
-                    <span class="badge badge-gold" style="font-size:0.7rem;">${post.primary_category}</span>
-                  </div>
-                  <strong style="display:block;font-size:0.95rem;color:var(--slate-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                    ${post.title}
-                  </strong>
-                </div>
-              </div>
-
-              <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;margin-left:1rem;">
-                <span style="font-size:0.8rem;color:var(--slate-500);margin-right:0.5rem;">
-                  <i data-lucide="image" style="width:12px;height:12px;display:inline;"></i> ${post.image_count} fotos
-                </span>
-                <button class="btn btn-outline btn-sm" style="padding:0.35rem 0.75rem;" onclick="editPostInAdmin(${post.id})">
-                  Editar
-                </button>
-                <button class="btn btn-outline btn-sm" style="padding:0.35rem 0.75rem;color:var(--slate-500);" onclick="navigateTo('#post/${post.id}')">
-                  <i data-lucide="eye" style="width:14px;height:14px;"></i>
-                </button>
-                <button class="btn btn-sm" style="padding:0.35rem 0.5rem;color:#dc2626;" onclick="deletePostInAdmin(${post.id})" title="Eliminar Post">
-                  <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                </button>
-              </div>
+      <div id="sortable-posts-list" class="sortable-posts-container">
+        ${state.posts.map((post, idx) => `
+          <div class="sortable-post-row" draggable="true" data-index="${idx}">
+            <div class="drag-handle" title="Arrastar para reordenar">
+              <i data-lucide="grip-vertical" style="width:18px;height:18px;color:var(--slate-400);"></i>
             </div>
-          `;
-        }).join('')}
+            <div class="post-row-thumb">
+              <img src="${post.cover_image || './default_cover.png'}" alt="Thumb" onerror="this.src='./default_cover.png'" />
+            </div>
+            <div class="post-row-info">
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                <span class="badge ${getCategoryColor(post.primary_category)}" style="font-size:0.7rem;padding:0.1rem 0.4rem;">${post.primary_category}</span>
+                <span style="font-size:0.75rem;color:var(--slate-400);">${post.date}</span>
+                <span style="font-size:0.75rem;color:var(--slate-400);">• ${post.image_count || 1} fotos</span>
+              </div>
+              <strong style="font-size:0.95rem;color:var(--slate-900);display:block;line-height:1.3;">#${post.id} — ${post.title}</strong>
+            </div>
+            <div class="post-row-actions">
+              <button class="row-action-btn view" onclick="window.location.hash = '#post/${post.id}'" title="Ver no site">
+                <i data-lucide="eye" style="width:15px;height:15px;"></i>
+              </button>
+              <button class="row-action-btn edit" onclick="editPostInAdmin(${post.id})" title="Editar">
+                <i data-lucide="layers" style="width:15px;height:15px;"></i>
+              </button>
+              <button class="row-action-btn delete" onclick="deletePostInAdmin(${post.id})" title="Eliminar">
+                <i data-lucide="trash-2" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+        `).join('')}
       </div>
     </div>
   `;
@@ -1904,99 +2256,79 @@ function renderAdminPostForm() {
   const draft = isEditing ? state.adminEditingPost : state.newPostDraft;
 
   return `
-    <form id="admin-post-form" onsubmit="handleSavePost(event)" style="max-width:850px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
-      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--slate-200);padding-bottom:1rem;">
-        <h3 style="font-size:1.35rem;color:var(--slate-900);">
-          ${isEditing ? `A Editar Publicação #${draft.id}` : 'Criar Nova Publicação para o Blog'}
+    <form id="post-editor-form" onsubmit="handleSavePost(event)" style="background:var(--bg-subtle);border:1px solid var(--slate-200);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-sm);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;border-bottom:1px solid var(--slate-200);padding-bottom:1rem;">
+        <h3 style="font-size:1.4rem;font-weight:800;color:var(--slate-900);">
+          ${isEditing ? `Editar Publicação #${draft.id}` : 'Criar Nova Publicação para o Blog'}
         </h3>
         ${isEditing ? `
-          <button type="button" class="btn btn-outline btn-sm" onclick="cancelEditingPost()">
-            Cancelar Edição
-          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="cancelEditingPost()">Cancelar Edição</button>
         ` : ''}
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
         <div>
-          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Tema / Categoria Principal *</label>
-          <select id="post-category" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;font-size:0.95rem;font-weight:600;">
-            ${ALL_CATEGORIES.map(cat => `
-              <option value="${cat}" ${draft.primary_category === cat || (draft.categories && draft.categories.includes(cat)) ? 'selected' : ''}>${cat}</option>
+          <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Título da Publicação *</label>
+          <input type="text" id="post-title" required value="${escapeHtml(draft.title)}" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" placeholder="Ex: Inauguração do Centro de Boas Acções na Polana Caniço" />
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Data da Acção *</label>
+          <input type="date" id="post-date" required value="${draft.date}" class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);" />
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Categoria Temática *</label>
+          <select id="post-category" required class="form-input" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);">
+            ${CATEGORIES.map(cat => `
+              <option value="${cat}" ${draft.primary_category === cat ? 'selected' : ''}>${cat}</option>
             `).join('')}
           </select>
         </div>
+
         <div>
-          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Data da Actividade *</label>
-          <input type="date" id="post-date" required value="${draft.date || ''}" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
-        </div>
-      </div>
-
-      <div>
-        <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Título da Publicação *</label>
-        <input type="text" id="post-title" required value="${escapeHtml(draft.title || '')}" placeholder="Ex: Inauguração do Novo Reforço Escolar no Centro de Boas Acções" style="width:100%;padding:0.85rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);font-size:1rem;font-weight:600;" />
-      </div>
-
-      <!-- DEDICATED FEATURED IMAGE SECTION -->
-      <div style="background:var(--slate-50);border:1.5px dashed var(--slate-300);border-radius:var(--radius-xl);padding:1.5rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
-          <label style="font-size:0.95rem;font-weight:700;color:var(--slate-800);display:flex;align-items:center;gap:0.45rem;">
-            <i data-lucide="sparkles" style="width:17px;height:17px;color:var(--accent-500);"></i>
+          <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">
             Imagem de Destaque (Featured Image)
           </label>
-          <span style="font-size:0.78rem;color:var(--slate-500);">Aparece no topo do artigo e como capa nos cartões</span>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <input type="file" id="featured-image-input" accept="image/*" style="display:none;" onchange="window.handleFeaturedImageFile(this.files)" />
+            <button type="button" class="btn btn-outline btn-sm" onclick="window.triggerFeaturedImageInput()">
+              <i data-lucide="upload" style="width:14px;height:14px;"></i> Carregar Destaque
+            </button>
+            ${draft.cover_image && draft.cover_image !== './default_cover.png' ? `
+              <button type="button" class="btn btn-outline btn-sm" style="color:var(--red-600);border-color:var(--red-300);" onclick="window.removeFeaturedImage()">
+                <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Remover
+              </button>
+            ` : ''}
+          </div>
         </div>
-        
-        ${draft.cover_image && draft.cover_image !== './default_cover.png' ? `
-          <div style="display:flex;align-items:center;gap:1.25rem;background:#ffffff;padding:1rem;border-radius:var(--radius-lg);border:1px solid var(--slate-200);margin-top:0.75rem;flex-wrap:wrap;">
-            <img src="${draft.cover_image}" alt="Featured Image Preview" style="width:140px;height:90px;object-fit:cover;border-radius:var(--radius-md);box-shadow:0 2px 8px rgba(0,0,0,0.1);" onerror="this.src='./default_cover.png'" />
-            <div style="display:flex;flex-direction:column;gap:0.4rem;">
-              <span style="font-size:0.88rem;font-weight:700;color:var(--slate-800);">Imagem de Destaque Activa</span>
-              <span style="font-size:0.78rem;color:var(--slate-500);">Definida para ser o destaque visual principal desta publicação</span>
-              <div style="display:flex;gap:0.5rem;margin-top:0.35rem;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="window.triggerFeaturedImageInput()">
-                  <i data-lucide="upload" style="width:13px;height:13px;"></i> Substituir
-                </button>
-                <button type="button" class="btn btn-sm" style="color:#dc2626;background:#fee2e2;border:none;padding:0.35rem 0.75rem;" onclick="window.removeFeaturedImage()">
-                  <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Remover Destaque
-                </button>
-              </div>
-            </div>
-          </div>
-        ` : `
-          <div onclick="window.triggerFeaturedImageInput()" style="cursor:pointer;background:#ffffff;border:1.5px dashed var(--primary-300);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:all 0.2s ease;margin-top:0.5rem;">
-            <i data-lucide="image" style="width:34px;height:34px;color:var(--primary-600);margin-bottom:0.5rem;"></i>
-            <strong style="display:block;font-size:0.95rem;color:var(--slate-800);margin-bottom:0.25rem;">Clique para carregar a Imagem de Destaque</strong>
-            <span style="font-size:0.82rem;color:var(--slate-500);">Recomendado: 1200 x 600px (JPG, PNG, WebP)</span>
-          </div>
-        `}
-        <input type="file" id="featured-image-input" accept="image/*" style="display:none;" onchange="window.handleFeaturedImageFile(this.files)" />
       </div>
 
-      <!-- POST TEXT CONTENT -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
-          <label style="font-size:0.9rem;font-weight:700;color:var(--slate-800);">Conteúdo da Publicação / Relato de Campo *</label>
-          <div style="display:flex;gap:0.35rem;">
-            <button type="button" class="btn btn-outline btn-sm" style="padding:0.2rem 0.5rem;font-size:0.75rem;" onclick="insertTextFormat('**', '**')">Negrito</button>
-            <button type="button" class="btn btn-outline btn-sm" style="padding:0.2rem 0.5rem;font-size:0.75rem;" onclick="insertTextFormat('\n- ', '')">Lista</button>
+      <!-- Featured Image Preview Card -->
+      ${draft.cover_image && draft.cover_image !== './default_cover.png' ? `
+        <div style="margin-bottom:1.5rem;background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1rem;display:flex;align-items:center;gap:1rem;">
+          <img src="${draft.cover_image}" alt="Destaque" style="width:90px;height:65px;object-fit:cover;border-radius:var(--radius-md);border:1px solid var(--slate-200);" />
+          <div>
+            <span class="badge badge-gold" style="margin-bottom:0.25rem;">Imagem de Destaque Definida</span>
+            <span style="display:block;font-size:0.8rem;color:var(--slate-500);">Esta fotografia aparecerá no topo do artigo e nas pré-visualizações.</span>
           </div>
         </div>
-        <textarea id="post-content" required rows="7" placeholder="Descreva aqui o acontecimento, participantes, metas e resultados alcançados..." style="width:100%;padding:1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);font-size:0.95rem;line-height:1.6;">${draft.content || ''}</textarea>
+      ` : ''}
+
+      <div style="margin-bottom:1.5rem;">
+        <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--slate-700);margin-bottom:0.4rem;">Texto Completo da Acção *</label>
+        <textarea id="post-content" rows="7" required class="form-input" style="width:100%;padding:0.85rem 1rem;border:1px solid var(--slate-200);border-radius:var(--radius-md);line-height:1.6;" placeholder="Descreva os detalhes da actividade comunitária...">${escapeHtml(draft.content || '')}</textarea>
       </div>
 
-      <!-- MASONRY GALLERY UPLOADER -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
-          <label style="font-size:0.95rem;font-weight:700;color:var(--slate-800);display:flex;align-items:center;gap:0.45rem;">
-            <i data-lucide="image" style="width:17px;height:17px;color:var(--primary-600);"></i>
-            Galeria Fotográfica de Campo (Formato Masonry)
-          </label>
-          <span style="font-size:0.8rem;color:var(--slate-500);">Será exibida abaixo do texto em grelha Masonry</span>
-        </div>
-
-        <div id="image-dropzone" class="dropzone-container" onclick="window.triggerFileInput()">
-          <i data-lucide="upload" class="dropzone-icon"></i>
-          <h4 style="font-size:1.1rem;color:var(--slate-800);margin-bottom:0.35rem;">
+      <!-- Multi-Image Masonry Gallery Upload Area -->
+      <div style="background:#ffffff;border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;">
+        <label style="display:block;font-size:0.95rem;font-weight:700;color:var(--slate-900);margin-bottom:0.5rem;">
+          Galeria de Fotos da Acção (Formato Masonry)
+        </label>
+        <div id="image-dropzone" class="image-dropzone-box" onclick="window.triggerFileInput()">
+          <i data-lucide="upload" style="width:36px;height:36px;color:var(--primary-600);margin-bottom:0.75rem;"></i>
+          <h4 style="font-size:1.05rem;color:var(--slate-800);margin-bottom:0.25rem;">
             Arraste fotografias da galeria para aqui
           </h4>
           <p style="font-size:0.85rem;color:var(--slate-500);margin-bottom:1rem;">
@@ -2319,7 +2651,7 @@ window.handleVolunteerSubmit = (e) => {
     spread: 70,
     origin: { y: 0.6 }
   });
-  showToast('Muito obrigado! A sua candidatura de voluntariado foi enviada com sucesso.', 'success');
+  showToast('Muito obrigado! A sua candidatura foi enviada com sucesso.', 'success');
   e.target.reset();
 };
 
@@ -2374,17 +2706,6 @@ window.setDraftCoverImage = (index) => {
     renderApp();
     showToast('Definida como imagem de destaque!');
   }
-};
-
-window.insertTextFormat = (prefix, suffix) => {
-  const textarea = document.getElementById('post-content');
-  if (!textarea) return;
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const text = textarea.value;
-  const selected = text.substring(start, end);
-  textarea.value = text.substring(0, start) + prefix + selected + suffix + text.substring(end);
-  textarea.focus();
 };
 
 window.handleSavePost = (e) => {
