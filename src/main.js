@@ -276,7 +276,7 @@ function renderApp() {
           </span>
           <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.4rem;">
             ${LANGUAGES.map(l => `
-              <button class="btn btn-sm ${state.lang === l.code ? 'btn-primary' : 'btn-outline'}" style="padding:0.3rem 0.5rem;font-size:0.78rem;justify-content:center;" onclick="changeLanguage('${l.code}')">
+              <button class="btn btn-sm ${state.lang === l.code ? 'btn-primary' : 'btn-outline'}" style="padding:0.3rem 0.5rem;font-size:0.78rem;justify-content:center;" onclick="window.changeLanguage('${l.code}')">
                 ${l.flag} ${l.short}
               </button>
             `).join('')}
@@ -380,7 +380,7 @@ function renderHeader(route, currentLangObj, tr) {
                 Select Language
               </div>
               ${LANGUAGES.map(l => `
-                <div class="lang-option-item ${state.lang === l.code ? 'active' : ''}" onclick="changeLanguage('${l.code}')">
+                <div class="lang-option-item ${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('${l.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
                     <span>${l.flag}</span>
                     <span>${l.label}</span>
@@ -2008,6 +2008,17 @@ function attachAppEvents() {
   }
   if (closeMobileBtn && mobileNav) {
     closeMobileBtn.onclick = () => mobileNav.classList.remove('open');
+  }
+  if (mobileNav) {
+    mobileNav.onclick = (e) => {
+      if (e.target === mobileNav) mobileNav.classList.remove('open');
+    };
+    const navLinks = mobileNav.querySelectorAll('.mobile-link, a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+      });
+    });
   }
 
   // Language Dropdown
