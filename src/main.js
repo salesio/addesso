@@ -385,85 +385,117 @@ function renderFooter(tr) {
     <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
+          <!-- Brand & Mission Column -->
           <div class="footer-brand">
             <div class="footer-brand-logo-row">
               <div class="footer-logo-box">
                 <img src="./logo_cropped.png" alt="ADDESSO Logótipo Oficial" />
               </div>
-              <div>
+              <div class="footer-brand-meta">
                 <span class="footer-title">ADDESSO</span>
-                <span class="footer-subtitle">Moçambique • Fundada em 2009</span>
+                <span class="footer-subtitle">Moçambique • Desde 2009</span>
               </div>
             </div>
             <p class="footer-desc">
               ${orgInfo.mission}
             </p>
             <div class="footer-badges">
-              <span class="badge badge-outline"><i data-lucide="shield-check" style="width:14px;height:14px;"></i> ONG Registada • NUIT: ${orgInfo.transparency.nuit}</span>
-              <span class="badge badge-outline"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> Sede: Polana Caniço "A", Maputo</span>
+              <span class="footer-badge-pill">
+                <i data-lucide="shield-check" style="width:13px;height:13px;color:var(--primary-400);"></i>
+                <span>ONG Registada • NUIT: ${orgInfo.transparency.nuit}</span>
+              </span>
+              <span class="footer-badge-pill">
+                <i data-lucide="map-pin" style="width:13px;height:13px;color:var(--accent-400);"></i>
+                <span>Sede: Polana Caniço "A", Maputo</span>
+              </span>
             </div>
           </div>
 
+          <!-- Quick Navigation Column -->
           <div class="footer-col">
-            <h4 class="footer-heading">Organização</h4>
+            <h4 class="footer-heading">
+              <span class="footer-heading-dot"></span>
+              <span>Organização</span>
+            </h4>
             <ul class="footer-links">
-              <li><a href="#home">${tr.nav.home}</a></li>
-              <li><a href="#sobre">${tr.nav.about}</a></li>
-              <li><a href="#programas">${tr.nav.programs}</a></li>
-              <li><a href="#cba">${tr.nav.cba}</a></li>
-              <li><a href="#delegacoes">${tr.nav.delegations}</a></li>
-              <li><a href="#transparencia">${tr.nav.transparency}</a></li>
+              <li><a href="#home"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.home}</a></li>
+              <li><a href="#sobre"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.about}</a></li>
+              <li><a href="#programas"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.programs}</a></li>
+              <li><a href="#cba"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.cba}</a></li>
+              <li><a href="#delegacoes"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.delegations}</a></li>
+              <li><a href="#transparencia"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.transparency}</a></li>
             </ul>
           </div>
 
+          <!-- Community Actions Column -->
           <div class="footer-col">
-            <h4 class="footer-heading">Acção Comunitária</h4>
+            <h4 class="footer-heading">
+              <span class="footer-heading-dot" style="background:var(--primary-400);"></span>
+              <span>Acção Social</span>
+            </h4>
             <ul class="footer-links">
-              <li><a href="#blog">${tr.nav.blog} (${state.posts.length})</a></li>
-              <li><a href="#participar">Doações M-Pesa / e-Mola / BCI</a></li>
-              <li><a href="#participar">Voluntariado Comunitário</a></li>
-              <li><a href="#participar">Campanha Semeando Sorrisos</a></li>
-              <li><a href="#contactos">${tr.nav.contact}</a></li>
-              <li><a href="#admin">${tr.nav.admin}</a></li>
+              <li><a href="#blog"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.blog} (${state.posts.length})</a></li>
+              <li><a href="#participar"><i data-lucide="chevron-right" class="footer-link-arrow"></i> Doações M-Pesa / e-Mola / BCI</a></li>
+              <li><a href="#participar"><i data-lucide="chevron-right" class="footer-link-arrow"></i> Voluntariado Comunitário</a></li>
+              <li><a href="#participar"><i data-lucide="chevron-right" class="footer-link-arrow"></i> Campanha Semeando Sorrisos</a></li>
+              <li><a href="#contactos"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.contact}</a></li>
+              <li><a href="#admin"><i data-lucide="chevron-right" class="footer-link-arrow"></i> ${tr.nav.admin}</a></li>
             </ul>
           </div>
 
+          <!-- Direct Contacts Column -->
           <div class="footer-col">
-            <h4 class="footer-heading">Contactos Directos</h4>
+            <h4 class="footer-heading">
+              <span class="footer-heading-dot" style="background:var(--green-400);"></span>
+              <span>Contactos Directos</span>
+            </h4>
             <div class="footer-contact-info">
-              <div class="footer-contact-row">
-                <i data-lucide="map-pin"></i>
+              <div class="footer-contact-item">
+                <div class="footer-contact-icon">
+                  <i data-lucide="map-pin" style="width:14px;height:14px;"></i>
+                </div>
                 <span>${orgInfo.headquarters.address}</span>
               </div>
-              <div class="footer-contact-row">
-                <i data-lucide="phone"></i>
-                <span>${orgInfo.contacts.phones[0]}</span>
+              <div class="footer-contact-item">
+                <div class="footer-contact-icon">
+                  <i data-lucide="phone" style="width:14px;height:14px;"></i>
+                </div>
+                <a href="tel:${orgInfo.contacts.phones[0].replace(/[^0-9+]/g, '')}" style="color:var(--slate-300);">${orgInfo.contacts.phones[0]}</a>
               </div>
-              <div class="footer-contact-row">
-                <i data-lucide="mail"></i>
-                <span>${orgInfo.contacts.emails[0]}</span>
+              <div class="footer-contact-item">
+                <div class="footer-contact-icon">
+                  <i data-lucide="mail" style="width:14px;height:14px;"></i>
+                </div>
+                <a href="mailto:${orgInfo.contacts.emails[0]}" style="color:var(--slate-300);">${orgInfo.contacts.emails[0]}</a>
               </div>
             </div>
 
             <div class="footer-social-row">
-              <a href="${orgInfo.contacts.facebook}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook ADDESSO"><i data-lucide="globe"></i></a>
-              <a href="${orgInfo.contacts.instagram}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Instagram ADDESSO"><i data-lucide="sparkles"></i></a>
-              <a href="https://wa.me/${orgInfo.contacts.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="WhatsApp Directo"><i data-lucide="phone"></i></a>
-              <a href="${orgInfo.contacts.linkedin}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn ADDESSO"><i data-lucide="landmark"></i></a>
+              <a href="${orgInfo.contacts.facebook}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook ADDESSO"><i data-lucide="globe" style="width:16px;height:16px;"></i></a>
+              <a href="${orgInfo.contacts.instagram}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Instagram ADDESSO"><i data-lucide="sparkles" style="width:16px;height:16px;"></i></a>
+              <a href="https://wa.me/${orgInfo.contacts.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="WhatsApp Directo"><i data-lucide="phone" style="width:16px;height:16px;"></i></a>
+              <a href="${orgInfo.contacts.linkedin}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn ADDESSO"><i data-lucide="landmark" style="width:16px;height:16px;"></i></a>
             </div>
           </div>
         </div>
 
-        <div class="footer-bottom">
-          <div>
+        <!-- Centered Bottom Bar -->
+        <div class="footer-bottom-centered">
+          <div class="footer-slogan-pill">
+            <i data-lucide="heart" style="width:13px;height:13px;color:var(--accent-400);"></i>
+            <span>"${orgInfo.cbaSlogan || 'Pequenas Acções, Grandes Mudanças'}"</span>
+          </div>
+          <div class="footer-copyright-text">
             &copy; ${new Date().getFullYear()} ADDESSO — Associação para a Defesa e Desenvolvimento da Sociedade. ${tr.footer.rights}
           </div>
           <div class="footer-legal-links">
             <a href="#transparencia">Transparência & Estatutos</a>
-            <span>•</span>
-            <a href="#sobre">Governação</a>
-            <span>•</span>
-            <a href="#contactos">Polana Caniço "A"</a>
+            <span class="footer-legal-dot">•</span>
+            <a href="#sobre">Governação & Órgãos Sociais</a>
+            <span class="footer-legal-dot">•</span>
+            <a href="#cba">Centro de Boas Acções</a>
+            <span class="footer-legal-dot">•</span>
+            <a href="#contactos">Polana Caniço "A", Maputo</a>
           </div>
         </div>
       </div>
