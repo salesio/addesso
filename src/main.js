@@ -792,21 +792,24 @@ function renderHomePage(tr) {
 
           <div class="cba-photo-mosaic">
             <div class="cba-photo-card cba-photo-large">
-              <img src="./archive_images/2024-04-20_01/image_01.jpg" alt="Actividades no Centro de Boas Acções" onerror="this.src='./logo_cropped.png'" />
+              <img src="./images/cba/cba_digital_lab.jpg" alt="Literacia Digital e Informática no Centro de Boas Acções" loading="lazy" />
               <div class="cba-photo-overlay">
-                <span>Reforço Escolar & Leitura</span>
+                <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--accent-400);"></i>
+                <span>Hub Digital & Informática • Polana Caniço "A"</span>
               </div>
             </div>
-            <div class="cba-photo-card">
-              <img src="./archive_images/2024-04-06_01/image_01.jpg" alt="Educação e Juventude CBA" onerror="this.src='./logo_cropped.png'" />
+            <div class="cba-photo-card cba-photo-small">
+              <img src="./images/cba/cba_youth_hub.jpg" alt="Mini-Semana da Juventude e Feira CBA" loading="lazy" />
               <div class="cba-photo-overlay">
-                <span>Oficinas Juvenis</span>
+                <i data-lucide="users" style="width:14px;height:14px;color:var(--primary-300);"></i>
+                <span>Juventude & Liderança</span>
               </div>
             </div>
-            <div class="cba-photo-card">
-              <img src="./archive_images/2024-03-30_01/image_01.jpg" alt="Horta Comunitária CBA" onerror="this.src='./logo_cropped.png'" />
+            <div class="cba-photo-card cba-photo-small">
+              <img src="./images/cba/cba_community_center.jpg" alt="Centro de Boas Acções Polana Caniço" loading="lazy" />
               <div class="cba-photo-overlay">
-                <span>Horta Pedagógica</span>
+                <i data-lucide="heart" style="width:14px;height:14px;color:var(--green-400);"></i>
+                <span>Polo Central de Apoio</span>
               </div>
             </div>
           </div>
@@ -890,42 +893,45 @@ function renderHomePage(tr) {
       </div>
     </section>
 
-    <!-- Últimas Notícias do Blog -->
+    <!-- Diário de Campo & Notícias (Compact Modern Grid) -->
     <section class="section-padding" style="background-color:var(--bg-subtle);">
       <div class="container">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3rem;flex-wrap:wrap;gap:1.5rem;">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.25rem;flex-wrap:wrap;gap:1.25rem;">
           <div>
             <div class="section-tag">${tr.blog.tag}</div>
-            <h2 class="section-title">Últimas Publicações do Diário de Campo</h2>
+            <h2 class="section-title" style="margin-bottom:0.35rem;">Últimas Publicações do Diário de Campo</h2>
+            <p class="section-subtitle" style="margin-bottom:0;">Acompanhe o impacto diário, acções nos bairros e eventos da nossa comunidade.</p>
           </div>
-          <a href="#blog" class="btn btn-outline">
+          <a href="#blog" class="btn btn-outline btn-sm">
             <span>Ver Todas as ${totalPosts} Notícias</span>
-            <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
           </a>
         </div>
 
-        <div class="blog-grid">
-          ${recentPosts.map(post => `
-            <article class="post-card" onclick="window.location.hash = '#post/${post.id}'" style="cursor:pointer;">
-              <div class="post-card-img-wrapper">
+        <div class="home-compact-news-grid">
+          ${recentPosts.slice(0, 3).map(post => `
+            <article class="compact-news-card" onclick="window.location.hash = '#post/${post.id}'">
+              <div class="compact-news-thumb">
                 <img src="${post.cover_image || './default_cover.png'}" alt="${escapeHtml(post.title)}" loading="lazy" onerror="this.src='./default_cover.png'" />
-                <span class="post-cat-badge ${getCategoryColor(post.primary_category)}">${post.primary_category}</span>
-                <span class="post-count-badge">
-                  <i data-lucide="image" style="width:13px;height:13px;"></i>
-                  ${post.image_count || 1}
+                <span class="compact-news-cat">${post.primary_category || 'Comunidade'}</span>
+                <span class="compact-news-photos" title="${post.image_count || 1} fotos">
+                  <i data-lucide="image" style="width:12px;height:12px;"></i>
+                  <span>${post.image_count || 1}</span>
                 </span>
               </div>
-              <div class="post-card-body">
-                <div class="post-card-meta">
-                  <span><i data-lucide="calendar" style="width:13px;height:13px;"></i> ${formatDatePT(post.date)}</span>
-                  <span><i data-lucide="clock" style="width:13px;height:13px;"></i> ${post.read_time_min} ${tr.blog.readTime}</span>
+              <div class="compact-news-body">
+                <div class="compact-news-date">
+                  <i data-lucide="calendar" style="width:12px;height:12px;color:var(--primary-600);"></i>
+                  <span>${formatDatePT(post.date)}</span>
+                  <span>•</span>
+                  <span>${post.read_time_min || 1} min</span>
                 </div>
-                <h3 class="post-card-title">${post.title}</h3>
-                <p class="post-card-excerpt">${post.excerpt}</p>
-                <div class="post-card-footer">
-                  <span class="post-read-more">
-                    ${tr.blog.readStory}
-                    <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+                <h3 class="compact-news-title">${post.title}</h3>
+                <p class="compact-news-excerpt">${post.excerpt || post.content.substring(0, 110) + '...'}</p>
+                <div class="compact-news-footer">
+                  <span class="compact-read-btn">
+                    <span>Ler Publicação</span>
+                    <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                   </span>
                 </div>
               </div>
@@ -1280,8 +1286,8 @@ function renderCbaPage(tr) {
             </div>
           </div>
 
-          <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);border:1px solid var(--slate-200);">
-            <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Inauguração Centro de Boas Acções" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./logo_cropped.png'" />
+          <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);border:1px solid var(--slate-200);aspect-ratio:4/3;background:var(--slate-900);">
+            <img src="./images/cba/cba_community_center.jpg" alt="Centro de Boas Acções Polana Caniço" style="width:100%;height:100%;object-fit:cover;" />
           </div>
         </div>
 
