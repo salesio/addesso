@@ -2026,15 +2026,159 @@ img {
   padding: 3rem;
 }
 
-.mpesa-highlight-box {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1.5px dashed var(--accent-500);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
+/* ==========================================================================
+   PAYMENT & DONATION CHANNEL CARDS
+   ========================================================================== */
+
+.payment-channel-card {
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.4rem;
+  margin-top: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1.5rem;
+  gap: 1rem;
+  transition: all var(--transition-fast);
+  border: 1.5px solid transparent;
+}
+
+@media (max-width: 640px) {
+  .payment-channel-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1.15rem;
+  }
+}
+
+.payment-channel-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.payment-logo-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 5px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--slate-200);
+  overflow: hidden;
+}
+
+.payment-logo-badge img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.payment-channel-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-channel-tag {
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+}
+
+.payment-channel-number {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--slate-950);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.payment-channel-name {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  margin-top: 0.15rem;
+}
+
+/* M-Pesa Card */
+.mpesa-card {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.mpesa-card:hover {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: var(--accent-500);
+}
+.mpesa-tag { color: var(--accent-700); }
+
+/* e-Mola Card */
+.emola-card {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.45);
+}
+.emola-card:hover {
+  background: rgba(249, 115, 22, 0.14);
+  border-color: #ea580c;
+}
+.emola-tag { color: #c2410c; }
+
+/* BCI Card */
+.bci-card {
+  background: #ffffff;
+  border-color: var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.bci-card:hover {
+  border-color: var(--primary-400);
+  box-shadow: var(--shadow-md);
+}
+
+.bci-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  font-size: 0.86rem;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 540px) {
+  .bci-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bci-detail-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.bci-label {
+  color: var(--slate-500);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.bci-val {
+  color: var(--slate-800);
+  word-break: break-all;
+}
+
+.bci-copy-btn {
+  width: 100%;
 }
 
 /* ==========================================================================

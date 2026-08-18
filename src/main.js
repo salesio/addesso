@@ -1544,41 +1544,76 @@ function renderParticiparPage(tr) {
             <div class="donation-right-pane">
               <h3 style="font-size:1.5rem;color:var(--slate-900);margin-bottom:1.5rem;">${tr.donation.channelsTitle}</h3>
 
-              <!-- M-Pesa -->
-              <div class="mpesa-highlight-box">
-                <div>
-                  <span style="font-weight:700;font-size:0.8rem;text-transform:uppercase;color:var(--accent-700);display:block;">Vodacom M-Pesa (Moçambique)</span>
-                  <strong style="font-size:1.35rem;color:var(--slate-900);">${orgInfo.donationInfo.mpesa}</strong>
-                  <span style="display:block;font-size:0.8rem;color:var(--slate-500);">${orgInfo.donationInfo.mpesaName}</span>
+              <!-- Vodacom M-Pesa -->
+              <div class="payment-channel-card mpesa-card">
+                <div class="payment-channel-left">
+                  <div class="payment-logo-badge">
+                    <img src="./images/payments/mpesa_logo.png" alt="Vodacom M-Pesa" onerror="this.src='./logo_cropped.png'" />
+                  </div>
+                  <div class="payment-channel-info">
+                    <span class="payment-channel-tag mpesa-tag">Vodacom M-Pesa (Moçambique)</span>
+                    <strong class="payment-channel-number">${orgInfo.donationInfo.mpesa}</strong>
+                    <span class="payment-channel-name">${orgInfo.donationInfo.mpesaName}</span>
+                  </div>
                 </div>
-                <button class="btn btn-accent btn-sm" onclick="copyToClipboard('${orgInfo.donationInfo.mpesa}', 'Número M-Pesa copiado com sucesso!')">
+                <button class="btn btn-accent btn-sm" onclick="window.copyToClipboard('${orgInfo.donationInfo.mpesa}', 'Número M-Pesa copiado com sucesso!')">
                   <i data-lucide="copy" style="width:14px;height:14px;"></i> Copiar
                 </button>
               </div>
 
-              <!-- e-Mola -->
-              <div class="mpesa-highlight-box" style="border-color:var(--primary-500);background:rgba(14,165,233,0.08);margin-top:1rem;">
-                <div>
-                  <span style="font-weight:700;font-size:0.8rem;text-transform:uppercase;color:var(--primary-700);display:block;">Movitel e-Mola</span>
-                  <strong style="font-size:1.35rem;color:var(--slate-900);">${orgInfo.donationInfo.emola}</strong>
-                  <span style="display:block;font-size:0.8rem;color:var(--slate-500);">${orgInfo.donationInfo.mpesaName}</span>
+              <!-- Movitel e-Mola -->
+              <div class="payment-channel-card emola-card">
+                <div class="payment-channel-left">
+                  <div class="payment-logo-badge">
+                    <img src="./images/payments/emola_logo.png" alt="Movitel e-Mola" onerror="this.src='./logo_cropped.png'" />
+                  </div>
+                  <div class="payment-channel-info">
+                    <span class="payment-channel-tag emola-tag">Movitel e-Mola</span>
+                    <strong class="payment-channel-number">${orgInfo.donationInfo.emola}</strong>
+                    <span class="payment-channel-name">${orgInfo.donationInfo.mpesaName}</span>
+                  </div>
                 </div>
-                <button class="btn btn-outline btn-sm" onclick="copyToClipboard('${orgInfo.donationInfo.emola}', 'Número e-Mola copiado com sucesso!')">
+                <button class="btn btn-outline btn-sm" onclick="window.copyToClipboard('${orgInfo.donationInfo.emola}', 'Número e-Mola copiado com sucesso!')">
                   <i data-lucide="copy" style="width:14px;height:14px;"></i> Copiar
                 </button>
               </div>
 
-              <!-- Bank Transfer -->
-              <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem;">
-                <h4 style="font-size:1.05rem;color:var(--slate-900);margin-bottom:0.75rem;">Transferência Bancária (BCI)</h4>
-                <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.88rem;color:var(--slate-700);">
-                  <div><strong>Banco:</strong> ${orgInfo.donationInfo.bank}</div>
-                  <div><strong>Conta:</strong> ${orgInfo.donationInfo.accountNumber}</div>
-                  <div><strong>NIB:</strong> ${orgInfo.donationInfo.nib}</div>
-                  <div><strong>IBAN:</strong> ${orgInfo.donationInfo.iban}</div>
-                  <div><strong>SWIFT:</strong> ${orgInfo.donationInfo.swift}</div>
+              <!-- Transferência Bancária (BCI) -->
+              <div class="payment-channel-card bci-card">
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                  <div class="payment-logo-badge">
+                    <img src="./images/payments/bci_logo.png" alt="Banco BCI" onerror="this.src='./logo_cropped.png'" />
+                  </div>
+                  <div>
+                    <h4 style="font-size:1.1rem;font-weight:800;color:var(--slate-900);margin:0;">Transferência Bancária (BCI)</h4>
+                    <span style="font-size:0.8rem;color:var(--slate-500);">${orgInfo.donationInfo.bank}</span>
+                  </div>
                 </div>
-                <button class="btn btn-outline btn-sm" style="margin-top:1rem;width:100%;" onclick="copyToClipboard('${orgInfo.donationInfo.iban}', 'IBAN do BCI copiado!')">
+
+                <div class="bci-details-grid">
+                  <div class="bci-detail-item">
+                    <span class="bci-label">Titular:</span>
+                    <strong class="bci-val">${orgInfo.donationInfo.mpesaName}</strong>
+                  </div>
+                  <div class="bci-detail-item">
+                    <span class="bci-label">Conta:</span>
+                    <strong class="bci-val">${orgInfo.donationInfo.accountNumber}</strong>
+                  </div>
+                  <div class="bci-detail-item">
+                    <span class="bci-label">NIB:</span>
+                    <strong class="bci-val">${orgInfo.donationInfo.nib}</strong>
+                  </div>
+                  <div class="bci-detail-item">
+                    <span class="bci-label">IBAN:</span>
+                    <strong class="bci-val">${orgInfo.donationInfo.iban}</strong>
+                  </div>
+                  <div class="bci-detail-item">
+                    <span class="bci-label">SWIFT:</span>
+                    <strong class="bci-val">${orgInfo.donationInfo.swift}</strong>
+                  </div>
+                </div>
+
+                <button class="btn btn-outline btn-sm bci-copy-btn" onclick="window.copyToClipboard('${orgInfo.donationInfo.iban}', 'IBAN do BCI copiado!')">
                   <i data-lucide="copy" style="width:14px;height:14px;"></i> Copiar Dados Bancários
                 </button>
               </div>
