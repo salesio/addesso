@@ -38,7 +38,8 @@ import {
   ListFilter,
   Eye,
   Globe,
-  ChevronLeft
+  ChevronLeft,
+  Maximize2
 } from 'lucide';
 
 /* ==========================================================================
@@ -326,7 +327,7 @@ function renderApp() {
       X, Menu, Check, ChevronRight, Sparkles, Upload, Trash2, GripVertical, 
       Plus, Download, RefreshCw, BookOpen, Users, Sprout, HeartHandshake, 
       Landmark, MapPin, Phone, Mail, ExternalLink, Copy, Layers, ListFilter, Eye,
-      Globe, ChevronLeft
+      Globe, ChevronLeft, Maximize2
     }
   });
 }
@@ -525,6 +526,10 @@ function renderDedicatedPostPage(id, tr) {
   // Update dynamic page title for browser tab
   document.title = `${post.title} | ADDESSO Moçambique`;
 
+  const featuredImg = (post.cover_image && post.cover_image !== './default_cover.png') 
+    ? post.cover_image 
+    : (post.images && post.images.length > 0 ? post.images[0] : null);
+
   return `
     <!-- Reading Progress Bar -->
     <div id="reading-progress" class="reading-progress-bar"></div>
@@ -561,7 +566,7 @@ function renderDedicatedPostPage(id, tr) {
             </span>
             <span style="display:flex;align-items:center;gap:0.4rem;">
               <i data-lucide="image" style="width:16px;height:16px;color:var(--accent-400);"></i>
-              <span>${post.image_count || 0} fotos</span>
+              <span>${post.image_count || (post.images ? post.images.length : 0)} fotos</span>
             </span>
             <span style="display:flex;align-items:center;gap:0.4rem;">
               <span class="badge badge-blue" style="font-size:0.75rem;">Registo #${post.id}</span>
@@ -574,31 +579,60 @@ function renderDedicatedPostPage(id, tr) {
       <div class="container">
         <div class="post-content-container">
           <!-- Back Link -->
-          <div style="margin-bottom:2.5rem;">
+          <div style="margin-bottom:1.75rem;">
             <a href="#blog" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:0.4rem;">
               <i data-lucide="arrow-left" style="width:15px;height:15px;"></i>
               <span>${tr.blog.backToBlog}</span>
             </a>
           </div>
 
-          <!-- Post Main Text -->
+          <!-- Featured Image (Imagem de Destaque) -->
+          ${featuredImg ? `
+            <div class="post-featured-image-wrapper" onclick="window.openLightbox(${post.id}, 0)" title="Clique para ver em ecrã completo">
+              <img src="${featuredImg}" alt="${post.title}" loading="eager" onerror="this.parentElement.style.display='none'" />
+              <div class="featured-image-badge">
+                <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--accent-400);"></i>
+                <span>Imagem de Destaque</span>
+              </div>
+              <div class="featured-image-expand-hint">
+                <i data-lucide="maximize-2" style="width:15px;height:15px;"></i>
+                <span>Ver em ecrã completo</span>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Post Main Text (Conteúdo do Artigo) -->
           <div class="post-main-text">${post.content}</div>
 
-          <!-- High-Res Photo Gallery with Lightbox -->
+          <!-- Masonry Photo Gallery -->
           ${post.images && post.images.length > 0 ? `
-            <div style="margin-top:3.5rem;border-top:1px solid var(--slate-200);padding-top:2.5rem;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.5rem;">
-                <h3 style="font-size:1.4rem;font-weight:800;color:var(--slate-900);display:flex;align-items:center;gap:0.6rem;">
-                  <i data-lucide="image" style="width:22px;height:22px;color:var(--primary-600);"></i>
-                  Galeria Fotográfica de Campo (${post.images.length} fotos)
-                </h3>
-                <span style="font-size:0.85rem;color:var(--slate-500);">Clique numa foto para ampliar</span>
+            <div class="masonry-gallery-wrapper">
+              <div class="masonry-gallery-header">
+                <div>
+                  <h3 class="masonry-gallery-title">
+                    <i data-lucide="image" style="width:24px;height:24px;color:var(--primary-600);"></i>
+                    Galeria Fotográfica de Campo (${post.images.length} fotos)
+                  </h3>
+                  <p style="color:var(--slate-500);font-size:0.9rem;margin-top:0.35rem;">
+                    Registos documentados das actividades e impacto da ADDESSO na comunidade
+                  </p>
+                </div>
+                <span class="gallery-hint-pill">
+                  <i data-lucide="maximize-2" style="width:14px;height:14px;"></i> Clique em qualquer foto para ampliar
+                </span>
               </div>
 
-              <div class="modal-gallery-grid">
+              <div class="masonry-gallery-grid">
                 ${post.images.map((img, idx) => `
-                  <div class="gallery-thumb-item" onclick="openLightbox(${post.id}, ${idx})">
-                    <img src="${img}" alt="Fotografia de Campo ${idx + 1}" loading="lazy" onerror="this.src='./logo_cropped.png'" />
+                  <div class="masonry-gallery-item" onclick="window.openLightbox(${post.id}, ${idx})" title="Foto ${idx + 1} de ${post.images.length}">
+                    <img src="${img}" alt="Registo de Campo ${idx + 1}" loading="lazy" onerror="this.src='./default_cover.png'" />
+                    <div class="masonry-item-overlay">
+                      <span class="masonry-photo-number">#${idx + 1}</span>
+                      <span class="masonry-zoom-btn">
+                        <i data-lucide="maximize-2" style="width:15px;height:15px;"></i>
+                        Ampliar
+                      </span>
+                    </div>
                   </div>
                 `).join('')}
               </div>
@@ -614,19 +648,19 @@ function renderDedicatedPostPage(id, tr) {
               Ajude a amplificar a voz das comunidades apoiadas pela ADDESSO em Moçambique.
             </p>
             <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-              <button class="btn btn-accent btn-sm" onclick="sharePostWhatsApp('${post.title}', ${post.id})">
+              <button class="btn btn-accent btn-sm" onclick="window.sharePostWhatsApp('${escapeHtml(post.title)}', ${post.id})">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 Partilhar no WhatsApp
               </button>
-              <button class="btn btn-outline btn-sm" onclick="sharePostFacebook(${post.id})">
+              <button class="btn btn-outline btn-sm" onclick="window.sharePostFacebook(${post.id})">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 Facebook
               </button>
-              <button class="btn btn-outline btn-sm" onclick="sharePostTwitter('${post.title}', ${post.id})">
+              <button class="btn btn-outline btn-sm" onclick="window.sharePostTwitter('${escapeHtml(post.title)}', ${post.id})">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 X / Twitter
               </button>
-              <button class="btn btn-outline btn-sm" onclick="copyPostLink(${post.id})">
+              <button class="btn btn-outline btn-sm" onclick="window.copyPostLink(${post.id})">
                 <i data-lucide="copy" style="width:15px;height:15px;"></i> Copiar Link
               </button>
             </div>
@@ -635,7 +669,7 @@ function renderDedicatedPostPage(id, tr) {
           <!-- Adjacent Next / Previous Post Navigation -->
           <div class="post-adjacent-nav">
             ${prevPost ? `
-              <div class="adjacent-post-card" onclick="navigateTo('#post/${prevPost.id}')">
+              <div class="adjacent-post-card" onclick="window.navigateTo('#post/${prevPost.id}')">
                 <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--slate-400);margin-bottom:0.25rem;display:flex;align-items:center;gap:0.35rem;">
                   <i data-lucide="arrow-left" style="width:13px;height:13px;"></i> ${tr.blog.prevPost}
                 </span>
@@ -646,7 +680,7 @@ function renderDedicatedPostPage(id, tr) {
             ` : '<div></div>'}
 
             ${nextPost ? `
-              <div class="adjacent-post-card" style="text-align:right;" onclick="navigateTo('#post/${nextPost.id}')">
+              <div class="adjacent-post-card" style="text-align:right;" onclick="window.navigateTo('#post/${nextPost.id}')">
                 <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--slate-400);margin-bottom:0.25rem;display:inline-flex;align-items:center;gap:0.35rem;justify-content:flex-end;">
                   ${tr.blog.nextPost} <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
                 </span>
@@ -1410,22 +1444,51 @@ function renderTimelinePostCard(post, tr) {
 
 function renderLightboxContent() {
   const { images, currentIndex } = state.activeLightbox;
-  const currentImg = images[currentIndex];
+  if (!images || images.length === 0) return '';
+  const currentImg = images[currentIndex] || images[0];
+
   return `
-    <div class="lightbox-controls">
-      <span style="font-size:0.95rem;font-weight:600;background:rgba(255,255,255,0.2);padding:0.4rem 0.8rem;border-radius:20px;">
-        ${currentIndex + 1} / ${images.length}
-      </span>
-      <button id="close-lightbox" style="color:#ffffff;padding:0.5rem;"><i data-lucide="x" style="width:28px;height:28px;"></i></button>
-    </div>
+    <div class="lightbox-modal-content" onclick="event.stopPropagation()">
+      <!-- Top Header Bar -->
+      <div class="lightbox-header">
+        <div class="lightbox-counter-badge">
+          <i data-lucide="image" style="width:16px;height:16px;color:var(--accent-400);"></i>
+          <span>Fotografia <strong>${currentIndex + 1}</strong> de <strong>${images.length}</strong></span>
+        </div>
+        <button class="lightbox-close-btn" onclick="window.closeLightbox()" title="Fechar visualização (Esc)">
+          <i data-lucide="x" style="width:24px;height:24px;"></i>
+        </button>
+      </div>
 
-    ${images.length > 1 ? `
-      <button class="lightbox-arrow left" onclick="prevLightboxImage()"><i data-lucide="arrow-left" style="width:24px;height:24px;"></i></button>
-      <button class="lightbox-arrow right" onclick="nextLightboxImage()"><i data-lucide="arrow-right" style="width:24px;height:24px;"></i></button>
-    ` : ''}
+      <!-- Center Main Stage -->
+      <div class="lightbox-main-view">
+        ${images.length > 1 ? `
+          <button class="lightbox-nav-btn prev" onclick="window.prevLightboxImage(); event.stopPropagation();" title="Fotografia Anterior (←)">
+            <i data-lucide="chevron-left" style="width:28px;height:28px;"></i>
+          </button>
+        ` : ''}
 
-    <div class="lightbox-image-container">
-      <img src="${currentImg}" alt="Visualização em alta resolução" />
+        <div class="lightbox-image-container" onclick="event.stopPropagation()">
+          <img src="${currentImg}" alt="Fotografia em alta resolução ${currentIndex + 1}" />
+        </div>
+
+        ${images.length > 1 ? `
+          <button class="lightbox-nav-btn next" onclick="window.nextLightboxImage(); event.stopPropagation();" title="Próxima Fotografia (→)">
+            <i data-lucide="chevron-right" style="width:28px;height:28px;"></i>
+          </button>
+        ` : ''}
+      </div>
+
+      <!-- Bottom Thumbnail Carousel -->
+      ${images.length > 1 ? `
+        <div class="lightbox-thumbs-bar" onclick="event.stopPropagation()">
+          ${images.map((img, idx) => `
+            <div class="lightbox-thumb-item ${currentIndex === idx ? 'active' : ''}" onclick="window.setLightboxIndex(${idx}); event.stopPropagation();" title="Ver foto ${idx + 1}">
+              <img src="${img}" alt="Miniatura ${idx + 1}" onerror="this.src='./default_cover.png'" />
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div></div>'}
     </div>
   `;
 }
@@ -1810,26 +1873,63 @@ function renderAdminPostForm() {
         ` : ''}
       </div>
 
-      <div>
-        <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Título da Publicação *</label>
-        <input type="text" id="post-title" required value="${escapeHtml(draft.title || '')}" placeholder="Ex: Inauguração do Novo Reforço Escolar no Centro de Boas Acções" style="width:100%;padding:0.85rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);font-size:1rem;font-weight:600;" />
-      </div>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
         <div>
-          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Data da Actividade *</label>
-          <input type="date" id="post-date" required value="${draft.date || ''}" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
-        </div>
-        <div>
-          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Categoria Principal *</label>
-          <select id="post-category" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;">
+          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Tema / Categoria Principal *</label>
+          <select id="post-category" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;font-size:0.95rem;font-weight:600;">
             ${ALL_CATEGORIES.map(cat => `
               <option value="${cat}" ${draft.primary_category === cat || (draft.categories && draft.categories.includes(cat)) ? 'selected' : ''}>${cat}</option>
             `).join('')}
           </select>
         </div>
+        <div>
+          <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Data da Actividade *</label>
+          <input type="date" id="post-date" required value="${draft.date || ''}" style="width:100%;padding:0.8rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);background:#ffffff;" />
+        </div>
       </div>
 
+      <div>
+        <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">Título da Publicação *</label>
+        <input type="text" id="post-title" required value="${escapeHtml(draft.title || '')}" placeholder="Ex: Inauguração do Novo Reforço Escolar no Centro de Boas Acções" style="width:100%;padding:0.85rem 1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);font-size:1rem;font-weight:600;" />
+      </div>
+
+      <!-- DEDICATED FEATURED IMAGE SECTION -->
+      <div style="background:var(--slate-50);border:1.5px dashed var(--slate-300);border-radius:var(--radius-xl);padding:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+          <label style="font-size:0.95rem;font-weight:700;color:var(--slate-800);display:flex;align-items:center;gap:0.45rem;">
+            <i data-lucide="sparkles" style="width:17px;height:17px;color:var(--accent-500);"></i>
+            Imagem de Destaque (Featured Image)
+          </label>
+          <span style="font-size:0.78rem;color:var(--slate-500);">Aparece no topo do artigo e como capa nos cartões</span>
+        </div>
+        
+        ${draft.cover_image && draft.cover_image !== './default_cover.png' ? `
+          <div style="display:flex;align-items:center;gap:1.25rem;background:#ffffff;padding:1rem;border-radius:var(--radius-lg);border:1px solid var(--slate-200);margin-top:0.75rem;flex-wrap:wrap;">
+            <img src="${draft.cover_image}" alt="Featured Image Preview" style="width:140px;height:90px;object-fit:cover;border-radius:var(--radius-md);box-shadow:0 2px 8px rgba(0,0,0,0.1);" onerror="this.src='./default_cover.png'" />
+            <div style="display:flex;flex-direction:column;gap:0.4rem;">
+              <span style="font-size:0.88rem;font-weight:700;color:var(--slate-800);">Imagem de Destaque Activa</span>
+              <span style="font-size:0.78rem;color:var(--slate-500);">Definida para ser o destaque visual principal desta publicação</span>
+              <div style="display:flex;gap:0.5rem;margin-top:0.35rem;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="window.triggerFeaturedImageInput()">
+                  <i data-lucide="upload" style="width:13px;height:13px;"></i> Substituir
+                </button>
+                <button type="button" class="btn btn-sm" style="color:#dc2626;background:#fee2e2;border:none;padding:0.35rem 0.75rem;" onclick="window.removeFeaturedImage()">
+                  <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Remover Destaque
+                </button>
+              </div>
+            </div>
+          </div>
+        ` : `
+          <div onclick="window.triggerFeaturedImageInput()" style="cursor:pointer;background:#ffffff;border:1.5px dashed var(--primary-300);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:all 0.2s ease;margin-top:0.5rem;">
+            <i data-lucide="image" style="width:34px;height:34px;color:var(--primary-600);margin-bottom:0.5rem;"></i>
+            <strong style="display:block;font-size:0.95rem;color:var(--slate-800);margin-bottom:0.25rem;">Clique para carregar a Imagem de Destaque</strong>
+            <span style="font-size:0.82rem;color:var(--slate-500);">Recomendado: 1200 x 600px (JPG, PNG, WebP)</span>
+          </div>
+        `}
+        <input type="file" id="featured-image-input" accept="image/*" style="display:none;" onchange="window.handleFeaturedImageFile(this.files)" />
+      </div>
+
+      <!-- POST TEXT CONTENT -->
       <div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
           <label style="font-size:0.9rem;font-weight:700;color:var(--slate-800);">Conteúdo da Publicação / Relato de Campo *</label>
@@ -1841,20 +1941,26 @@ function renderAdminPostForm() {
         <textarea id="post-content" required rows="7" placeholder="Descreva aqui o acontecimento, participantes, metas e resultados alcançados..." style="width:100%;padding:1rem;border:1.5px solid var(--slate-300);border-radius:var(--radius-md);font-size:0.95rem;line-height:1.6;">${draft.content || ''}</textarea>
       </div>
 
+      <!-- MASONRY GALLERY UPLOADER -->
       <div>
-        <label style="display:block;font-size:0.9rem;font-weight:700;color:var(--slate-800);margin-bottom:0.4rem;">
-          Fotografias de Campo (Uploader Drag & Drop)
-        </label>
-        <div id="image-dropzone" class="dropzone-container" onclick="triggerFileInput()">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+          <label style="font-size:0.95rem;font-weight:700;color:var(--slate-800);display:flex;align-items:center;gap:0.45rem;">
+            <i data-lucide="image" style="width:17px;height:17px;color:var(--primary-600);"></i>
+            Galeria Fotográfica de Campo (Formato Masonry)
+          </label>
+          <span style="font-size:0.8rem;color:var(--slate-500);">Será exibida abaixo do texto em grelha Masonry</span>
+        </div>
+
+        <div id="image-dropzone" class="dropzone-container" onclick="window.triggerFileInput()">
           <i data-lucide="upload" class="dropzone-icon"></i>
           <h4 style="font-size:1.1rem;color:var(--slate-800);margin-bottom:0.35rem;">
-            Arraste fotografias directamente para aqui
+            Arraste fotografias da galeria para aqui
           </h4>
           <p style="font-size:0.85rem;color:var(--slate-500);margin-bottom:1rem;">
-            ou clique para navegar nos ficheiros do computador (JPG, PNG, WebP)
+            ou clique para carregar múltiplas fotos de campo (JPG, PNG, WebP)
           </p>
-          <input type="file" id="file-input" multiple accept="image/*" style="display:none;" onchange="handleImageFiles(this.files)" />
-          <button type="button" class="btn btn-outline btn-sm" onclick="triggerFileInput(); event.stopPropagation();">
+          <input type="file" id="file-input" multiple accept="image/*" style="display:none;" onchange="window.handleImageFiles(this.files)" />
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.triggerFileInput(); event.stopPropagation();">
             <i data-lucide="plus" style="width:14px;height:14px;"></i> Seleccionar Fotos
           </button>
         </div>
@@ -1863,9 +1969,9 @@ function renderAdminPostForm() {
           ${(draft.images || []).map((img, idx) => `
             <div class="preview-thumb-card ${draft.cover_image === img ? 'is-cover' : ''}">
               <img src="${img}" alt="Preview ${idx + 1}" onerror="this.src='./default_cover.png'" />
-              <button type="button" class="thumb-delete-btn" onclick="removeDraftImage(${idx})">×</button>
-              ${draft.cover_image === img ? `<span class="thumb-cover-badge">Capa</span>` : `
-                <button type="button" style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#fff;font-size:0.65rem;padding:0.15rem 0.35rem;border-radius:4px;" onclick="setDraftCoverImage(${idx})">Definir Capa</button>
+              <button type="button" class="thumb-delete-btn" onclick="window.removeDraftImage(${idx})" title="Remover da galeria">×</button>
+              ${draft.cover_image === img ? `<span class="thumb-cover-badge">Destaque</span>` : `
+                <button type="button" style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.65);color:#fff;font-size:0.65rem;padding:0.2rem 0.4rem;border-radius:4px;border:none;cursor:pointer;" onclick="window.setDraftCoverImage(${idx})">Definir Destaque</button>
               `}
             </div>
           `).join('')}
@@ -2040,13 +2146,34 @@ window.filterBlogByCategory = (cat) => {
   navigateTo('#blog');
 };
 
-window.openLightbox = (postId, imageIndex) => {
+window.openLightbox = (postId, imageIndex = 0) => {
   const post = state.posts.find(p => p.id === postId);
-  if (post && post.images && post.images.length > 0) {
+  if (!post) return;
+
+  // Build complete image list for Lightbox (Cover + Gallery images)
+  let allImages = [];
+  if (post.cover_image && post.cover_image !== './default_cover.png') {
+    allImages.push(post.cover_image);
+  }
+  if (post.images && post.images.length > 0) {
+    post.images.forEach(img => {
+      if (!allImages.includes(img)) allImages.push(img);
+    });
+  }
+  if (allImages.length === 0 && post.images && post.images.length > 0) {
+    allImages = [...post.images];
+  }
+
+  if (allImages.length > 0) {
+    let targetIndex = imageIndex;
+    if (post.images && post.images[imageIndex]) {
+      const foundIdx = allImages.indexOf(post.images[imageIndex]);
+      if (foundIdx !== -1) targetIndex = foundIdx;
+    }
     state.activeLightbox = {
       isOpen: true,
-      images: post.images,
-      currentIndex: imageIndex
+      images: allImages,
+      currentIndex: Math.max(0, Math.min(targetIndex, allImages.length - 1))
     };
     renderApp();
   }
@@ -2057,16 +2184,50 @@ window.closeLightbox = () => {
   renderApp();
 };
 
+window.setLightboxIndex = (index) => {
+  if (state.activeLightbox.images && state.activeLightbox.images[index]) {
+    state.activeLightbox.currentIndex = index;
+    renderApp();
+  }
+};
+
 window.nextLightboxImage = () => {
   const { images, currentIndex } = state.activeLightbox;
+  if (!images || images.length <= 1) return;
   state.activeLightbox.currentIndex = (currentIndex + 1) % images.length;
   renderApp();
 };
 
 window.prevLightboxImage = () => {
   const { images, currentIndex } = state.activeLightbox;
+  if (!images || images.length <= 1) return;
   state.activeLightbox.currentIndex = (currentIndex - 1 + images.length) % images.length;
   renderApp();
+};
+
+window.triggerFeaturedImageInput = () => {
+  const fileInput = document.getElementById('featured-image-input');
+  if (fileInput) fileInput.click();
+};
+
+window.handleFeaturedImageFile = (files) => {
+  if (!files || files.length === 0) return;
+  const targetDraft = state.adminEditingPost || state.newPostDraft;
+  const file = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    targetDraft.cover_image = e.target.result;
+    renderApp();
+    showToast('Imagem de destaque carregada!');
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeFeaturedImage = () => {
+  const targetDraft = state.adminEditingPost || state.newPostDraft;
+  targetDraft.cover_image = '';
+  renderApp();
+  showToast('Imagem de destaque removida.');
 };
 
 window.copyToClipboard = (text, successMsg) => {
@@ -2157,6 +2318,7 @@ window.setDraftCoverImage = (index) => {
   if (targetDraft.images && targetDraft.images[index]) {
     targetDraft.cover_image = targetDraft.images[index];
     renderApp();
+    showToast('Definida como imagem de destaque!');
   }
 };
 
@@ -2277,9 +2439,9 @@ window.resetToFactoryPosts = () => {
 
 window.addEventListener('keydown', (e) => {
   if (state.activeLightbox.isOpen) {
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') nextLightboxImage();
-    if (e.key === 'ArrowLeft') prevLightboxImage();
+    if (e.key === 'Escape') window.closeLightbox();
+    if (e.key === 'ArrowRight') window.nextLightboxImage();
+    if (e.key === 'ArrowLeft') window.prevLightboxImage();
   }
 });
 
