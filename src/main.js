@@ -313,22 +313,31 @@ function renderHeader(route, currentLangObj, tr) {
           </div>
         </a>
 
-        <!-- Desktop Navigation -->
-        <ul class="nav-links">
-          <li><a href="#home" class="nav-link ${route === 'home' ? 'active' : ''}">${tr.nav.home}</a></li>
-          <li><a href="#sobre" class="nav-link ${route === 'sobre' ? 'active' : ''}">${tr.nav.about}</a></li>
-          <li><a href="#programas" class="nav-link ${route === 'programas' || route === 'projectos' ? 'active' : ''}">${tr.nav.programs}</a></li>
-          <li><a href="#cba" class="nav-link ${route === 'cba' ? 'active' : ''}">${tr.nav.cba}</a></li>
-          <li><a href="#delegacoes" class="nav-link ${route === 'delegacoes' ? 'active' : ''}">${tr.nav.delegations}</a></li>
-          <li><a href="#transparencia" class="nav-link ${route === 'transparencia' ? 'active' : ''}">${tr.nav.transparency}</a></li>
-          <li>
-            <a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">
-              <span>${tr.nav.blog}</span>
-              <span class="nav-counter-pill">${state.posts.length}</span>
-            </a>
-          </li>
-          <li><a href="#contactos" class="nav-link ${route === 'contactos' ? 'active' : ''}">${tr.nav.contact}</a></li>
-        </ul>
+        <!-- Desktop Centered Navigation Pill with Gradient Separators -->
+        <nav class="nav-center-container">
+          <ul class="nav-links">
+            <li class="nav-item"><a href="#home" class="nav-link ${route === 'home' ? 'active' : ''}">${tr.nav.home}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#sobre" class="nav-link ${route === 'sobre' ? 'active' : ''}">${tr.nav.about}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#programas" class="nav-link ${route === 'programas' || route === 'projectos' ? 'active' : ''}">${tr.nav.programs}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#cba" class="nav-link ${route === 'cba' ? 'active' : ''}">${tr.nav.cba}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#delegacoes" class="nav-link ${route === 'delegacoes' ? 'active' : ''}">${tr.nav.delegations}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#transparencia" class="nav-link ${route === 'transparencia' ? 'active' : ''}">${tr.nav.transparency}</a></li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item">
+              <a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">
+                <span>${tr.nav.blog}</span>
+                <span class="nav-counter-pill">${state.posts.length}</span>
+              </a>
+            </li>
+            <li class="nav-separator" aria-hidden="true"></li>
+            <li class="nav-item"><a href="#contactos" class="nav-link ${route === 'contactos' ? 'active' : ''}">${tr.nav.contact}</a></li>
+          </ul>
+        </nav>
 
         <!-- Action CTAs & Language Switcher -->
         <div class="nav-actions">
