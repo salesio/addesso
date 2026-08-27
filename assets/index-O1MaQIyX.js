@@ -123,12 +123,15 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
                 <li><a href="#participar">Indivíduos (Voluntariado)</a></li>
                 <li><a href="#participar">Organizações (Parcerias)</a></li>
                 <li><a href="#participar">Empresas (Responsabilidade Social)</a></li>
-                <li><a href="#contactos">Contactos</a></li>
+                
               </ul>
             </li>
 
             <li class="nav-item">
               <a href="#blog" class="nav-link ${e===`blog`?`active`:``}">${s}</a>
+            </li>
+            <li class="nav-item">
+              <a href="#contactos" class="nav-link ${e===`contactos`?`active`:``}">Contactos</a>
             </li>
           </ul>
         </nav>
