@@ -322,47 +322,47 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
         `).join(``)}
       </div>
     `:``}
-  `}function Ee(e,t){switch(e){case`sobre`:return Oe(t);case`programas`:case`projectos`:return Q(t);case`cba`:return ke(t);case`delegacoes`:case`presenca`:return Ae(t);case`transparencia`:return je(t);case`blog`:return Ne(t);case`participar`:case`doar`:return Me(t);case`contactos`:return Fe(t);case`admin`:return Ie(t);default:return De(t)}}function De(e){return`
+  `}function Ee(e,t){switch(e){case`sobre`:return Oe(t);case`programas`:case`projectos`:return Q(t);case`cba`:return ke(t);case`delegacoes`:case`presenca`:return Ae(t);case`transparencia`:return je(t);case`blog`:return Ne(t);case`participar`:case`doar`:return Me(t);case`contactos`:return Fe(t);case`admin`:return Ie(t);default:return De(t)}}function De(e){let n=[...K.posts].reverse().slice(0,3);return`
     <!-- IAVE Style Hero Section -->
     <section class="iave-hero" style="background-image: url('./images/cba/cba_community_center.jpg');">
       <div class="iave-hero-overlay"></div>
       <div class="iave-hero-content container">
-        <div class="iave-hero-badge">Empoderar Comunidades Desde 2009</div>
-        <h1>Transformando Vidas e Lideranças em Moçambique</h1>
-        <p>Pequenas acções geram grandes mudanças. Junte-se à ADDESSO na construção de um futuro comunitário sustentável através da educação infantil, capacitação juvenil e segurança alimentar.</p>
+        <div class="iave-hero-badge">${e.hero.badge}</div>
+        <h1>${e.hero.title}</h1>
+        <p>${e.hero.subtitle}</p>
         <div class="iave-hero-actions">
-          <a href="#cba" class="btn btn-primary btn-lg">Conheça o CBA</a>
-          <a href="#sobre" class="btn btn-outline-light btn-lg">Quem Somos</a>
+          <a href="#cba" class="btn btn-primary btn-lg">${e.hero.cbaBtn}</a>
+          <a href="#sobre" class="btn btn-outline-light btn-lg">${e.nav.about}</a>
         </div>
       </div>
     </section>
 
     <!-- IAVE Style Intro Strip -->
     <section class="iave-intro container section-padding">
-      <h2 class="iave-intro-heading">Todos os anos, a ADDESSO ajuda centenas de famílias a encontrarem a sua autonomia nas comunidades moçambicanas.</h2>
-      <p class="iave-intro-text">Promovemos o desenvolvimento comunitário integrado desde a primeira infância, literacia tecnológica para jovens, até à nutrição e assistência geriátrica na comunidade da Polana Caniço.</p>
-      <a href="#sobre" class="iave-text-link">Conheça a nossa história <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+      <h2 class="iave-intro-heading">${e.pillars.title}</h2>
+      <p class="iave-intro-text">${e.pillars.subtitle}</p>
+      <a href="#sobre" class="iave-text-link">${e.nav.about} <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
     </section>
 
     <!-- IAVE Style Our Work (Pillars) -->
     <section class="iave-pillars-section">
       <div class="container section-padding">
-        <h2 class="iave-section-title">Os Nossos Programas Estruturantes</h2>
+        <h2 class="iave-section-title">${e.pillars.tag}</h2>
         <div class="iave-pillars-grid">
           <div class="iave-pillar-card">
-            <h3>Desenvolvimento da Primeira Infância</h3>
-            <p>A Creche Familiar no CBA garante estimulação psicomotora, educação e nutrição diária a crianças carenciadas, permitindo que as mães estudem ou trabalhem com tranquilidade.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${t.structuredPrograms[0].title}</h3>
+            <p>${t.structuredPrograms[0].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${e.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
           <div class="iave-pillar-card">
-            <h3>Capacitação & Liderança Juvenil</h3>
-            <p>Através do Hub Digital de Informática e das Feiras da Juventude, ensinamos programação, línguas e liderança para reduzir o fosso digital e promover a empregabilidade.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${t.structuredPrograms[1].title}</h3>
+            <p>${t.structuredPrograms[1].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${e.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
           <div class="iave-pillar-card">
-            <h3>Segurança Alimentar & Solidariedade</h3>
-            <p>A iniciativa Horta no Quintal e a Sopa Solidária combatem a desnutrição na Polana Caniço, enquanto a nossa Fisioterapia apoia a terceira idade e acamados.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${t.structuredPrograms[2].title}</h3>
+            <p>${t.structuredPrograms[2].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${e.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
         </div>
       </div>
@@ -372,24 +372,24 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
     <section class="iave-get-involved section-padding">
       <div class="container">
         <div class="iave-get-involved-header">
-          <h2>Envolva-se</h2>
-          <p>A ADDESSO trabalha de braços dados com a sociedade civil. Descubra como pode colaborar connosco para expandir o impacto comunitário.</p>
+          <h2>${e.donation.title}</h2>
+          <p>${e.donation.subtitle}</p>
         </div>
         <div class="iave-get-involved-grid">
           <div class="iave-involved-item">
-            <h3 style="color:var(--primary-700);">Indivíduos & Voluntários</h3>
-            <p>Faça parte das nossas missões de campo. Doe o seu tempo, as suas competências e a sua energia para transformar realidades em Maputo.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--primary-600);color:var(--primary-700);">Inscrever-se</a>
+            <h3 style="color:var(--primary-700);">${e.donation.volunteerBtn}</h3>
+            <p>${e.cba.f2}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--primary-600);color:var(--primary-700);">${e.nav.help}</a>
           </div>
           <div class="iave-involved-item">
-            <h3 style="color:var(--accent-700);">Empresas & Organizações</h3>
-            <p>Alinhe os seus Objectivos de Desenvolvimento Sustentável connosco através de parcerias estratégicas, responsabilidade social e patrocínios.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--accent-600);color:var(--accent-700);">Ser Parceiro</a>
+            <h3 style="color:var(--accent-700);">${e.hero.partnersBadge}</h3>
+            <p>${e.cba.f3}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--accent-600);color:var(--accent-700);">${e.contact.tag}</a>
           </div>
           <div class="iave-involved-item">
-            <h3 style="color:var(--green-700);">Apoio Financeiro Directo</h3>
-            <p>Cada contribuição ajuda a manter a Creche Familiar e o Hub Digital abertos. Doe com segurança via M-Pesa, e-Mola ou Transferência Bancária.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--green-600);color:var(--green-700);">Fazer Doação</a>
+            <h3 style="color:var(--green-700);">${e.donation.mpesaBtn}</h3>
+            <p>${e.donation.tag}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--green-600);color:var(--green-700);">${e.nav.help}</a>
           </div>
         </div>
       </div>
@@ -399,27 +399,27 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
     <section class="iave-news section-padding bg-subtle">
       <div class="container">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--slate-200);padding-bottom:1rem;margin-bottom:2rem;">
-          <h2 class="iave-section-title" style="margin-bottom:0;">Notícias Recentes</h2>
-          <a href="#blog" class="iave-text-link">Ver Arquivo Completo <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+          <h2 class="iave-section-title" style="margin-bottom:0;">${e.blog.tag}</h2>
+          <a href="#blog" class="iave-text-link">${e.blog.backToBlog} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
         </div>
         
         <div class="home-compact-news-grid">
-          ${[...K.posts].reverse().slice(0,3).map(e=>{let t=e.images&&e.images.length>0?e.images[0]:`./default_cover.png`,n=e.categories&&e.categories.length>0?e.categories[0]:`Geral`;return`
-              <div class="compact-news-card" onclick="window.location.hash='post/${e.id}'">
+          ${n.map(t=>{let n=t.images&&t.images.length>0?t.images[0]:`./default_cover.png`,r=t.categories&&t.categories.length>0?t.categories[0]:`Geral`;return`
+              <div class="compact-news-card" onclick="window.location.hash='post/${t.id}'">
                 <div class="compact-news-thumb">
-                  <img src="${t}" alt="${$(e.title)}" onerror="this.src='./default_cover.png'" />
-                  <div class="compact-news-cat">${$(n)}</div>
-                  ${e.images&&e.images.length>1?`<div class="compact-news-photos"><i data-lucide="image" style="width:12px;height:12px;"></i> ${e.images.length} Fotos</div>`:``}
+                  <img src="${n}" alt="${$(t.title)}" onerror="this.src='./default_cover.png'" />
+                  <div class="compact-news-cat">${$(r)}</div>
+                  ${t.images&&t.images.length>1?`<div class="compact-news-photos"><i data-lucide="image" style="width:12px;height:12px;"></i> ${t.images.length} ${e.stats.photos}</div>`:``}
                 </div>
                 <div class="compact-news-body">
                   <div class="compact-news-date">
                     <i data-lucide="calendar" style="width:13px;height:13px;"></i>
-                    ${X(e.date)}
+                    ${X(t.date)}
                   </div>
-                  <h3 class="compact-news-title">${$(e.title)}</h3>
-                  <p class="compact-news-excerpt">${$(e.content.replace(/<[^>]+>/g,``).substring(0,100))}...</p>
+                  <h3 class="compact-news-title">${$(t.title)}</h3>
+                  <p class="compact-news-excerpt">${$(t.content.replace(/<[^>]+>/g,``).substring(0,100))}...</p>
                   <div class="compact-news-footer">
-                    <span class="compact-read-btn">Ler Publicação <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+                    <span class="compact-read-btn">${e.blog.readStory} <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
                   </div>
                 </div>
               </div>
