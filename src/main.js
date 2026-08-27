@@ -325,8 +325,8 @@ function renderHeader(route, currentLangObj, tr) {
           <ul class="nav-links">
             
             <li class="nav-item has-dropdown">
-              <a href="#sobre" class="nav-link \${isSobreActive}">
-                \${navQuemSomos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#sobre" class="nav-link ${isSobreActive}">
+                ${navQuemSomos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#sobre">História e Missão</a></li>
@@ -337,8 +337,8 @@ function renderHeader(route, currentLangObj, tr) {
             </li>
 
             <li class="nav-item has-dropdown">
-              <a href="#programas" class="nav-link \${isProgramasActive}">
-                \${navOQueFazemos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#programas" class="nav-link ${isProgramasActive}">
+                ${navOQueFazemos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#programas">Programas Estruturantes</a></li>
@@ -349,8 +349,8 @@ function renderHeader(route, currentLangObj, tr) {
             </li>
 
             <li class="nav-item has-dropdown">
-              <a href="#participar" class="nav-link \${isEnvolvaseActive}">
-                \${navEnvolvase} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#participar" class="nav-link ${isEnvolvaseActive}">
+                ${navEnvolvase} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#participar">Indivíduos (Voluntariado)</a></li>
@@ -361,28 +361,28 @@ function renderHeader(route, currentLangObj, tr) {
             </li>
 
             <li class="nav-item">
-              <a href="#blog" class="nav-link \${route === 'blog' ? 'active' : ''}">\${navNoticias}</a>
+              <a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">${navNoticias}</a>
             </li>
           </ul>
         </nav>
 
         <div class="nav-actions">
           <div class="lang-selector-wrapper">
-            <button id="lang-menu-btn" class="lang-btn \${state.isLangMenuOpen ? 'active' : ''}" title="Mudar Idioma">
-              <span>\${currentLangObj.flag}</span>
-              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">\${currentLangObj.short}</span>
+            <button id="lang-menu-btn" class="lang-btn ${state.isLangMenuOpen ? 'active' : ''}" title="Mudar Idioma">
+              <span>${currentLangObj.flag}</span>
+              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${currentLangObj.short}</span>
               <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-menu" class="lang-menu \${state.isLangMenuOpen ? 'open' : ''}">
-              \${LANGUAGES.map(l => \`
-                <div class="lang-option-item \${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('\${l.code}')">
+            <div id="lang-menu" class="lang-menu ${state.isLangMenuOpen ? 'open' : ''}">
+              ${LANGUAGES.map(l => `
+                <div class="lang-option-item ${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('${l.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
-                    <span>\${l.flag}</span>
-                    <span>\${l.label}</span>
+                    <span>${l.flag}</span>
+                    <span>${l.label}</span>
                   </span>
-                  \${state.lang === l.code ? '<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>' : ''}
+                  ${state.lang === l.code ? '<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>' : ''}
                 </div>
-              \`).join('')}
+              `).join('')}
             </div>
           </div>
           <a href="#participar" class="btn btn-primary" style="background:#dc2626; border:none; border-radius:4px; font-weight:700;">ENVOLVA-SE</a>
