@@ -620,42 +620,42 @@ function renderHomePage(tr) {
     <section class="iave-hero" style="background-image: url('./images/cba/cba_community_center.jpg');">
       <div class="iave-hero-overlay"></div>
       <div class="iave-hero-content container">
-        <div class="iave-hero-badge">Empoderar Comunidades Desde 2009</div>
-        <h1>Transformando Vidas e Lideranças em Moçambique</h1>
-        <p>Pequenas acções geram grandes mudanças. Junte-se à ADDESSO na construção de um futuro comunitário sustentável através da educação infantil, capacitação juvenil e segurança alimentar.</p>
+        <div class="iave-hero-badge">${tr.hero.badge}</div>
+        <h1>${tr.hero.title}</h1>
+        <p>${tr.hero.subtitle}</p>
         <div class="iave-hero-actions">
-          <a href="#cba" class="btn btn-primary btn-lg">Conheça o CBA</a>
-          <a href="#sobre" class="btn btn-outline-light btn-lg">Quem Somos</a>
+          <a href="#cba" class="btn btn-primary btn-lg">${tr.hero.cbaBtn}</a>
+          <a href="#sobre" class="btn btn-outline-light btn-lg">${tr.nav.about}</a>
         </div>
       </div>
     </section>
 
     <!-- IAVE Style Intro Strip -->
     <section class="iave-intro container section-padding">
-      <h2 class="iave-intro-heading">Todos os anos, a ADDESSO ajuda centenas de famílias a encontrarem a sua autonomia nas comunidades moçambicanas.</h2>
-      <p class="iave-intro-text">Promovemos o desenvolvimento comunitário integrado desde a primeira infância, literacia tecnológica para jovens, até à nutrição e assistência geriátrica na comunidade da Polana Caniço.</p>
-      <a href="#sobre" class="iave-text-link">Conheça a nossa história <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+      <h2 class="iave-intro-heading">${tr.pillars.title}</h2>
+      <p class="iave-intro-text">${tr.pillars.subtitle}</p>
+      <a href="#sobre" class="iave-text-link">${tr.nav.about} <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
     </section>
 
     <!-- IAVE Style Our Work (Pillars) -->
     <section class="iave-pillars-section">
       <div class="container section-padding">
-        <h2 class="iave-section-title">Os Nossos Programas Estruturantes</h2>
+        <h2 class="iave-section-title">${tr.pillars.tag}</h2>
         <div class="iave-pillars-grid">
           <div class="iave-pillar-card">
-            <h3>Desenvolvimento da Primeira Infância</h3>
-            <p>A Creche Familiar no CBA garante estimulação psicomotora, educação e nutrição diária a crianças carenciadas, permitindo que as mães estudem ou trabalhem com tranquilidade.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${orgInfo.structuredPrograms[0].title}</h3>
+            <p>${orgInfo.structuredPrograms[0].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${tr.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
           <div class="iave-pillar-card">
-            <h3>Capacitação & Liderança Juvenil</h3>
-            <p>Através do Hub Digital de Informática e das Feiras da Juventude, ensinamos programação, línguas e liderança para reduzir o fosso digital e promover a empregabilidade.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${orgInfo.structuredPrograms[1].title}</h3>
+            <p>${orgInfo.structuredPrograms[1].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${tr.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
           <div class="iave-pillar-card">
-            <h3>Segurança Alimentar & Solidariedade</h3>
-            <p>A iniciativa Horta no Quintal e a Sopa Solidária combatem a desnutrição na Polana Caniço, enquanto a nossa Fisioterapia apoia a terceira idade e acamados.</p>
-            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+            <h3>${orgInfo.structuredPrograms[2].title}</h3>
+            <p>${orgInfo.structuredPrograms[2].subtitle}</p>
+            <a href="#programas" class="iave-text-link">${tr.pillars.viewPosts} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
         </div>
       </div>
@@ -665,24 +665,24 @@ function renderHomePage(tr) {
     <section class="iave-get-involved section-padding">
       <div class="container">
         <div class="iave-get-involved-header">
-          <h2>Envolva-se</h2>
-          <p>A ADDESSO trabalha de braços dados com a sociedade civil. Descubra como pode colaborar connosco para expandir o impacto comunitário.</p>
+          <h2>${tr.donation.title}</h2>
+          <p>${tr.donation.subtitle}</p>
         </div>
         <div class="iave-get-involved-grid">
           <div class="iave-involved-item">
-            <h3 style="color:var(--primary-700);">Indivíduos & Voluntários</h3>
-            <p>Faça parte das nossas missões de campo. Doe o seu tempo, as suas competências e a sua energia para transformar realidades em Maputo.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--primary-600);color:var(--primary-700);">Inscrever-se</a>
+            <h3 style="color:var(--primary-700);">${tr.donation.volunteerBtn}</h3>
+            <p>${tr.cba.f2}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--primary-600);color:var(--primary-700);">${tr.nav.help}</a>
           </div>
           <div class="iave-involved-item">
-            <h3 style="color:var(--accent-700);">Empresas & Organizações</h3>
-            <p>Alinhe os seus Objectivos de Desenvolvimento Sustentável connosco através de parcerias estratégicas, responsabilidade social e patrocínios.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--accent-600);color:var(--accent-700);">Ser Parceiro</a>
+            <h3 style="color:var(--accent-700);">${tr.hero.partnersBadge}</h3>
+            <p>${tr.cba.f3}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--accent-600);color:var(--accent-700);">${tr.contact.tag}</a>
           </div>
           <div class="iave-involved-item">
-            <h3 style="color:var(--green-700);">Apoio Financeiro Directo</h3>
-            <p>Cada contribuição ajuda a manter a Creche Familiar e o Hub Digital abertos. Doe com segurança via M-Pesa, e-Mola ou Transferência Bancária.</p>
-            <a href="#participar" class="btn btn-outline" style="border-color:var(--green-600);color:var(--green-700);">Fazer Doação</a>
+            <h3 style="color:var(--green-700);">${tr.donation.mpesaBtn}</h3>
+            <p>${tr.donation.tag}</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--green-600);color:var(--green-700);">${tr.nav.help}</a>
           </div>
         </div>
       </div>
@@ -692,8 +692,8 @@ function renderHomePage(tr) {
     <section class="iave-news section-padding bg-subtle">
       <div class="container">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--slate-200);padding-bottom:1rem;margin-bottom:2rem;">
-          <h2 class="iave-section-title" style="margin-bottom:0;">Notícias Recentes</h2>
-          <a href="#blog" class="iave-text-link">Ver Arquivo Completo <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+          <h2 class="iave-section-title" style="margin-bottom:0;">${tr.blog.tag}</h2>
+          <a href="#blog" class="iave-text-link">${tr.blog.backToBlog} <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
         </div>
         
         <div class="home-compact-news-grid">
@@ -705,7 +705,7 @@ function renderHomePage(tr) {
                 <div class="compact-news-thumb">
                   <img src="${firstImg}" alt="${escapeHtml(post.title)}" onerror="this.src='./default_cover.png'" />
                   <div class="compact-news-cat">${escapeHtml(cat)}</div>
-                  ${post.images && post.images.length > 1 ? `<div class="compact-news-photos"><i data-lucide="image" style="width:12px;height:12px;"></i> ${post.images.length} Fotos</div>` : ''}
+                  ${post.images && post.images.length > 1 ? `<div class="compact-news-photos"><i data-lucide="image" style="width:12px;height:12px;"></i> ${post.images.length} ${tr.stats.photos}</div>` : ''}
                 </div>
                 <div class="compact-news-body">
                   <div class="compact-news-date">
@@ -715,7 +715,7 @@ function renderHomePage(tr) {
                   <h3 class="compact-news-title">${escapeHtml(post.title)}</h3>
                   <p class="compact-news-excerpt">${escapeHtml(post.content.replace(/<[^>]+>/g, '').substring(0, 100))}...</p>
                   <div class="compact-news-footer">
-                    <span class="compact-read-btn">Ler Publicação <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+                    <span class="compact-read-btn">${tr.blog.readStory} <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
                   </div>
                 </div>
               </div>
