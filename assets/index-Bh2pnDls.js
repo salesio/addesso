@@ -75,7 +75,7 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
     <div id="lightbox-modal" class="lightbox-modal ${K.activeLightbox.isOpen?`open`:``}">
       ${K.activeLightbox.isOpen?Te():``}
     </div>
-  `,ze(),H({icons:{Heart:te,Share2:R,Search:L,Calendar:x,Clock:E,image:ne,ArrowRight:_,ArrowLeft:g,X:_e,Menu:ue,Check:S,ChevronRight:w,Sparkles:B,Upload:he,Trash2:pe,GripVertical:F,Plus:fe,Download:k,RefreshCw:I,BookOpen:y,Users:ge,Sprout:V,HeartHandshake:ee,Landmark:re,MapPin:se,Phone:de,Mail:oe,ExternalLink:A,Copy:O,Layers:ie,ListFilter:ae,Eye:j,Globe:P,ChevronLeft:C,Maximize2:le,FileText:M,ShieldCheck:z,Award:v,TrendingUp:me,Map:ce,Compass:D,Gift:N,HelpCircle:T,Briefcase:b}})}function Ce(e,t,n){return n.nav.about,n.nav.programs,n.nav.help,n.nav.blog,[`sobre`,`transparencia`,`delegacoes`].includes(e),[`programas`,`cba`].includes(e),[`participar`,`contactos`].includes(e),`
+  `,ze(),H({icons:{Heart:te,Share2:R,Search:L,Calendar:x,Clock:E,image:ne,ArrowRight:_,ArrowLeft:g,X:_e,Menu:ue,Check:S,ChevronRight:w,Sparkles:B,Upload:he,Trash2:pe,GripVertical:F,Plus:fe,Download:k,RefreshCw:I,BookOpen:y,Users:ge,Sprout:V,HeartHandshake:ee,Landmark:re,MapPin:se,Phone:de,Mail:oe,ExternalLink:A,Copy:O,Layers:ie,ListFilter:ae,Eye:j,Globe:P,ChevronLeft:C,Maximize2:le,FileText:M,ShieldCheck:z,Award:v,TrendingUp:me,Map:ce,Compass:D,Gift:N,HelpCircle:T,Briefcase:b}})}function Ce(e,t,r){let i=r.nav.about||`Quem Somos`,a=r.nav.programs||`O Que Fazemos`,o=r.nav.help||`Envolva-se`,s=r.nav.blog||`Diário de Campo`;return`
     <header class="site-header corporate-header">
       <div class="container nav-wrapper corporate-nav-wrapper">
         <a href="#home" class="brand-logo">
@@ -92,8 +92,8 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
           <ul class="nav-links">
             
             <li class="nav-item has-dropdown">
-              <a href="#sobre" class="nav-link \${isSobreActive}">
-                \${navQuemSomos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#sobre" class="nav-link ${[`sobre`,`transparencia`,`delegacoes`].includes(e)?`active`:``}">
+                ${i} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#sobre">História e Missão</a></li>
@@ -104,8 +104,8 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
             </li>
 
             <li class="nav-item has-dropdown">
-              <a href="#programas" class="nav-link \${isProgramasActive}">
-                \${navOQueFazemos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#programas" class="nav-link ${[`programas`,`cba`].includes(e)?`active`:``}">
+                ${a} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#programas">Programas Estruturantes</a></li>
@@ -116,8 +116,8 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
             </li>
 
             <li class="nav-item has-dropdown">
-              <a href="#participar" class="nav-link \${isEnvolvaseActive}">
-                \${navEnvolvase} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              <a href="#participar" class="nav-link ${[`participar`,`contactos`].includes(e)?`active`:``}">
+                ${o} <i data-lucide="chevron-down" class="dropdown-caret"></i>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#participar">Indivíduos (Voluntariado)</a></li>
@@ -128,28 +128,28 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
             </li>
 
             <li class="nav-item">
-              <a href="#blog" class="nav-link \${route === 'blog' ? 'active' : ''}">\${navNoticias}</a>
+              <a href="#blog" class="nav-link ${e===`blog`?`active`:``}">${s}</a>
             </li>
           </ul>
         </nav>
 
         <div class="nav-actions">
           <div class="lang-selector-wrapper">
-            <button id="lang-menu-btn" class="lang-btn \${state.isLangMenuOpen ? 'active' : ''}" title="Mudar Idioma">
-              <span>\${currentLangObj.flag}</span>
-              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">\${currentLangObj.short}</span>
+            <button id="lang-menu-btn" class="lang-btn ${K.isLangMenuOpen?`active`:``}" title="Mudar Idioma">
+              <span>${t.flag}</span>
+              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${t.short}</span>
               <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-menu" class="lang-menu \${state.isLangMenuOpen ? 'open' : ''}">
-              \${LANGUAGES.map(l => \`
-                <div class="lang-option-item \${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('\${l.code}')">
+            <div id="lang-menu" class="lang-menu ${K.isLangMenuOpen?`open`:``}">
+              ${n.map(e=>`
+                <div class="lang-option-item ${K.lang===e.code?`active`:``}" onclick="window.changeLanguage('${e.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
-                    <span>\${l.flag}</span>
-                    <span>\${l.label}</span>
+                    <span>${e.flag}</span>
+                    <span>${e.label}</span>
                   </span>
-                  \${state.lang === l.code ? '<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>' : ''}
+                  ${K.lang===e.code?`<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>`:``}
                 </div>
-              \`).join('')}
+              `).join(``)}
             </div>
           </div>
           <a href="#participar" class="btn btn-primary" style="background:#dc2626; border:none; border-radius:4px; font-weight:700;">ENVOLVA-SE</a>
