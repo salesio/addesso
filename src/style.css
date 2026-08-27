@@ -3381,3 +3381,222 @@ html, body {
   border-color: var(--accent-400);
   box-shadow: var(--shadow-md);
 }
+
+
+/* ==========================================================================
+   IAVE CORPORATE RESTRUCTURE STYLES
+   ========================================================================== */
+
+.corporate-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
+  padding: 0.5rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.corporate-nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.corporate-nav {
+  display: flex;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.corporate-nav .nav-links {
+  gap: 1.5rem;
+}
+.corporate-nav .nav-link {
+  font-weight: 600;
+  color: var(--slate-700);
+  font-size: 0.95rem;
+}
+.corporate-nav .nav-link:hover, .corporate-nav .nav-link.active {
+  color: var(--primary-700);
+  background: transparent !important;
+}
+.btn-donate {
+  background: var(--accent-600);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+}
+.btn-donate:hover {
+  background: var(--accent-700);
+}
+
+.iave-hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  text-align: center;
+}
+.iave-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+}
+.iave-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.iave-hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(4px);
+}
+.iave-hero-content h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+.iave-hero-content p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+}
+.iave-hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.btn-outline-light {
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-weight: 700;
+}
+.btn-outline-light:hover {
+  background: #ffffff;
+  color: var(--primary-900);
+}
+
+.iave-intro {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.iave-intro-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+.iave-intro-text {
+  font-size: 1.15rem;
+  color: var(--slate-600);
+  margin-bottom: 1.5rem;
+}
+.iave-text-link {
+  color: var(--primary-700);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.iave-text-link:hover {
+  text-decoration: underline;
+}
+
+.iave-section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.iave-pillars-section {
+  background: var(--slate-50);
+}
+.iave-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.iave-pillar-card {
+  background: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 0;
+  border-top: 4px solid var(--primary-600);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.iave-pillar-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--slate-900);
+}
+.iave-pillar-card p {
+  color: var(--slate-600);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.iave-get-involved {
+  background: #ffffff;
+}
+.iave-get-involved-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+.iave-get-involved-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+.iave-get-involved-header p {
+  font-size: 1.1rem;
+  color: var(--slate-600);
+}
+.iave-get-involved-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.iave-involved-item {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid var(--slate-200);
+}
+.iave-involved-item h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.iave-involved-item p {
+  color: var(--slate-600);
+  margin-bottom: 1.5rem;
+  min-height: 70px;
+}
+.iave-involved-item .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .iave-hero-content h1 { font-size: 3rem; }
+  .iave-pillars-grid, .iave-get-involved-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .iave-hero-content h1 { font-size: 2.25rem; }
+  .iave-hero-actions { flex-direction: column; }
+  .iave-pillars-grid, .iave-get-involved-grid { grid-template-columns: 1fr; }
+  .iave-intro-heading { font-size: 1.8rem; }
+}
