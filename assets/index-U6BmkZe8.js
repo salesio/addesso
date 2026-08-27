@@ -143,7 +143,7 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
               <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${t.short}</span>
               <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-menu" class="lang-menu ${K.isLangMenuOpen?`open`:``}">
+            <div id="lang-menu" class="lang-dropdown-menu ${K.isLangMenuOpen?`open`:``}">
               ${n.map(e=>`
                 <div class="lang-option-item ${K.lang===e.code?`active`:``}" onclick="window.changeLanguage('${e.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
