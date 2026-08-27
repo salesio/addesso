@@ -75,59 +75,37 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
     <div id="lightbox-modal" class="lightbox-modal ${K.activeLightbox.isOpen?`open`:``}">
       ${K.activeLightbox.isOpen?Te():``}
     </div>
-  `,ze(),H({icons:{Heart:te,Share2:R,Search:L,Calendar:x,Clock:E,image:ne,ArrowRight:_,ArrowLeft:g,X:_e,Menu:ue,Check:S,ChevronRight:w,Sparkles:B,Upload:he,Trash2:pe,GripVertical:F,Plus:fe,Download:k,RefreshCw:I,BookOpen:y,Users:ge,Sprout:V,HeartHandshake:ee,Landmark:re,MapPin:se,Phone:de,Mail:oe,ExternalLink:A,Copy:O,Layers:ie,ListFilter:ae,Eye:j,Globe:P,ChevronLeft:C,Maximize2:le,FileText:M,ShieldCheck:z,Award:v,TrendingUp:me,Map:ce,Compass:D,Gift:N,HelpCircle:T,Briefcase:b}})}function Ce(e,t,r){return`
-    <header class="site-header">
-      <div class="container nav-wrapper">
-        <!-- Official Brand Logo -->
+  `,ze(),H({icons:{Heart:te,Share2:R,Search:L,Calendar:x,Clock:E,image:ne,ArrowRight:_,ArrowLeft:g,X:_e,Menu:ue,Check:S,ChevronRight:w,Sparkles:B,Upload:he,Trash2:pe,GripVertical:F,Plus:fe,Download:k,RefreshCw:I,BookOpen:y,Users:ge,Sprout:V,HeartHandshake:ee,Landmark:re,MapPin:se,Phone:de,Mail:oe,ExternalLink:A,Copy:O,Layers:ie,ListFilter:ae,Eye:j,Globe:P,ChevronLeft:C,Maximize2:le,FileText:M,ShieldCheck:z,Award:v,TrendingUp:me,Map:ce,Compass:D,Gift:N,HelpCircle:T,Briefcase:b}})}function Ce(e,t,r){let i=r.nav.about,a=r.nav.programs,o=r.nav.cba,s=r.nav.help||`Envolva-se`,c=r.nav.blog||`Notícias`;return`
+    <header class="site-header corporate-header">
+      <div class="container nav-wrapper corporate-nav-wrapper">
         <a href="#home" class="brand-logo">
           <div class="brand-logo-img-wrapper">
-            <img src="./logo_cropped.png" alt="ADDESSO Logotipo Oficial" />
+            <img src="./logo_cropped.png" alt="ADDESSO Logo" />
           </div>
           <div class="brand-text">
             <span class="brand-name">ADDESSO</span>
-            <span class="brand-slogan">Moçambique • Desde 2009</span>
+            <span class="brand-slogan">Moçambique</span>
           </div>
         </a>
 
-        <!-- Desktop Centered Navigation Pill with Gradient Separators -->
-        <nav class="nav-center-container">
+        <nav class="nav-center-container corporate-nav">
           <ul class="nav-links">
-            <li class="nav-item"><a href="#home" class="nav-link ${e===`home`?`active`:``}">${r.nav.home}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#sobre" class="nav-link ${e===`sobre`?`active`:``}">${r.nav.about}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#programas" class="nav-link ${e===`programas`||e===`projectos`?`active`:``}">${r.nav.programs}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#cba" class="nav-link ${e===`cba`?`active`:``}">${r.nav.cba}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#delegacoes" class="nav-link ${e===`delegacoes`?`active`:``}">${r.nav.delegations}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#transparencia" class="nav-link ${e===`transparencia`?`active`:``}">${r.nav.transparency}</a></li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item">
-              <a href="#blog" class="nav-link ${e===`blog`?`active`:``}">
-                <span>${r.nav.blog}</span>
-                <span class="nav-counter-pill">${K.posts.length}</span>
-              </a>
-            </li>
-            <li class="nav-separator" aria-hidden="true"></li>
-            <li class="nav-item"><a href="#contactos" class="nav-link ${e===`contactos`?`active`:``}">${r.nav.contact}</a></li>
+            <li class="nav-item"><a href="#sobre" class="nav-link ${e===`sobre`?`active`:``}">${i}</a></li>
+            <li class="nav-item"><a href="#programas" class="nav-link ${e===`programas`?`active`:``}">${a}</a></li>
+            <li class="nav-item"><a href="#cba" class="nav-link ${e===`cba`?`active`:``}">${o}</a></li>
+            <li class="nav-item"><a href="#envolva-se" class="nav-link ${e===`envolva-se`?`active`:``}">${s}</a></li>
+            <li class="nav-item"><a href="#blog" class="nav-link ${e===`blog`?`active`:``}">${c}</a></li>
           </ul>
         </nav>
 
-        <!-- Action CTAs & Language Switcher -->
         <div class="nav-actions">
-          <!-- International Language Switcher Dropdown -->
           <div class="lang-selector-wrapper">
-            <button id="lang-menu-btn" class="lang-btn ${K.isLangMenuOpen?`active`:``}" title="Mudar Idioma / Change Language">
+            <button id="lang-menu-btn" class="lang-btn ${K.isLangMenuOpen?`active`:``}" title="Mudar Idioma">
               <span>${t.flag}</span>
-              <span style="font-size:0.8rem;font-weight:700;">${t.short}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${t.short}</span>
+              <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-dropdown" class="lang-dropdown-menu ${K.isLangMenuOpen?`open`:``}">
-              <div style="padding:0.4rem 0.85rem;font-size:0.72rem;font-weight:700;color:var(--slate-400);text-transform:uppercase;border-bottom:1px solid var(--slate-100);margin-bottom:0.25rem;">
-                Select Language
-              </div>
+            <div id="lang-menu" class="lang-menu ${K.isLangMenuOpen?`open`:``}">
               ${n.map(e=>`
                 <div class="lang-option-item ${K.lang===e.code?`active`:``}" onclick="window.changeLanguage('${e.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
@@ -139,16 +117,9 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
               `).join(``)}
             </div>
           </div>
-
-          <a href="#participar" class="btn btn-accent btn-sm" title="Apoiar e Fazer Parte">
-            <i data-lucide="heart" style="width:15px;height:15px;"></i>
-            <span>${r.nav.help}</span>
-          </a>
-          <a href="#admin" class="nav-admin-btn ${e===`admin`?`active`:``}" title="${r.nav.admin}">
-            <i data-lucide="layers" style="width:18px;height:18px;"></i>
-          </a>
-          <button id="open-mobile-nav" class="mobile-menu-btn" aria-label="Abrir Menu">
-            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          <a href="#participar" class="btn btn-donate">Doar</a>
+          <button id="mobile-menu-btn" class="mobile-toggle">
+            <i data-lucide="menu" style="width:24px;height:24px;"></i>
           </button>
         </div>
       </div>
@@ -312,374 +283,108 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
         `).join(``)}
       </div>
     `:``}
-  `}function Ee(e,t){switch(e){case`sobre`:return Oe(t);case`programas`:case`projectos`:return Q(t);case`cba`:return ke(t);case`delegacoes`:case`presenca`:return Ae(t);case`transparencia`:return je(t);case`blog`:return Ne(t);case`participar`:case`doar`:return Me(t);case`contactos`:return Fe(t);case`admin`:return Ie(t);default:return De(t)}}function De(e){let n=[...K.posts].reverse().slice(0,3),r=K.posts.length;return`
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="container">
-        <div class="hero-grid">
-          <div>
-            <div class="section-tag">
-              <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
-              ${e.hero.badge}
-            </div>
-            <h1 class="hero-headline">
-              Empoderar comunidades para <span class="text-brand">liderarem a sua própria mudança</span>
-            </h1>
-            <p class="hero-description">
-              ${e.hero.subtitle}
-            </p>
-            <div class="hero-ctas">
-              <a href="#programas" class="btn btn-primary btn-lg">
-                <i data-lucide="book-open" style="width:18px;height:18px;"></i>
-                ${e.hero.exploreBtn}
-              </a>
-              <a href="#cba" class="btn btn-outline btn-lg">
-                <i data-lucide="landmark" style="width:18px;height:18px;"></i>
-                ${e.hero.cbaBtn}
-              </a>
-            </div>
-            <div class="hero-badges-strip">
-              <div class="hero-badge-item">
-                <div style="width:9px;height:9px;border-radius:50%;background:var(--primary-500);"></div>
-                <span>${e.hero.yearsBadge}</span>
-              </div>
-              <div class="hero-badge-item">
-                <div style="width:9px;height:9px;border-radius:50%;background:var(--accent-500);"></div>
-                <span>${e.hero.photosBadge}</span>
-              </div>
-              <div class="hero-badge-item">
-                <div style="width:9px;height:9px;border-radius:50%;background:var(--green-500);"></div>
-                <span>${e.hero.partnersBadge}</span>
-              </div>
-            </div>
-          </div>
+  `}function Ee(e,t){switch(e){case`sobre`:return Oe(t);case`programas`:case`projectos`:return Q(t);case`cba`:return ke(t);case`delegacoes`:case`presenca`:return Ae(t);case`transparencia`:return je(t);case`blog`:return Ne(t);case`participar`:case`doar`:return Me(t);case`contactos`:return Fe(t);case`admin`:return Ie(t);default:return De(t)}}function De(e){return`
+    <!-- IAVE Style Hero Section -->
+    <section class="iave-hero" style="background-image: url('./images/cba/cba_community_center.jpg');">
+      <div class="iave-hero-overlay"></div>
+      <div class="iave-hero-content container">
+        <div class="iave-hero-badge">Empoderar Comunidades Desde 2009</div>
+        <h1>Transformando Vidas e Lideranças em Moçambique</h1>
+        <p>Pequenas acções geram grandes mudanças. Junte-se à ADDESSO na construção de um futuro comunitário sustentável através da educação infantil, capacitação juvenil e segurança alimentar.</p>
+        <div class="iave-hero-actions">
+          <a href="#cba" class="btn btn-primary btn-lg">Conheça o CBA</a>
+          <a href="#sobre" class="btn btn-outline-light btn-lg">Quem Somos</a>
+        </div>
+      </div>
+    </section>
 
-          <!-- Hero Visual Frame with Real Archive Photo -->
-          <div class="hero-visual-card">
-            <div class="hero-main-photo-frame">
-              <img src="./archive_images/2025-06-17_01/image_01.jpg" alt="Centro de Boas Acções ADDESSO Inauguração" onerror="this.src='./logo_cropped.png'" />
-            </div>
-            <div class="hero-float-card hero-float-1">
-              <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-100);color:var(--primary-700);display:flex;align-items:center;justify-content:center;">
-                <i data-lucide="users" style="width:20px;height:20px;"></i>
-              </div>
-              <div>
-                <strong style="display:block;font-size:0.95rem;color:var(--slate-900);">Polana Caniço "A"</strong>
-                <span style="font-size:0.78rem;color:var(--slate-500);">Centro Comunitário Activo</span>
-              </div>
-            </div>
-            <div class="hero-float-card hero-float-2">
-              <div style="width:40px;height:40px;border-radius:50%;background:rgba(245,158,11,0.2);color:var(--accent-400);display:flex;align-items:center;justify-content:center;">
-                <i data-lucide="sprout" style="width:20px;height:20px;"></i>
-              </div>
-              <div>
-                <strong style="display:block;font-size:0.95rem;">Tacho no Quintal</strong>
-                <span style="font-size:0.78rem;color:var(--slate-300);">Segurança Alimentar</span>
-              </div>
-            </div>
+    <!-- IAVE Style Intro Strip -->
+    <section class="iave-intro container section-padding">
+      <h2 class="iave-intro-heading">Todos os anos, a ADDESSO ajuda centenas de famílias a encontrarem a sua autonomia nas comunidades moçambicanas.</h2>
+      <p class="iave-intro-text">Promovemos o desenvolvimento comunitário integrado desde a primeira infância, literacia tecnológica para jovens, até à nutrição e assistência geriátrica na comunidade da Polana Caniço.</p>
+      <a href="#sobre" class="iave-text-link">Conheça a nossa história <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+    </section>
+
+    <!-- IAVE Style Our Work (Pillars) -->
+    <section class="iave-pillars-section">
+      <div class="container section-padding">
+        <h2 class="iave-section-title">Os Nossos Programas Estruturantes</h2>
+        <div class="iave-pillars-grid">
+          <div class="iave-pillar-card">
+            <h3>Desenvolvimento da Primeira Infância</h3>
+            <p>A Creche Familiar no CBA garante estimulação psicomotora, educação e nutrição diária a crianças carenciadas, permitindo que as mães estudem ou trabalhem com tranquilidade.</p>
+            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+          </div>
+          <div class="iave-pillar-card">
+            <h3>Capacitação & Liderança Juvenil</h3>
+            <p>Através do Hub Digital de Informática e das Feiras da Juventude, ensinamos programação, línguas e liderança para reduzir o fosso digital e promover a empregabilidade.</p>
+            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
+          </div>
+          <div class="iave-pillar-card">
+            <h3>Segurança Alimentar & Solidariedade</h3>
+            <p>A iniciativa Horta no Quintal e a Sopa Solidária combatem a desnutrição na Polana Caniço, enquanto a nossa Fisioterapia apoia a terceira idade e acamados.</p>
+            <a href="#programas" class="iave-text-link">Explorar Programa <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Impact Metrics Bar -->
-    <div class="impact-bar-wrapper">
+    <!-- IAVE Style Get Involved -->
+    <section class="iave-get-involved section-padding">
       <div class="container">
-        <div class="impact-grid">
-          <div class="impact-item">
-            <div class="impact-number">${t.stats.yearsOfImpact}</div>
-            <div class="impact-label">${e.stats.years}</div>
-          </div>
-          <div class="impact-item">
-            <div class="impact-number">${r}+</div>
-            <div class="impact-label">${e.stats.actions}</div>
-          </div>
-          <div class="impact-item">
-            <div class="impact-number">${t.stats.directBeneficiaries}</div>
-            <div class="impact-label">${e.stats.beneficiaries}</div>
-          </div>
-          <div class="impact-item">
-            <div class="impact-number">${t.stats.provincesActive}</div>
-            <div class="impact-label">Províncias com Presença Activa</div>
-          </div>
+        <div class="iave-get-involved-header">
+          <h2>Envolva-se</h2>
+          <p>A ADDESSO trabalha de braços dados com a sociedade civil. Descubra como pode colaborar connosco para expandir o impacto comunitário.</p>
         </div>
-      </div>
-    </div>
-
-    <!-- OS 3 PROGRAMAS ESTRUTURANTES (ESQUEMAS ATRACTIVOS) -->
-    <section class="section-padding" style="background-color:#ffffff;">
-      <div class="container">
-        <div style="text-align:center;max-width:760px;margin:0 auto 3.5rem;">
-          <div class="section-tag">${e.pillars.tag}</div>
-          <h2 class="section-title">Os 3 Programas Estruturantes do Centro de Boas Acções</h2>
-          <p class="section-subtitle" style="margin:0 auto;">
-            Uma intervenção integrada e intergeracional que acolhe desde a primeira infância até à terceira idade.
-          </p>
-        </div>
-
-        <div class="structured-programs-grid">
-          ${t.structuredPrograms.map(e=>`
-            <div class="program-scheme-card" style="--prog-color: ${e.color};">
-              <div class="program-scheme-header">
-                <div class="program-number-badge">${e.number}</div>
-                <div>
-                  <span class="badge ${e.id===`programa-1`?`badge-blue`:e.id===`programa-2`?`badge-gold`:`badge-emerald`}" style="margin-bottom:0.4rem;">
-                    ${e.badge}
-                  </span>
-                  <h3 class="program-scheme-title">${e.title}</h3>
-                  <span class="program-scheme-subtitle">${e.subtitle}</span>
-                </div>
-              </div>
-
-              <p class="program-scheme-desc">${e.description}</p>
-
-              <!-- Scheme Flow / Sub-projects -->
-              <div class="program-subprojects-flow">
-                <span class="flow-label">Projectos Integrados:</span>
-                <div class="flow-items-grid">
-                  ${e.projects.map(e=>`
-                    <div class="flow-item">
-                      <div class="flow-item-icon">
-                        <i data-lucide="${e.icon}" style="width:16px;height:16px;"></i>
-                      </div>
-                      <div>
-                        <strong class="flow-item-name">${e.name}</strong>
-                        <span class="flow-item-tag">${e.tag}</span>
-                      </div>
-                    </div>
-                  `).join(``)}
-                </div>
-              </div>
-
-              <div class="program-scheme-footer">
-                <a href="#programas" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;">
-                  <span>Conhecer o Programa em Detalhe</span>
-                  <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
-                </a>
-              </div>
-            </div>
-          `).join(``)}
-        </div>
-      </div>
-    </section>
-
-    <!-- Centro de Boas Acções Showcase -->
-    <section class="section-padding" style="background:linear-gradient(180deg, var(--bg-subtle) 0%, #ffffff 100%);">
-      <div class="container">
-        <div class="cba-showcase-grid">
-          <div>
-            <div class="section-tag">${e.cba.tag}</div>
-            <h2 class="section-title">
-              Centro de Boas Acções (CBA)
-            </h2>
-            <div style="font-size:1.15rem;font-weight:700;color:var(--primary-700);margin-bottom:1rem;font-style:italic;">
-              "${t.cba.slogan}"
-            </div>
-            <p style="font-size:1.05rem;color:var(--slate-600);line-height:1.7;margin-bottom:1.75rem;">
-              ${t.cba.description}
-            </p>
-
-            <div class="cba-services-list">
-              ${t.cba.services.slice(0,4).map(e=>`
-                <div class="cba-service-item">
-                  <div class="cba-service-icon">
-                    <i data-lucide="${e.icon}" style="width:18px;height:18px;"></i>
-                  </div>
-                  <div>
-                    <strong style="display:block;font-size:0.95rem;color:var(--slate-900);">${e.title}</strong>
-                    <span style="font-size:0.84rem;color:var(--slate-500);">${e.desc}</span>
-                  </div>
-                </div>
-              `).join(``)}
-            </div>
-
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;">
-              <a href="#cba" class="btn btn-primary">
-                <span>${e.cba.detailsBtn}</span>
-                <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
-              </a>
-              <a href="#contactos" class="btn btn-outline">
-                <i data-lucide="map-pin" style="width:16px;height:16px;"></i>
-                <span>Como Chegar</span>
-              </a>
-            </div>
+        <div class="iave-get-involved-grid">
+          <div class="iave-involved-item">
+            <h3 style="color:var(--primary-700);">Indivíduos & Voluntários</h3>
+            <p>Faça parte das nossas missões de campo. Doe o seu tempo, as suas competências e a sua energia para transformar realidades em Maputo.</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--primary-600);color:var(--primary-700);">Inscrever-se</a>
           </div>
-
-          <div class="cba-photo-mosaic">
-            <div class="cba-photo-card cba-photo-large">
-              <img src="./images/cba/cba_digital_lab.jpg" alt="Literacia Digital e Informática no Centro de Boas Acções" loading="lazy" />
-              <div class="cba-photo-overlay">
-                <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--accent-400);"></i>
-                <span>Hub Digital & Informática • Polana Caniço "A"</span>
-              </div>
-            </div>
-            <div class="cba-photo-card cba-photo-small">
-              <img src="./images/cba/cba_youth_hub.jpg" alt="Mini-Semana da Juventude e Feira CBA" loading="lazy" />
-              <div class="cba-photo-overlay">
-                <i data-lucide="users" style="width:14px;height:14px;color:var(--primary-300);"></i>
-                <span>Juventude & Liderança</span>
-              </div>
-            </div>
-            <div class="cba-photo-card cba-photo-small">
-              <img src="./images/cba/cba_community_center.jpg" alt="Centro de Boas Acções Polana Caniço" loading="lazy" />
-              <div class="cba-photo-overlay">
-                <i data-lucide="heart" style="width:14px;height:14px;color:var(--green-400);"></i>
-                <span>Polo Central de Apoio</span>
-              </div>
-            </div>
+          <div class="iave-involved-item">
+            <h3 style="color:var(--accent-700);">Empresas & Organizações</h3>
+            <p>Alinhe os seus Objectivos de Desenvolvimento Sustentável connosco através de parcerias estratégicas, responsabilidade social e patrocínios.</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--accent-600);color:var(--accent-700);">Ser Parceiro</a>
+          </div>
+          <div class="iave-involved-item">
+            <h3 style="color:var(--green-700);">Apoio Financeiro Directo</h3>
+            <p>Cada contribuição ajuda a manter a Creche Familiar e o Hub Digital abertos. Doe com segurança via M-Pesa, e-Mola ou Transferência Bancária.</p>
+            <a href="#participar" class="btn btn-outline" style="border-color:var(--green-600);color:var(--green-700);">Fazer Doação</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Campanha em Destaque: Semeando Sorrisos -->
-    <section class="section-padding" style="background-color:#ffffff;">
+    <!-- IAVE Style Recent News (Compact Grid) -->
+    <section class="iave-news section-padding bg-subtle">
       <div class="container">
-        <div class="campaign-featured-card">
-          <div class="campaign-grid">
-            <div>
-              <span class="badge badge-gold" style="margin-bottom:1rem;">Campanha em Curso 2026</span>
-              <h2 style="font-size:clamp(1.75rem,2.8vw,2.4rem);color:#ffffff;margin-bottom:1rem;line-height:1.25;">
-                ${t.donationCampaign.title}
-              </h2>
-              <p style="color:var(--slate-200);font-size:1.05rem;line-height:1.7;margin-bottom:1.5rem;">
-                ${t.donationCampaign.objective}
-              </p>
-
-              <!-- Progress Bar -->
-              <div class="campaign-progress-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;font-size:0.9rem;font-weight:700;color:#ffffff;">
-                  <span>Meta Angariada: ${t.donationCampaign.currentAmount}</span>
-                  <span style="color:var(--accent-300);">${t.donationCampaign.percentage}%</span>
-                </div>
-                <div class="progress-bar-track">
-                  <div class="progress-bar-fill" style="width: ${t.donationCampaign.percentage}%;"></div>
-                </div>
-                <div style="font-size:0.8rem;color:var(--slate-300);margin-top:0.4rem;">
-                  Meta Total: ${t.donationCampaign.goalAmount}
-                </div>
-              </div>
-
-              <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;">
-                <a href="#participar" class="btn btn-accent btn-lg">
-                  <i data-lucide="heart" style="width:18px;height:18px;"></i>
-                  <span>Apoiar Esta Campanha</span>
-                </a>
-                <button class="btn btn-outline-white" onclick="window.copyToClipboard('${t.donationInfo.mpesa}', 'Número M-Pesa copiado com sucesso!')">
-                  <i data-lucide="copy" style="width:16px;height:16px;"></i>
-                  <span>Copiar M-Pesa (${t.donationInfo.mpesa})</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Quick Channels box -->
-            <div class="campaign-channels-sidebar">
-              <h4 style="color:#ffffff;font-size:1.15rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
-                <i data-lucide="gift" style="width:20px;height:20px;color:var(--accent-400);"></i>
-                Doação Rápida
-              </h4>
-
-              <div class="quick-channel-item">
-                <img src="./images/payments/mpesa_logo.png" alt="M-Pesa" class="quick-chan-logo" />
-                <div>
-                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">M-Pesa (Moçambique)</strong>
-                  <span style="color:var(--accent-300);font-size:0.95rem;font-weight:700;">${t.donationInfo.mpesa}</span>
-                </div>
-              </div>
-
-              <div class="quick-channel-item">
-                <img src="./images/payments/emola_logo.png" alt="e-Mola" class="quick-chan-logo" />
-                <div>
-                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">Movitel e-Mola</strong>
-                  <span style="color:#fdba74;font-size:0.95rem;font-weight:700;">${t.donationInfo.emola}</span>
-                </div>
-              </div>
-
-              <div class="quick-channel-item">
-                <img src="./images/payments/bci_logo.png" alt="BCI" class="quick-chan-logo" />
-                <div>
-                  <strong style="display:block;color:#ffffff;font-size:0.95rem;">Banco BCI (Conta)</strong>
-                  <span style="color:var(--slate-200);font-size:0.85rem;">Conta: ${t.donationInfo.accountNumber}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--slate-200);padding-bottom:1rem;margin-bottom:2rem;">
+          <h2 class="iave-section-title" style="margin-bottom:0;">Notícias Recentes</h2>
+          <a href="#blog" class="iave-text-link">Ver Arquivo Completo <i data-lucide="arrow-right" style="width:16px;height:16px;margin-left:0.2rem;"></i></a>
         </div>
-      </div>
-    </section>
-
-    <!-- Diário de Campo & Notícias (Compact Modern Grid) -->
-    <section class="section-padding" style="background-color:var(--bg-subtle);">
-      <div class="container">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.25rem;flex-wrap:wrap;gap:1.25rem;">
-          <div>
-            <div class="section-tag">${e.blog.tag}</div>
-            <h2 class="section-title" style="margin-bottom:0.35rem;">Últimas Publicações do Diário de Campo</h2>
-            <p class="section-subtitle" style="margin-bottom:0;">Acompanhe o impacto diário, acções nos bairros e eventos da nossa comunidade.</p>
-          </div>
-          <a href="#blog" class="btn btn-outline btn-sm">
-            <span>Ver Todas as ${r} Notícias</span>
-            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
-          </a>
-        </div>
-
+        
         <div class="home-compact-news-grid">
-          ${n.slice(0,3).map(e=>`
-            <article class="compact-news-card" onclick="window.location.hash = '#post/${e.id}'">
-              <div class="compact-news-thumb">
-                <img src="${e.cover_image||`./default_cover.png`}" alt="${$(e.title)}" loading="lazy" onerror="this.src='./default_cover.png'" />
-                <span class="compact-news-cat">${e.primary_category||`Comunidade`}</span>
-                <span class="compact-news-photos" title="${e.image_count||1} fotos">
-                  <i data-lucide="image" style="width:12px;height:12px;"></i>
-                  <span>${e.image_count||1}</span>
-                </span>
-              </div>
-              <div class="compact-news-body">
-                <div class="compact-news-date">
-                  <i data-lucide="calendar" style="width:12px;height:12px;color:var(--primary-600);"></i>
-                  <span>${X(e.date)}</span>
-                  <span>•</span>
-                  <span>${e.read_time_min||1} min</span>
+          ${[...K.posts].reverse().slice(0,3).map(e=>{let t=e.images&&e.images.length>0?e.images[0]:`./default_cover.png`,n=e.categories&&e.categories.length>0?e.categories[0]:`Geral`;return`
+              <div class="compact-news-card" onclick="window.location.hash='post/${e.id}'">
+                <div class="compact-news-thumb">
+                  <img src="${t}" alt="${$(e.title)}" onerror="this.src='./default_cover.png'" />
+                  <div class="compact-news-cat">${$(n)}</div>
+                  ${e.images&&e.images.length>1?`<div class="compact-news-photos"><i data-lucide="image" style="width:12px;height:12px;"></i> ${e.images.length} Fotos</div>`:``}
                 </div>
-                <h3 class="compact-news-title">${e.title}</h3>
-                <p class="compact-news-excerpt">${e.excerpt||e.content.substring(0,110)+`...`}</p>
-                <div class="compact-news-footer">
-                  <span class="compact-read-btn">
-                    <span>Ler Publicação</span>
-                    <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-                  </span>
+                <div class="compact-news-body">
+                  <div class="compact-news-date">
+                    <i data-lucide="calendar" style="width:13px;height:13px;"></i>
+                    ${X(e.date)}
+                  </div>
+                  <h3 class="compact-news-title">${$(e.title)}</h3>
+                  <p class="compact-news-excerpt">${$(e.content.replace(/<[^>]+>/g,``).substring(0,100))}...</p>
+                  <div class="compact-news-footer">
+                    <span class="compact-read-btn">Ler Publicação <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+                  </div>
                 </div>
               </div>
-            </article>
-          `).join(``)}
-        </div>
-      </div>
-    </section>
-
-    <!-- Parceiros Institucionais (Rede de Cooperação) -->
-    <section class="section-padding" style="background-color:#ffffff;">
-      <div class="container">
-        <div style="text-align:center;max-width:720px;margin:0 auto 3.5rem;">
-          <div class="section-tag">Rede de Cooperação</div>
-          <h2 class="section-title">Parceiros Oficiais & Alianças Institucionais</h2>
-          <p class="section-subtitle" style="margin:0 auto;">
-            Trabalhamos em conjunto com universidades, entidades governamentais, sociedade civil e cooperação internacional.
-          </p>
-        </div>
-
-        <div class="partners-grid">
-          ${t.partners.map(e=>`
-            <div class="partner-card">
-              <div class="partner-logo-box">
-                <img src="${e.logo}" alt="Logotipo ${e.name}" loading="lazy" onerror="this.src='./logo_cropped.png'" />
-              </div>
-              <div class="partner-card-content">
-                <span class="badge badge-purple" style="margin-bottom:0.6rem;font-size:0.75rem;">${e.type}</span>
-                <h4 style="font-size:1.1rem;font-weight:800;margin-bottom:0.4rem;color:var(--slate-900);line-height:1.3;">${e.name}</h4>
-                <p style="font-size:0.86rem;color:var(--slate-600);line-height:1.55;">${e.description}</p>
-              </div>
-            </div>
-          `).join(``)}
+            `}).join(``)}
         </div>
       </div>
     </section>
