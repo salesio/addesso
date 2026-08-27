@@ -299,11 +299,14 @@ function renderApp() {
    ========================================================================== */
 
 function renderHeader(route, currentLangObj, tr) {
-  const navQuemSomos = tr.nav.about;
-  const navOQueFazemos = tr.nav.programs;
-  const navCba = tr.nav.cba;
+  const navQuemSomos = tr.nav.about || "Quem Somos";
+  const navOQueFazemos = tr.nav.programs || "O Que Fazemos";
   const navEnvolvase = tr.nav.help || "Envolva-se";
-  const navNoticias = tr.nav.blog || "Notícias";
+  const navNoticias = tr.nav.blog || "Diário de Campo";
+
+  const isSobreActive = ['sobre', 'transparencia', 'delegacoes'].includes(route) ? 'active' : '';
+  const isProgramasActive = ['programas', 'cba'].includes(route) ? 'active' : '';
+  const isEnvolvaseActive = ['participar', 'contactos'].includes(route) ? 'active' : '';
 
   return `
     <header class="site-header corporate-header">
@@ -318,36 +321,72 @@ function renderHeader(route, currentLangObj, tr) {
           </div>
         </a>
 
-        <nav class="nav-center-container corporate-nav">
+        <nav class="nav-center-container corporate-nav iave-nav">
           <ul class="nav-links">
-            <li class="nav-item"><a href="#sobre" class="nav-link ${route === 'sobre' ? 'active' : ''}">${navQuemSomos}</a></li>
-            <li class="nav-item"><a href="#programas" class="nav-link ${route === 'programas' ? 'active' : ''}">${navOQueFazemos}</a></li>
-            <li class="nav-item"><a href="#cba" class="nav-link ${route === 'cba' ? 'active' : ''}">${navCba}</a></li>
-            <li class="nav-item"><a href="#envolva-se" class="nav-link ${route === 'envolva-se' ? 'active' : ''}">${navEnvolvase}</a></li>
-            <li class="nav-item"><a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">${navNoticias}</a></li>
+            
+            <li class="nav-item has-dropdown">
+              <a href="#sobre" class="nav-link \${isSobreActive}">
+                \${navQuemSomos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="#sobre">História e Missão</a></li>
+                <li><a href="#delegacoes">Presença Nacional (Delegações)</a></li>
+                <li><a href="#transparencia">Transparência</a></li>
+                <li><a href="#sobre">Liderança</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item has-dropdown">
+              <a href="#programas" class="nav-link \${isProgramasActive}">
+                \${navOQueFazemos} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="#programas">Programas Estruturantes</a></li>
+                <li><a href="#cba">Centro de Boas Acções (CBA)</a></li>
+                <li><a href="#programas">Educação e Primeira Infância</a></li>
+                <li><a href="#programas">Segurança Alimentar e Saúde</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item has-dropdown">
+              <a href="#participar" class="nav-link \${isEnvolvaseActive}">
+                \${navEnvolvase} <i data-lucide="chevron-down" class="dropdown-caret"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="#participar">Indivíduos (Voluntariado)</a></li>
+                <li><a href="#participar">Organizações (Parcerias)</a></li>
+                <li><a href="#participar">Empresas (Responsabilidade Social)</a></li>
+                <li><a href="#contactos">Contactos</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a href="#blog" class="nav-link \${route === 'blog' ? 'active' : ''}">\${navNoticias}</a>
+            </li>
           </ul>
         </nav>
 
         <div class="nav-actions">
           <div class="lang-selector-wrapper">
-            <button id="lang-menu-btn" class="lang-btn ${state.isLangMenuOpen ? 'active' : ''}" title="Mudar Idioma">
-              <span>${currentLangObj.flag}</span>
-              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${currentLangObj.short}</span>
+            <button id="lang-menu-btn" class="lang-btn \${state.isLangMenuOpen ? 'active' : ''}" title="Mudar Idioma">
+              <span>\${currentLangObj.flag}</span>
+              <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">\${currentLangObj.short}</span>
               <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-menu" class="lang-menu ${state.isLangMenuOpen ? 'open' : ''}">
-              ${LANGUAGES.map(l => `
-                <div class="lang-option-item ${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('${l.code}')">
+            <div id="lang-menu" class="lang-menu \${state.isLangMenuOpen ? 'open' : ''}">
+              \${LANGUAGES.map(l => \`
+                <div class="lang-option-item \${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('\${l.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
-                    <span>${l.flag}</span>
-                    <span>${l.label}</span>
+                    <span>\${l.flag}</span>
+                    <span>\${l.label}</span>
                   </span>
-                  ${state.lang === l.code ? '<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>' : ''}
+                  \${state.lang === l.code ? '<i data-lucide="check" style="width:14px;height:14px;color:var(--primary-600);"></i>' : ''}
                 </div>
-              `).join('')}
+              \`).join('')}
             </div>
           </div>
-          <a href="#participar" class="btn btn-donate">Doar</a>
+          <a href="#participar" class="btn btn-primary" style="background:#dc2626; border:none; border-radius:4px; font-weight:700;">ENVOLVA-SE</a>
+          <a href="#participar" class="btn btn-donate" style="background:#336699; border:none; border-radius:4px; font-weight:700;">DOAR</a>
           <button id="mobile-menu-btn" class="mobile-toggle">
             <i data-lucide="menu" style="width:24px;height:24px;"></i>
           </button>
