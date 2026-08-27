@@ -376,7 +376,7 @@ function renderHeader(route, currentLangObj, tr) {
               <span style="font-size:0.8rem;font-weight:700;margin-left:0.25rem;">${currentLangObj.short}</span>
               <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:0.25rem;"></i>
             </button>
-            <div id="lang-menu" class="lang-menu ${state.isLangMenuOpen ? 'open' : ''}">
+            <div id="lang-menu" class="lang-dropdown-menu ${state.isLangMenuOpen ? 'open' : ''}">
               ${LANGUAGES.map(l => `
                 <div class="lang-option-item ${state.lang === l.code ? 'active' : ''}" onclick="window.changeLanguage('${l.code}')">
                   <span style="display:flex;align-items:center;gap:0.5rem;">
