@@ -3408,6 +3408,11 @@ html, body {
 }
 .corporate-nav .nav-links {
   gap: 1.5rem;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }
 .corporate-nav .nav-link {
   font-weight: 600;
@@ -3608,6 +3613,11 @@ html, body {
 
 .iave-nav .nav-links {
   gap: 1.2rem;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }
 .iave-nav .nav-item {
   position: relative;
@@ -3626,10 +3636,13 @@ html, body {
   align-items: center;
   gap: 0.3rem;
   position: relative;
+  border-radius: 0 !important;
+  border: none !important;
 }
 .iave-nav .nav-link:hover, .iave-nav .nav-link.active {
-  color: var(--slate-900);
-  background: transparent;
+  color: var(--slate-900) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /* Orange underline effect like IAVE */

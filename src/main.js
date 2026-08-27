@@ -356,12 +356,15 @@ function renderHeader(route, currentLangObj, tr) {
                 <li><a href="#participar">Indivíduos (Voluntariado)</a></li>
                 <li><a href="#participar">Organizações (Parcerias)</a></li>
                 <li><a href="#participar">Empresas (Responsabilidade Social)</a></li>
-                <li><a href="#contactos">Contactos</a></li>
+                
               </ul>
             </li>
 
             <li class="nav-item">
               <a href="#blog" class="nav-link ${route === 'blog' ? 'active' : ''}">${navNoticias}</a>
+            </li>
+            <li class="nav-item">
+              <a href="#contactos" class="nav-link ${route === 'contactos' ? 'active' : ''}">Contactos</a>
             </li>
           </ul>
         </nav>
